@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/splash_bg" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_ezymd" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:elevation="@dimen/_4sdp"
+            android:orientation="vertical"
+            android:padding="@dimen/_15sdp"
+            android:visibility="gone">
+
+
+            <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:text="@string/login"
+                android:textColor="@color/blue_002366"
+                android:textSize="@dimen/_25sdp"
+                app:textFont="bold" />
+
+
+            <com.ezymd.restaurantapp.delivery.customviews.SnapEditText
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@drawable/edit_text_bg"
+                android:hint="@string/username"
+                android:inputType="text"
+                android:letterSpacing="0.08"
+                android:paddingStart="@dimen/_9sdp"
+                android:paddingEnd="@dimen/_9sdp"
+                android:text=""
+                android:textColor="@color/blue_002366"
+                android:textColorHint="@color/gray_B2BDD1"
+                android:textSize="@dimen/_17sdp"
+                app:textFontEdit="bold" />
+
+
+            <com.ezymd.restaurantapp.delivery.customviews.SnapEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@drawable/edit_text_bg"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:letterSpacing="0.08"
+                android:paddingStart="@dimen/_9sdp"
+                android:paddingEnd="@dimen/_9sdp"
+                android:text=""
+                android:textColor="@color/blue_002366"
+                android:textColorHint="@color/gray_B2BDD1"
+                android:textSize="@dimen/_17sdp"
+                app:textFontEdit="bold" />
+
+
+            <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+                android:id="@+id/forgot_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="end"
+                android:letterSpacing="0.08"
+                android:padding="@dimen/_5sdp"
+                android:text="@string/forgot_password"
+                android:textColor="@color/blue_002366"
+                android:textSize="@dimen/_13sdp"
+                app:textFontEdit="bold" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp">
+
+                <com.ezymd.restaurantapp.delivery.customviews.SnapButton
+                    android:id="@+id/next"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_gray_btn_pressed"
+                    android:gravity="center"
+                    android:text="@string/login"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_17sdp"
+                    app:buttonFont="bold" />
+
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:elevation="@dimen/_10sdp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

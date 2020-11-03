@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <keep_state_fragment
+        android:id="@+id/navigation_home"
+        android:name="com.ezymd.restaurantapp.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <keep_state_fragment
+        android:id="@+id/navigation_search"
+        android:name="com.ezymd.restaurantapp.ui.search.SearchFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search" />
+
+    <keep_state_fragment
+        android:id="@+id/navigation_cart"
+        android:name="com.ezymd.restaurantapp.ui.card.CartFragment"
+        android:label="@string/title_cart"
+        tools:layout="@layout/fragment_notifications" />
+
+    <keep_state_fragment
+        android:id="@+id/navigation_order"
+        android:name="com.ezymd.restaurantapp.ui.card.CartFragment"
+        android:label="@string/title_order"
+        tools:layout="@layout/fragment_notifications" />
+
+
+    <keep_state_fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.ezymd.restaurantapp.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+</navigation>
