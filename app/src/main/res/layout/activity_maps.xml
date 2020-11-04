@@ -10,8 +10,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/container_toolbar"
-        android:layout_marginBottom="@dimen/_190sdp">
+        android:layout_below="@+id/container_toolbar">
+        <!--android:layout_marginBottom="@dimen/_190sdp"-->
 
         <fragment
             android:id="@+id/map"
@@ -68,9 +68,10 @@
             app:useCompatPadding="true" />
     </FrameLayout>
 
-    <include
+   <!-- <include
         layout="@layout/bottom_sheet_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+        android:visibility="gone"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

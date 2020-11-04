@@ -20,7 +20,7 @@ interface ServerConfig {
         const val SEARCH_RESTURANTS="nearByRestaurant"
         const val RESTURANT_DETAILS="restaurantItems/{id}"
         const val SOCIAL_LOGIN_USER = "socialLoginRegister"
-        const val LOGIN_USER = "loginRegister"
+        const val LOGIN_USER = "agentlogin"
         const val LIST_TRENDING="trendingFoods"
     }
 }

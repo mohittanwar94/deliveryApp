@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import com.ezymd.restaurantapp.delivery.location.LocationActivity
 import com.ezymd.restaurantapp.delivery.login.Login
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import java.security.MessageDigest
@@ -22,7 +23,7 @@ class SplashScreen : BaseActivity() {
         super.onResume()
         printKeyHash(this)
         if (userInfo!!.userID != 0)
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, LocationActivity::class.java))
         else
             startActivity(Intent(this, Login::class.java))
 

@@ -34,7 +34,7 @@ class LocationViewModel : ViewModel() {
     fun getAddress(lat: Double, long: Double, gcd: Geocoder) {
         isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            loginRepository!!.getAddress(gcd, lat, long, address, isLoading)
+//            loginRepository!!.getAddress(gcd, lat, long, address, isLoading)
         }
 
     }

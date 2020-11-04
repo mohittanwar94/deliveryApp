@@ -78,7 +78,7 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
         })
 
         viewModel.isLoading.observe(this, androidx.lifecycle.Observer {
-            progress.visibility = if (it) View.VISIBLE else View.GONE
+//            progress.visibility = if (it) View.VISIBLE else View.GONE
         })
 
     }
@@ -86,14 +86,14 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
     private fun setGUI() {
 
 
-        done.setOnClickListener {
+      /*  done.setOnClickListener {
             setResult(Activity.RESULT_OK, Intent().putExtra(JSONKeys.OBJECT, locationModel))
             finish()
         }
         change.setOnClickListener {
             UIUtil.clickAlpha(it)
             startSearchPlacesApi()
-        }
+        }*/
 
 
     }
@@ -239,7 +239,7 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
         var add = address
         if (add.startsWith("Unnamed Road,"))
             add = add.replace("Unnamed Road,", "")
-        toLocationTxt.text = (add.trim())
+       // toLocationTxt.text = (add.trim())
     }
 
 
