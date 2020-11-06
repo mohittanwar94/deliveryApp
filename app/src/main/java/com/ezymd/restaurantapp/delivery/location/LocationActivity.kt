@@ -2,6 +2,8 @@ package com.ezymd.restaurantapp.delivery.location
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
 import android.location.Geocoder
@@ -12,14 +14,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.*
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.WorkerLocation
 import com.ezymd.restaurantapp.delivery.location.model.LocationModel
-import com.ezymd.restaurantapp.delivery.utils.JSONKeys
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
-import com.ezymd.restaurantapp.delivery.utils.UIUtil
 import com.ezymd.restaurantapp.location.LocationViewModel
-
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.common.api.Status
@@ -39,8 +40,8 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import kotlinx.android.synthetic.main.activity_maps.*
-import kotlinx.android.synthetic.main.bottom_sheet_location.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class LocationActivity : BaseActivity(), OnMapReadyCallback {
@@ -86,14 +87,14 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
     private fun setGUI() {
 
 
-      /*  done.setOnClickListener {
-            setResult(Activity.RESULT_OK, Intent().putExtra(JSONKeys.OBJECT, locationModel))
-            finish()
-        }
-        change.setOnClickListener {
-            UIUtil.clickAlpha(it)
-            startSearchPlacesApi()
-        }*/
+        /*  done.setOnClickListener {
+              setResult(Activity.RESULT_OK, Intent().putExtra(JSONKeys.OBJECT, locationModel))
+              finish()
+          }
+          change.setOnClickListener {
+              UIUtil.clickAlpha(it)
+              startSearchPlacesApi()
+          }*/
 
 
     }
@@ -168,8 +169,31 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
     }
 
 
-    private fun getCurrentLocation() {
+    private fun constraints(): Constraints {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresCharging(false).build()
+        return constraints;
+    }
 
+    private fun getCurrentLocation() {
+        //setAlarmManger()
+           val mWorkManager = WorkManager.getInstance(this)
+           val someWork = PeriodicWorkRequest.Builder(
+               WorkerLocation::class.java, 15, TimeUnit.MINUTES
+           )
+               .setConstraints(constraints())
+               .addTag("LOCATION")
+               .build()
+           mWorkManager.enqueueUniquePeriodicWork(
+               "LOCATION",
+               ExistingPeriodicWorkPolicy.KEEP,
+               someWork
+           )
+          /*val intent = Intent(this.application, BackgroundLocationService::class.java)
+        this.application.startService(intent)
+*/
+        //  this.application.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         val locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = (10 * 1000).toLong()
@@ -201,6 +225,36 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    private fun setAlarmManger() {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val notificationIntent = Intent("android.media.action.DISPLAY_NOTIFICATION")
+        notificationIntent.addCategory("android.intent.category.DEFAULT")
+        val broadcast = PendingIntent.getBroadcast(
+            this,
+            310,
+            notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+
+
+       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 60000,
+                broadcast
+            )
+        } else {
+            alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 60000,
+                60000,
+                broadcast
+            )
+        }
+        SnapLog.print("set alarm=======")
     }
 
 
@@ -239,7 +293,7 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
         var add = address
         if (add.startsWith("Unnamed Road,"))
             add = add.replace("Unnamed Road,", "")
-       // toLocationTxt.text = (add.trim())
+        // toLocationTxt.text = (add.trim())
     }
 
 

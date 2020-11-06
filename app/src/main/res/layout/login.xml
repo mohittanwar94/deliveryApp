@@ -92,6 +92,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="end"
+                android:visibility="gone"
                 android:letterSpacing="0.08"
                 android:padding="@dimen/_5sdp"
                 android:text="@string/forgot_password"

@@ -104,6 +104,21 @@
                     tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>
+        <service
+            android:name=".location.BackgroundLocationService"
+            android:enabled="false"
+            android:exported="false"
+            android:description="@string/search_location"
+            android:label="@string/search_location">
+                    </service>
+
+        <receiver android:name=".LocationPublisher">
+            <intent-filter>
+                <action android:name="android.media.action.DISPLAY_NOTIFICATION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
 
         <receiver
