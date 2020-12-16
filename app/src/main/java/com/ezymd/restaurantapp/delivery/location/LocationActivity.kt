@@ -34,11 +34,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -67,7 +64,7 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-
+        setWorkManager()
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
@@ -84,36 +81,25 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
 
     }
 
+    private fun setWorkManager() {
+        val mWorkManager = WorkManager.getInstance(this)
+        val someWork = PeriodicWorkRequest.Builder(
+            WorkerLocation::class.java, 15, TimeUnit.MINUTES
+        )
+            .setConstraints(constraints())
+            .addTag("LOCATION")
+            .build()
+        mWorkManager.enqueueUniquePeriodicWork(
+            "LOCATION",
+            ExistingPeriodicWorkPolicy.KEEP,
+            someWork
+        )
+    }
+
     private fun setGUI() {
 
-
-        /*  done.setOnClickListener {
-              setResult(Activity.RESULT_OK, Intent().putExtra(JSONKeys.OBJECT, locationModel))
-              finish()
-          }
-          change.setOnClickListener {
-              UIUtil.clickAlpha(it)
-              startSearchPlacesApi()
-          }*/
-
-
     }
 
-
-    private fun startSearchPlacesApi() {
-        if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, getString(R.string.google_places_api))
-        }
-        val fields = listOf(
-            Place.Field.ID,
-            Place.Field.NAME,
-            Place.Field.LAT_LNG,
-            Place.Field.PHOTO_METADATAS
-        )
-        val intent =
-            Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this)
-        startActivityForResult(intent, CURRENT_PLACE_AUTOCOMPLETE_REQUEST_CODE)
-    }
 
     override fun onMapReady(map: GoogleMap?) {
         googleMap = map ?: return
@@ -177,23 +163,6 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getCurrentLocation() {
-        //setAlarmManger()
-           val mWorkManager = WorkManager.getInstance(this)
-           val someWork = PeriodicWorkRequest.Builder(
-               WorkerLocation::class.java, 15, TimeUnit.MINUTES
-           )
-               .setConstraints(constraints())
-               .addTag("LOCATION")
-               .build()
-           mWorkManager.enqueueUniquePeriodicWork(
-               "LOCATION",
-               ExistingPeriodicWorkPolicy.KEEP,
-               someWork
-           )
-          /*val intent = Intent(this.application, BackgroundLocationService::class.java)
-        this.application.startService(intent)
-*/
-        //  this.application.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         val locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = (10 * 1000).toLong()
@@ -240,7 +209,7 @@ class LocationActivity : BaseActivity(), OnMapReadyCallback {
 
 
 
-       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 60000,

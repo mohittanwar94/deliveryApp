@@ -106,11 +106,10 @@
         </receiver>
         <service
             android:name=".location.BackgroundLocationService"
+            android:description="@string/search_location"
             android:enabled="false"
             android:exported="false"
-            android:description="@string/search_location"
-            android:label="@string/search_location">
-                    </service>
+            android:label="@string/search_location"></service>
 
         <receiver android:name=".LocationPublisher">
             <intent-filter>
@@ -128,6 +127,47 @@
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVE" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".tracker.TrackerActivity" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <service
+            android:name=".notification.MyFirebaseMessagingService"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+
+        <service
+            android:name=".tracker.TrackerService"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".utils.BootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

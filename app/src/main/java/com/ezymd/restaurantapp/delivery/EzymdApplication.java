@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.Process;
 
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ezymd.restaurantapp.delivery.utils.AppSignatureHelper;
 import com.ezymd.restaurantapp.delivery.utils.ConnectivityReceiver;
+import com.ezymd.restaurantapp.delivery.utils.UserInfo;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +73,12 @@ public class EzymdApplication extends Application implements Application.Activit
             Process.killProcess(Process.myPid());
         }
 
-
+        UserInfo userInfo= UserInfo.getInstance(mInstance);
+        if (userInfo.getDeviceID().length() < 1) {
+            String deviceId = android.provider.Settings.System.getString(getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID);
+            userInfo.setDeviceID(deviceId == null ? "" + new ApplicationInfo().uid : deviceId);
+        }
     }
 
     public static synchronized EzymdApplication getInstance() {
