@@ -2,7 +2,6 @@ package com.ezymd.restaurantapp.delivery.tracker;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +13,11 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleService;
 
 import com.ezymd.restaurantapp.delivery.R;
+import com.ezymd.restaurantapp.delivery.utils.BaseRequest;
+import com.ezymd.restaurantapp.delivery.utils.UserInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,15 +27,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-public class TrackerService extends Service {
+public class TrackerService extends LifecycleService {
 
     private static final String TAG = TrackerService.class.getSimpleName();
 
+    private TrackerViewModel viewModel;
+
     @Override
     public IBinder onBind(Intent intent) {
+        super.onBind(intent);
         return null;
     }
 
@@ -41,7 +44,9 @@ public class TrackerService extends Service {
     public void onCreate() {
         super.onCreate();
         buildNotification();
-        loginToFirebase();
+        viewModel = new TrackerViewModel();
+        requestLocationUpdates();
+        // loginToFirebase();
     }
 
     private void buildNotification() {
@@ -75,7 +80,7 @@ public class TrackerService extends Service {
         super.onDestroy();
         try {
             unregisterReceiver(stopReceiver);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -99,11 +104,11 @@ public class TrackerService extends Service {
 
     private void requestLocationUpdates() {
         LocationRequest request = new LocationRequest();
-        request.setInterval(10000);
-        request.setFastestInterval(5000);
+        request.setInterval(120000);
+        request.setFastestInterval(60000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
+        // final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
@@ -112,16 +117,34 @@ public class TrackerService extends Service {
             client.requestLocationUpdates(request, new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
+                    Location location = locationResult.getLastLocation();
+                    if (location != null) {
+                        updateLocationonServer(location);
+
+                    }
+                   /* DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
                     Location location = locationResult.getLastLocation();
                     if (location != null) {
                         Log.d(TAG, "location update " + location);
                         ref.setValue(location);
-                    }
+                    }*/
+
+
                 }
             }, null);
         }
 
     }
+
+    private void updateLocationonServer(Location location) {
+        UserInfo userInfo = UserInfo.getInstance(this);
+        BaseRequest baseRequest = new BaseRequest(userInfo);
+        baseRequest.paramsMap.put("lat", "" + location.getLatitude());
+        baseRequest.paramsMap.put("lang", "" + location.getLatitude());
+        baseRequest.paramsMap.put("user_id", "" + userInfo.getUserID());
+        viewModel.downloadLatestCoordinates(baseRequest);
+        // baseRequest.paramsMap.put("order_id",""+location.get());
+    }
+
 
 }

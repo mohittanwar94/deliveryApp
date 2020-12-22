@@ -4,9 +4,9 @@ package com.ezymd.restaurantapp.network
 import com.ezymd.restaurantapp.delivery.ServerConfig
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import com.ezymd.restaurantapp.delivery.utils.BaseResponse
+import com.google.gson.JsonObject
+import retrofit2.http.*
 
 interface WebServices {
     @FormUrlEncoded
@@ -21,6 +21,23 @@ interface WebServices {
     suspend fun loginUser(
         @FieldMap commonParameters: Map<String, String>
     ): LoginModel
+
+
+    @GET(ServerConfig.DIRECTION_API)
+    suspend fun downloadRoute(
+        @Query("origin") url: String,
+        @Query("sensor") sensor: String,
+        @Query("destination") destination: String,
+        @Query("mode") mode: String,
+        @Query("key") key: String
+    ): JsonObject
+
+    @FormUrlEncoded
+    @POST(ServerConfig.UPDATED_COORDINATES)
+    suspend fun locationUpdates(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") accessToken: String
+    ): BaseResponse
 
 
 }

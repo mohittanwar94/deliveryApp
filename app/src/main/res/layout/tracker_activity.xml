@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/_200sdp"
+        android:background="@color/color_f2f4f7"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.view.circulartimerview.CircularTimerView
+            android:id="@+id/progress_circular"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_250sdp"
+            android:layout_gravity="center"
+            app:backgroundColor="#90ffb912"
+            app:backgroundWidth="8"
+            app:isClockwise="true"
+            app:maxValue="100"
+            app:prefix=""
+            app:progressBackgroundColor="#eee"
+            app:progressColor="@color/color_002366"
+            app:progressText=""
+            app:progressTextColor="@color/white"
+            app:startingPoint="bottom"
+            app:suffix=""
+            app:textSize="@dimen/_30sdp" />
+
+
+        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="@dimen/_4sdp"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/_15sdp"
+            android:paddingRight="@dimen/_15sdp"
+            android:text="@string/incoming_order"
+            android:textColor="@color/color_002366"
+            android:textSize="@dimen/_15sdp"
+            app:textFont="bold" />
+
+    </FrameLayout>
+
+    <include
+        layout="@layout/user_live_tracking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

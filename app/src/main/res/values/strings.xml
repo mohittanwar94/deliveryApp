@@ -83,4 +83,6 @@
     <string name="default_notification_channel_id" translatable="false">Ezymd011</string>
     <string name="default_notification_channel_id_2" translatable="false">Ezymd012</string>
     <string name="ok">Ok</string>
+    <string name="incoming_order">Incoming orders</string>
+    <string name="slide_to_accept">Slide to accept</string>
 </resources>
