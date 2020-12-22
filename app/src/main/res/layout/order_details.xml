@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_9sdp"
+            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <LinearLayout
@@ -35,7 +36,7 @@
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
-                    app:srcCompat="@drawable/ic_dining" />
+                    app:srcCompat="@drawable/ic_location" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -71,6 +72,33 @@
 
             </LinearLayout>
 
+            <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+                android:id="@+id/showDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:gravity="center_horizontal"
+                android:text="@string/hide_details"
+                android:textColor="@color/color_ffb912"
+                android:textSize="@dimen/_13sdp"
+                android:textStyle="normal"
+                app:textFont="bold" />
+
+
+            <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+                android:id="@+id/items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:gravity="center_horizontal"
+                android:text=""
+                android:textColor="@color/color_667ba3"
+                android:textSize="@dimen/_13sdp"
+                android:textStyle="normal"
+                app:textFont="roman" />
+
 
             <com.ncorti.slidetoact.SlideToActView
                 android:id="@+id/accept"
@@ -78,22 +106,22 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginTop="@dimen/_70sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
-                app:animation_duration="250"
                 android:elevation="@dimen/_4sdp"
+                app:animate_completion="true"
+                app:animation_duration="250"
                 app:area_margin="@dimen/_4sdp"
                 app:border_radius="@dimen/_20sdp"
+                app:bump_vibration="300"
+                app:complete_icon="@drawable/ic_check"
+                app:icon_margin="@dimen/_5sdp"
                 app:inner_color="@color/white"
                 app:outer_color="@color/color_ffb912"
                 app:slider_height="@dimen/_35sdp"
-                app:animate_completion="true"
-                app:text_color="@color/white"
-                app:icon_margin="@dimen/_5sdp"
-                app:complete_icon="@drawable/ic_check"
-                app:slider_icon_color="@color/color_002366"
                 app:slider_icon="@drawable/ic_right_arrow"
+                app:slider_icon_color="@color/color_002366"
                 app:slider_locked="false"
                 app:text="@string/slide_to_accept"
-                app:bump_vibration="300"
+                app:text_color="@color/white"
                 app:text_size="@dimen/_15sdp" />
 
         </LinearLayout>

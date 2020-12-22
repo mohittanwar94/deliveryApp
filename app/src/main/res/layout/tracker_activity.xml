@@ -25,7 +25,7 @@
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_250sdp"
             android:layout_gravity="center"
-            app:backgroundColor="#90ffb912"
+            app:backgroundColor="#ffb84d"
             app:backgroundWidth="8"
             app:isClockwise="true"
             app:maxValue="100"

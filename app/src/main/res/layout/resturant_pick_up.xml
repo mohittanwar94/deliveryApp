@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/_200sdp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/header_new" />
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/navigate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/_15sdp"
+            android:contentDescription="@string/navigate"
+            app:backgroundTint="@color/color_ffb912"
+            app:useCompatPadding="false"
+            app:pressedTranslationZ="@dimen/_4sdp"
+            android:src="@drawable/ic_navigate"
+            app:fabSize="normal"
+            app:rippleColor="@color/white"
+            />
+
+
+    </FrameLayout>
+
+    <include
+        layout="@layout/user_live_tracking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

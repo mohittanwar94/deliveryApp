@@ -95,6 +95,11 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
         <activity
+            android:name=".order.ReachPickUpOrderActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

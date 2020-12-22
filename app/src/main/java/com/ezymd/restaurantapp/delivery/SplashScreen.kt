@@ -14,6 +14,7 @@ import android.util.Base64
 import android.util.Log
 import com.ezymd.restaurantapp.delivery.login.Login
 import com.ezymd.restaurantapp.delivery.order.IncomingOrderActivity
+import com.ezymd.restaurantapp.delivery.order.ReachPickUpOrderActivity
 import com.ezymd.restaurantapp.delivery.tracker.TrackerActivity
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import java.security.MessageDigest
@@ -60,7 +61,7 @@ class SplashScreen : BaseActivity() {
         super.onResume()
         printKeyHash(this)
         if (userInfo!!.userID != 0)
-            startActivity(Intent(this, IncomingOrderActivity::class.java))
+            startActivity(Intent(this, ReachPickUpOrderActivity::class.java))
         else
             startActivity(Intent(this, Login::class.java))
 

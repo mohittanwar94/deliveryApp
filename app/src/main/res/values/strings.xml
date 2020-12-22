@@ -85,4 +85,13 @@
     <string name="ok">Ok</string>
     <string name="incoming_order">Incoming orders</string>
     <string name="slide_to_accept">Slide to accept</string>
+    <string name="navigate">Show Navigation</string>
+    <string name="reached_for_pickup">Reached for pick up</string>
+    <string name="pick_order">Pick Order</string>
+    <string name="pick_the_order">Pick the order</string>
+    <string name="hide_details">Hide details</string>
+    <string name="show_order_details">Show order details</string>
+    <string name="complete_the_order">Complete your order</string>
+    <string name="order_completed">Order completed</string>
+    <string name="order_delivered">Order delivered</string>
 </resources>
