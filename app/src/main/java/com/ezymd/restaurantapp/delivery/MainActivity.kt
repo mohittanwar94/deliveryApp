@@ -1,50 +1,156 @@
 package com.ezymd.restaurantapp.delivery
 
-import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import androidx.navigation.findNavController
-import androidx.navigation.plusAssign
-import androidx.navigation.ui.setupWithNavController
-import com.ezymd.restaurantapp.delivery.BaseActivity
-import com.ezymd.restaurantapp.delivery.EzymdApplication
-import com.ezymd.restaurantapp.delivery.R
-import com.ezymd.restaurantapp.delivery.utils.ConnectivityReceiver
-import com.ezymd.restaurantapp.delivery.utils.KeepStateNavigator
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ezymd.restaurantapp.delivery.order.model.OrderModel
+import com.ezymd.restaurantapp.delivery.utils.*
+import com.ezymd.vendor.order.OrderViewModel
+import com.ezymd.vendor.order.adapter.OrdersAdapter
+import com.ezymd.vendor.orderdetails.OrderDetailsActivity
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.header_new.*
 
 class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
+    private var restaurantAdapter: OrdersAdapter? = null
+    private val dataResturant = ArrayList<OrderModel>()
+    private val searchViewModel by lazy {
+        ViewModelProvider(this).get(OrderViewModel::class.java)
+    }
 
-    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
+        setGUI()
+        setAdapterRestaurant()
+        searchViewModel.orderList(BaseRequest(userInfo))
+        setObservers()
+
+    }
 
 
-        val navController = findNavController(R.id.nav_host_fragment)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == JSONKeys.OTP_REQUEST && resultCode == Activity.RESULT_OK) {
+            dataResturant.clear()
+            restaurantAdapter?.clearData()
+            searchViewModel.orderList(BaseRequest(userInfo))
+        }
+    }
 
-        // get fragment
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!
+    private fun setAdapterRestaurant() {
+        resturantRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        resturantRecyclerView.addItemDecoration(
+            VerticalSpacesItemDecoration(
+                UIUtil.convertDpToPx(
+                    this,
+                    resources.getDimension(R.dimen._3sdp)
+                )
+                    .toInt()
+            )
+        )
+        restaurantAdapter =
+            OrdersAdapter(this, object : OnRecyclerViewLongClick {
+                override fun onClick(position: Int, view: View?) {
+                    startActivityForResult(
+                        Intent(this@MainActivity, OrderDetailsActivity::class.java).putExtra(
+                            JSONKeys.OBJECT,
+                            dataResturant[position]
+                        ), JSONKeys.OTP_REQUEST
+                    )
+                    overridePendingTransition(R.anim.left_in, R.anim.left_out)
+                }
 
-        // setup custom navigator
-        val navigator =
-            KeepStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment)
-        navController.navigatorProvider += navigator
+                override fun onLongClick(position: Int, view: View?) {
+                    val baseRequest = BaseRequest(userInfo!!)
+                    baseRequest.paramsMap.put("order_id", "" + dataResturant[position].orderId)
+                    searchViewModel.assignOrder(baseRequest)
 
-        // set navigation graph
-        navController.setGraph(R.navigation.mobile_navigation)
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
-        navView.setupWithNavController(navController)
-        navView.labelVisibilityMode = LABEL_VISIBILITY_LABELED
+                }
+            }, dataResturant)
+        resturantRecyclerView.adapter = restaurantAdapter
 
 
     }
+
 
     override fun onResume() {
         super.onResume()
         EzymdApplication.getInstance().setConnectivityListener(this@MainActivity);
     }
+
+    private fun setObservers() {
+
+
+        searchViewModel.isLoading.observe(this, androidx.lifecycle.Observer {
+            if (!it) {
+                enableEvents()
+                progress.visibility = View.GONE
+            } else {
+                progress.visibility = View.VISIBLE
+            }
+        })
+
+
+        searchViewModel.assignResponse.observe(this, Observer {
+            if (it != null && it.status == ErrorCodes.SUCCESS) {
+                showError(true, it.message, null)
+                dataResturant.clear()
+                restaurantAdapter?.clearData()
+                searchViewModel.orderList(BaseRequest(userInfo))
+            } else {
+                showError(false, it.message, null)
+            }
+
+        })
+        searchViewModel.baseResponse.observe(this, androidx.lifecycle.Observer {
+            if (it.status == ErrorCodes.SUCCESS && it.data != null) {
+                dataResturant.clear()
+                restaurantAdapter?.clearData()
+                restaurantAdapter?.setData(it.data)
+                restaurantAdapter?.getData()?.let { it1 ->
+                    dataResturant.addAll(it1)
+                }
+
+            } else {
+                showError(false, it.message, null)
+            }
+
+        })
+
+        searchViewModel.errorRequest.observe(this, androidx.lifecycle.Observer {
+            if (it != null)
+                showError(false, it, null)
+        })
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+
+    private fun setGUI() {
+        leftIcon.visibility = View.GONE
+        headertext.visibility = View.VISIBLE
+        headertext.text = getString(R.string.orders)
+        headertext.setTextColor(ContextCompat.getColor(this, R.color.color_002366))
+    }
+
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (!isConnected) {
@@ -53,7 +159,6 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
     }
 
     private fun noNetworkScreen() {
-
     }
 
 

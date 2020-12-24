@@ -4,6 +4,8 @@ package com.ezymd.restaurantapp.network
 import com.ezymd.restaurantapp.delivery.ServerConfig
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
+import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
+import com.ezymd.restaurantapp.delivery.order.model.OrderBaseModel
 import com.ezymd.restaurantapp.delivery.utils.BaseResponse
 import com.google.gson.JsonObject
 import retrofit2.http.*
@@ -39,6 +41,14 @@ interface WebServices {
         @Header("Authorization") accessToken: String
     ): BaseResponse
 
+
+
+    @GET(ServerConfig.CREATE_ORDER)
+    suspend fun orderList( @Header("Authorization") accessToken: String): OrderBaseModel
+
+    @FormUrlEncoded
+    @POST(ServerConfig.ASSIGN_ORDER_DELIVERY)
+    suspend fun assignOrder(@Field("order_id") restaurant_id:String, @Header("Authorization") accessToken: String): OrderAcceptResponse
 
 }
 

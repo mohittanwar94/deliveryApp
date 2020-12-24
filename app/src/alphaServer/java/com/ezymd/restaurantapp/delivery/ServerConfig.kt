@@ -27,5 +27,6 @@ interface ServerConfig {
         const val DIRECTION_API="https://maps.googleapis.com/maps/api/directions/json"
         const val CREATE_ORDER="order"
         const val UPDATED_COORDINATES="updateOrderLocation"
+        const val ASSIGN_ORDER_DELIVERY = "assignOrderToDeliveryAgent"
     }
 }

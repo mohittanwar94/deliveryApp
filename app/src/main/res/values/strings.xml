@@ -94,4 +94,38 @@
     <string name="complete_the_order">Complete your order</string>
     <string name="order_completed">Order completed</string>
     <string name="order_delivered">Order delivered</string>
+    <string name="track_order">Track order</string>
+
+    <string name="order_amount">Order Amount</string>
+    <string name="orderID">Order ID</string>
+    <string name="resurant_name">Resurant Name</string>
+    <string name="order_status">Order Status</string>
+    <string name="completed">Completed</string>
+    <string name="view_order_details">View Order Details</string>
+    <string name="payment_id">Payment ID</string>
+    <string name="created">Created At</string>
+    <string name="delivery_instruction">Delivery Instruction</string>
+    <string name="scheduleAt">Schedule At</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="address">Address</string>
+    <string name="now">Now</string>
+    <string name="pick_type">Pickup Type</string>
+    <string name="customer_will_pick_up">Customer Pickup</string>
+    <string name="delivery_boy_pick_up">Delivery Boy</string>
+
+    <string name="wait_assigning_order">Wait! assigning your order</string>
+    <string name="waiting_for_confrirmation">Waiting for confirmation from restaurant.\nPlease Wait...</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+    <string name="congratualtions">Congratulations</string>
+    <string name="reorder">Reorder</string>
+    <string name="review">Review</string>
+    <string name="your_order_is_completed">Your order is completed</string>
+    <string name="live_status">Live Status</string>
+    <string name="have_an_issue_chat_with_us">Have an issue chat with us?</string>
+    <string name="your_order_processing">Your order is processing</string>
+    <string name="your_order_is_cooking">"Your order is cooking "</string>
+    <string name="assign_for_delivey">Assign for delivery</string>
+    <string name="orders">Orders</string>
+
 </resources>

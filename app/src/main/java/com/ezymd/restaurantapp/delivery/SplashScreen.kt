@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import com.ezymd.restaurantapp.delivery.login.Login
-import com.ezymd.restaurantapp.delivery.order.ReachPickUpOrderActivity
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -60,7 +59,7 @@ class SplashScreen : BaseActivity() {
         printKeyHash(this)
         if (userInfo!!.userID != 0) {
             EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
-            startActivity(Intent(this, ReachPickUpOrderActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         } else
             startActivity(Intent(this, Login::class.java))
 

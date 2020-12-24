@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
-import com.ezymd.restaurantapp.delivery.MainActivity
 import com.ezymd.restaurantapp.delivery.OtpBroadcastReceiver
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.login.LoginRequest
