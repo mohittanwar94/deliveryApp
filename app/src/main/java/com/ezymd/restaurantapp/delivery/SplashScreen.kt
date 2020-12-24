@@ -13,9 +13,7 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import com.ezymd.restaurantapp.delivery.login.Login
-import com.ezymd.restaurantapp.delivery.order.IncomingOrderActivity
 import com.ezymd.restaurantapp.delivery.order.ReachPickUpOrderActivity
-import com.ezymd.restaurantapp.delivery.tracker.TrackerActivity
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -60,9 +58,10 @@ class SplashScreen : BaseActivity() {
     override fun onResume() {
         super.onResume()
         printKeyHash(this)
-        if (userInfo!!.userID != 0)
+        if (userInfo!!.userID != 0) {
+            EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
             startActivity(Intent(this, ReachPickUpOrderActivity::class.java))
-        else
+        } else
             startActivity(Intent(this, Login::class.java))
 
         overridePendingTransition(R.anim.left_in, R.anim.left_out)
