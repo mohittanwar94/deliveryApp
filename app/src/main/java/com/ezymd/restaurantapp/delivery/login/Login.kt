@@ -7,6 +7,7 @@ import android.view.animation.AlphaAnimation
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
+import com.ezymd.restaurantapp.delivery.MainActivity
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.location.LocationActivity
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
@@ -108,7 +109,7 @@ class Login : BaseActivity() {
         userInfo?.userID = it.data.user.id
         userInfo?.phoneNumber = it.data.user.phone_no
         userInfo?.profilePic = it.data.user.profile_pic
-        startActivity(Intent(this, LocationActivity::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
 
     }

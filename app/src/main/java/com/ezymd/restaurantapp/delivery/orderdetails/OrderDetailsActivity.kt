@@ -1,4 +1,4 @@
-package com.ezymd.vendor.orderdetails
+package com.ezymd.restaurantapp.delivery.orderdetails
 
 import android.annotation.SuppressLint
 import android.app.Activity

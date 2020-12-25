@@ -1,22 +1,31 @@
 package com.ezymd.restaurantapp.delivery
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.*
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
+import com.ezymd.restaurantapp.delivery.orderdetails.OrderDetailsActivity
+import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.ezymd.vendor.order.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
-import com.ezymd.vendor.orderdetails.OrderDetailsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header_new.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
+    private val PERMISSIONS_REQUEST: Int = 12
     private var restaurantAdapter: OrdersAdapter? = null
     private val dataResturant = ArrayList<OrderModel>()
     private val searchViewModel by lazy {
@@ -31,9 +40,76 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
         setAdapterRestaurant()
         searchViewModel.orderList(BaseRequest(userInfo))
         setObservers()
+        setLocationUpdates()
+        setWorkManager()
 
     }
 
+    private fun setLocationUpdates() {
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Toast.makeText(this, "Please enable location services", Toast.LENGTH_SHORT).show()
+        }
+
+        // Check location permission is granted - if it is, start
+        // the service, otherwise request the permission
+        val permission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        );
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            startTrackerService()
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
+                PERMISSIONS_REQUEST
+            )
+        }
+    }
+
+
+    private fun setWorkManager() {
+        val mWorkManager = WorkManager.getInstance(this)
+        val someWork = PeriodicWorkRequest.Builder(
+            WorkerLocation::class.java, 15, TimeUnit.MINUTES
+        )
+            .setConstraints(constraints())
+            .addTag("LOCATION")
+            .build()
+        mWorkManager.enqueueUniquePeriodicWork(
+            "LOCATION",
+            ExistingPeriodicWorkPolicy.KEEP,
+            someWork
+        )
+    }
+
+    private fun constraints(): Constraints {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresCharging(false).build()
+        return constraints;
+    }
+
+    private fun startTrackerService() {
+        startService(Intent(this, TrackerService::class.java))
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSIONS_REQUEST && grantResults.size == 1
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Start the service when the permission is granted
+            startTrackerService();
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
