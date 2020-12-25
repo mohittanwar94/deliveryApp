@@ -59,7 +59,7 @@ class OrderDetailsActivity : BaseActivity() {
 
         searchViewModel.assignResponse.observe(this, Observer {
             if (it != null && it.status == ErrorCodes.SUCCESS) {
-                item.orderStatus = OrderStatus.ORDER_ASSIGN_FOR_DELIVERY
+                item.orderStatus = OrderStatus.ORDER_ACCEPT_DELIVERY_BOY
                 actionTaken = true
                 showError(true, it.message, null)
             } else {
@@ -93,16 +93,16 @@ class OrderDetailsActivity : BaseActivity() {
             scheduleAt.text = getString(R.string.now)
         }
 
-        if (item.orderPickupStatus == OrderStatus.PROCESSING) {
+        if (item.orderStatus == OrderStatus.PROCESSING) {
             status.text = getString(R.string.your_order_processing)
         }
 
 
-
+        serviceCharge.text=getString(R.string.dollor)+""+item.transactionCharges
         trackOrder.setOnClickListener {
             UIUtil.clickHandled(it)
             val baseRequest = BaseRequest(userInfo!!)
-            baseRequest.paramsMap.put("order_id", "" + item.orderId)
+            baseRequest.paramsMap["order_id"] = "" + item.orderId
             searchViewModel.assignOrder(baseRequest)
         }
         leftIcon.setOnClickListener {

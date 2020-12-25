@@ -58,7 +58,6 @@ class SplashScreen : BaseActivity() {
         super.onResume()
         printKeyHash(this)
         if (userInfo!!.userID != 0) {
-            EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
             startActivity(Intent(this, MainActivity::class.java))
         } else
             startActivity(Intent(this, Login::class.java))

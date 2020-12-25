@@ -47,6 +47,13 @@ interface WebServices {
     suspend fun orderList( @Header("Authorization") accessToken: String): OrderBaseModel
 
     @FormUrlEncoded
+    @POST(ServerConfig.ACCEPT_ORDER)
+    suspend fun acceptOrder(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") accessToken: String
+    ): OrderAcceptResponse
+
+    @FormUrlEncoded
     @POST(ServerConfig.ASSIGN_ORDER_DELIVERY)
     suspend fun assignOrder(@Field("order_id") restaurant_id:String, @Header("Authorization") accessToken: String): OrderAcceptResponse
 

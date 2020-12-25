@@ -5,4 +5,5 @@ public interface OrderStatus {
     int ORDER_PREPARING = 2;
     int ORDER_ASSIGN_FOR_DELIVERY = 3;
     int ORDER_ACCEPTED = 4;
+    int ORDER_ACCEPT_DELIVERY_BOY = 5;
 }

@@ -12,6 +12,11 @@ public class OrderModel implements Serializable {
     @SerializedName("order_id")
     @Expose
     private Integer orderId;
+
+    @SerializedName("key")
+    @Expose
+    private String key;
+
     @SerializedName("restaurant_name")
     @Expose
     private String restaurantName;
@@ -45,6 +50,8 @@ public class OrderModel implements Serializable {
     @SerializedName("address")
     @Expose
     private String address;
+
+    // for deliverty type self or delivery
     @SerializedName("order_pickup_status")
     @Expose
     private Integer orderPickupStatus;
@@ -85,6 +92,14 @@ public class OrderModel implements Serializable {
     @SerializedName("order_items")
     @Expose
     private ArrayList<OrderItems> orderItems = new ArrayList<>();
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public Integer getOrderId() {
         return orderId;

@@ -68,8 +68,6 @@ public class TrackerService extends LifecycleService {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "received stop broadcast");
-            // Stop the service when the notification is tapped
-            unregisterReceiver(stopReceiver);
             stopSelf();
         }
     };

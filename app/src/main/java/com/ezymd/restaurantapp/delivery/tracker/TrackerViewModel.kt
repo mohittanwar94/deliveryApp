@@ -5,14 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ezymd.restaurantapp.delivery.EzymdApplication
+import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -27,6 +24,7 @@ class TrackerViewModel : ViewModel() {
     val routeInfoResponse: MutableLiveData<ArrayList<List<HashMap<String, String>>>>
     val firebaseResponse: MutableLiveData<DataSnapshot>
     val locationUpdate = MutableLiveData<BaseResponse>()
+    val acceptRequest = MutableLiveData<OrderAcceptResponse>()
     val isLoading: MutableLiveData<Boolean>
     val timer = Timer()
 
@@ -77,40 +75,6 @@ class TrackerViewModel : ViewModel() {
     }
 
 
-    fun loginToFirebase(email: String, password: String, path: String) {
-        // Authenticate with Firebase and subscribe to updates
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-            email, password
-        ).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                subscribeToUpdates(path)
-                SnapLog.print("firebase auth success")
-            } else {
-                SnapLog.print("firebase auth failed")
-            }
-        };
-    }
-
-    private fun subscribeToUpdates(path: String) {
-        val ref = FirebaseDatabase.getInstance().getReference(path)
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                firebaseResponse.postValue(dataSnapshot)
-            }
-
-            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                firebaseResponse.postValue(dataSnapshot)
-            }
-
-            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
-            override fun onCancelled(error: DatabaseError) {
-                SnapLog.print("Failed to read value." + error.toException())
-            }
-        })
-    }
-
-
     fun getDirectionsUrl(
         origin: LatLng,
         dest: LatLng,
@@ -150,6 +114,27 @@ class TrackerViewModel : ViewModel() {
         }
 
     }
+
+    fun acceptOrder(baseRequest: BaseRequest) {
+        isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = loginRepository!!.acceptOrder(
+                baseRequest,
+                Dispatchers.IO
+            )
+            isLoading.postValue(false)
+            when (result) {
+                is ResultWrapper.NetworkError -> showNetworkError()
+                is ResultWrapper.GenericError -> showGenericError(result.error)
+                is ResultWrapper.Success -> {
+                    SnapLog.print(result.value.toString())
+                    acceptRequest.postValue(result.value)
+                }
+            }
+        }
+
+    }
+
 
     fun downloadRoute(url: ConcurrentHashMap<String, String>) {
         isLoading.postValue(true)

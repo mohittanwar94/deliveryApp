@@ -28,5 +28,6 @@ interface ServerConfig {
         const val CREATE_ORDER="order"
         const val UPDATED_COORDINATES="updateOrderLocation"
         const val ASSIGN_ORDER_DELIVERY = "assignOrderToDeliveryAgent"
+        const val ACCEPT_ORDER="updateOrderStatus"
     }
 }

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ezymd.restaurantapp.delivery.order.IncomingOrderActivity;
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel;
+import com.ezymd.restaurantapp.delivery.order.model.OrderStatus;
 import com.ezymd.restaurantapp.delivery.utils.AppSignatureHelper;
 import com.ezymd.restaurantapp.delivery.utils.ConnectivityReceiver;
 import com.ezymd.restaurantapp.delivery.utils.FireBaseConstants;
@@ -153,12 +154,15 @@ public class EzymdApplication extends Application implements Application.Activit
     }
 
     private void processNewOrder(DataSnapshot dataSnapshot) {
+        if (dataSnapshot == null)
+            return;
         JSONObject json = new JSONObject((Map) dataSnapshot.getValue());
         OrderModel user =
                 new Gson().fromJson(
                         json.toString(), OrderModel.class);
 
-        if (TimeUtils.isOrderLive(user.getCreated())) {
+        user.setKey(dataSnapshot.getKey());
+        if (TimeUtils.isOrderLive(dataSnapshot.getKey()) && user.getOrderStatus() != OrderStatus.ORDER_ACCEPT_DELIVERY_BOY) {
             Intent intent = new Intent(getApplicationContext(), IncomingOrderActivity.class);
             intent.putExtra(JSONKeys.OBJECT, user);
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
