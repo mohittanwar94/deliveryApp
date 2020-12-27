@@ -6,4 +6,6 @@ public interface OrderStatus {
     int ORDER_ASSIGN_FOR_DELIVERY = 3;
     int ORDER_ACCEPTED = 4;
     int ORDER_ACCEPT_DELIVERY_BOY = 5;
+    int DELIVERY_BOY_REACHED_AT_RESTAURANT = 6;
+    int ITEMS_PICKED_FROM_RESTAURANT=7;
 }

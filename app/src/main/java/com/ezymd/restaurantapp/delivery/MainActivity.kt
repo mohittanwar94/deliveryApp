@@ -14,6 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
+import com.ezymd.restaurantapp.delivery.order.CompleteOrderActivity
+import com.ezymd.restaurantapp.delivery.order.OrderPickupActivity
 import com.ezymd.restaurantapp.delivery.order.ReachPickUpOrderActivity
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
@@ -119,6 +121,10 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
             dataResturant.clear()
             restaurantAdapter?.clearData()
             searchViewModel.orderList(BaseRequest(userInfo))
+        } else if (requestCode == JSONKeys.LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
+            dataResturant.clear()
+            restaurantAdapter?.clearData()
+            searchViewModel.orderList(BaseRequest(userInfo))
         }
     }
 
@@ -159,9 +165,23 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
     }
 
     private fun navigateBaseOnStatus(orderModel: OrderModel) {
-        if (orderModel.orderStatus==OrderStatus.ORDER_ACCEPT_DELIVERY_BOY) {
+        if (orderModel.orderStatus == OrderStatus.ORDER_ACCEPT_DELIVERY_BOY) {
             startActivityForResult(
                 Intent(this@MainActivity, ReachPickUpOrderActivity::class.java).putExtra(
+                    JSONKeys.OBJECT,
+                    orderModel
+                ), JSONKeys.LOCATION_REQUEST
+            )
+        } else if (orderModel.orderStatus == OrderStatus.DELIVERY_BOY_REACHED_AT_RESTAURANT) {
+            startActivityForResult(
+                Intent(this@MainActivity, OrderPickupActivity::class.java).putExtra(
+                    JSONKeys.OBJECT,
+                    orderModel
+                ), JSONKeys.LOCATION_REQUEST
+            )
+        }else if (orderModel.orderStatus == OrderStatus.ITEMS_PICKED_FROM_RESTAURANT) {
+            startActivityForResult(
+                Intent(this@MainActivity, CompleteOrderActivity::class.java).putExtra(
                     JSONKeys.OBJECT,
                     orderModel
                 ), JSONKeys.LOCATION_REQUEST

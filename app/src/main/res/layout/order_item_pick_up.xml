@@ -21,21 +21,8 @@
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize" />
+            android:layout_marginTop="@dimen/_40sdp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/navigate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/_15sdp"
-            android:contentDescription="@string/navigate"
-            android:src="@drawable/ic_navigate"
-            app:backgroundTint="@color/color_ffb912"
-            app:fabSize="normal"
-            app:pressedTranslationZ="@dimen/_4sdp"
-            app:rippleColor="@color/white"
-            app:useCompatPadding="false" />
 
 
     </FrameLayout>

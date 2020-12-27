@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
+    android:orientation="vertical"
     app:behavior_hideable="false">
 
     <androidx.cardview.widget.CardView
@@ -13,16 +13,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@android:color/white"
-        app:cardElevation="0dp"
+        app:cardElevation="3dp"
         app:cardUseCompatPadding="false"
         app:contentPadding="@dimen/_5sdp"
-        tools:ignore="MissingConstraints">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_9sdp"
-            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <LinearLayout
@@ -36,7 +35,7 @@
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
-                    app:srcCompat="@drawable/ic_location" />
+                    app:srcCompat="@drawable/ic_dining" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.01"
                         android:text=""
-                        android:textColor="@color/color_b2bdd1"
+                        android:textColor="@color/color_002366"
                         android:textSize="@dimen/_15sdp"
                         android:textStyle="normal"
                         app:textFont="medium" />
@@ -64,7 +63,7 @@
                         android:enabled="false"
                         android:gravity="start|center"
                         android:paddingEnd="@dimen/_10sdp"
-                        android:textColor="@color/color_667ba3"
+                        android:textColor="@color/color_b2bdd1"
                         android:textSize="@dimen/_13sdp"
                         app:textFont="roman" />
 
@@ -76,7 +75,7 @@
                 android:id="@+id/showDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_42sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/hide_details"
@@ -90,10 +89,11 @@
                 android:id="@+id/items"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_42sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
                 android:text=""
+                android:visibility="gone"
                 android:textColor="@color/color_667ba3"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="normal"
@@ -127,4 +127,4 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.ezymd.restaurantapp.delivery.order
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,6 +13,7 @@ import android.graphics.drawable.VectorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -19,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
+import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -59,7 +62,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(R.anim.right_in,R.anim.right_out)
+        overridePendingTransition(R.anim.right_in, R.anim.right_out)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +85,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         headertext.visibility = View.VISIBLE
         val slideListener = object : SlideToActView.OnSlideCompleteListener {
             override fun onSlideComplete(view: SlideToActView) {
-
+                acceptOrder()
             }
 
         }
@@ -107,6 +110,13 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun acceptOrder() {
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["order_id"] = "" + orderModel.orderId
+        baseRequest.paramsMap["order_status"] = "" + OrderStatus.DELIVERY_BOY_REACHED_AT_RESTAURANT
+        trackViewModel.acceptOrder(baseRequest)
+    }
+
     private fun setObserver() {
 
         trackViewModel.routeInfoResponse.observe(this, Observer {
@@ -119,6 +129,29 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     showPath(pointsList)
                 showDefaultLocationOnMap(defaultLocation)
                 // showMovingCab(pointsList)
+            }
+        })
+        trackViewModel.acceptRequest.observe(this, Observer {
+            if (it != null) {
+                if (it.status != ErrorCodes.SUCCESS) {
+                    showError(false, it.message, null)
+                } else {
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    startActivityForResult(
+                        Intent(
+                            this@ReachPickUpOrderActivity,
+                            OrderPickupActivity::class.java
+                        ).putExtra(
+                            JSONKeys.OBJECT,
+                            orderModel
+                        ), JSONKeys.LOCATION_REQUEST
+                    )
+
+                    overridePendingTransition(R.anim.left_in, R.anim.left_out)
+                    setResult(Activity.RESULT_OK)
+                    this.finish()
+                }
+
             }
         })
 
@@ -134,6 +167,23 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         })
 
 
+        trackViewModel.isLoading.observe(this, Observer {
+            progress.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
+
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == JSONKeys.LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
     }
 
     private fun getUpdateRoot(defaultLocation: LatLng) {
