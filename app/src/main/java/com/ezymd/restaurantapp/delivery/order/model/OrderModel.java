@@ -54,6 +54,21 @@ public class OrderModel implements Serializable {
     @Expose
     private String address;
 
+
+    @SerializedName("feedback")
+    @Expose
+    private String feedback;
+
+
+    @SerializedName("delivery_rating")
+    @Expose
+    private String delivery_rating;
+
+
+    @SerializedName("restaurant_rating")
+    @Expose
+    private String restaurant_rating;
+
     // for deliverty type self or delivery
     @SerializedName("order_pickup_status")
     @Expose
@@ -254,6 +269,30 @@ public class OrderModel implements Serializable {
 
     public String getRestaurant_lat() {
         return TextUtils.isEmpty(restaurant_lat) ? "" : restaurant_lat;
+    }
+
+    public String getFeedback() {
+        return TextUtils.isEmpty(feedback) ? "" : feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
+    }
+
+    public String getDelivery_rating() {
+        return TextUtils.isEmpty(delivery_rating) ? "0.0" : delivery_rating;
+    }
+
+    public void setDelivery_rating(String delivery_rating) {
+        this.delivery_rating = delivery_rating;
+    }
+
+    public String getRestaurant_rating() {
+        return TextUtils.isEmpty(restaurant_rating) ? "0.0" : restaurant_rating;
+    }
+
+    public void setRestaurant_rating(String restaurant_rating) {
+        this.restaurant_rating = restaurant_rating;
     }
 
     public void setRestaurant_lat(String restaurant_lat) {

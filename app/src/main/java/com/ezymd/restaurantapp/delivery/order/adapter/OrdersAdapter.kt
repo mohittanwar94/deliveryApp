@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
+import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.utils.OnRecyclerViewLongClick
 import com.ezymd.restaurantapp.delivery.utils.TimeUtils
 import kotlinx.android.synthetic.main.order_item_row.view.*
@@ -21,14 +22,11 @@ class OrdersAdapter(
     RecyclerView.Adapter<OrdersAdapter.NotesHolder>() {
 
 
-    private val onRecyclerView: OnRecyclerViewLongClick
-    private val mContext: Context
+    private val onRecyclerView: OnRecyclerViewLongClick = onRecyclerViewClick
     private val data = ArrayList<OrderModel>()
 
 
     init {
-        this.onRecyclerView = onRecyclerViewClick
-        this.mContext = context
         data.addAll(dataResturant)
     }
 
@@ -77,9 +75,13 @@ class OrdersAdapter(
 
         holder.itemView.items.text = itemsString.toString()
         holder.itemView.created.text = TimeUtils.getReadableDate(item.created)
-          holder.itemView.trackOrder.setOnClickListener {
-              onRecyclerView.onLongClick(position, it)
-          }
+        if (item.orderStatus == OrderStatus.ORDER_COMPLETED)
+            holder.itemView.trackOrder.visibility = View.GONE
+        else
+            holder.itemView.trackOrder.visibility = View.VISIBLE
+        holder.itemView.trackOrder.setOnClickListener {
+            onRecyclerView.onLongClick(position, it)
+        }
 
 
         holder.itemView.setOnClickListener {

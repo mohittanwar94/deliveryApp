@@ -93,21 +93,33 @@ class OrderDetailsActivity : BaseActivity() {
             scheduleAt.text = getString(R.string.now)
         }
 
-        if (item.orderStatus == OrderStatus.PROCESSING) {
-            status.text = getString(R.string.your_order_processing)
-        }
+        setOrderStatus(item.orderStatus)
 
 
-        serviceCharge.text=getString(R.string.dollor)+""+item.transactionCharges
-        trackOrder.setOnClickListener {
-            UIUtil.clickHandled(it)
-            val baseRequest = BaseRequest(userInfo!!)
-            baseRequest.paramsMap["order_id"] = "" + item.orderId
-            searchViewModel.assignOrder(baseRequest)
-        }
+        serviceCharge.text = getString(R.string.dollor) + "" + item.transactionCharges
+
         leftIcon.setOnClickListener {
             onBackPressed()
         }
+    }
+
+    private fun setOrderStatus(orderStatus: Int) {
+        review.visibility = View.GONE
+        feedback.visibility = View.GONE
+        review.rating = item.delivery_rating.toFloat()
+        feedback.text = item.feedback
+        if (orderStatus != OrderStatus.ORDER_COMPLETED) {
+            status.text = getString(R.string.your_order_processing)
+        } else {
+
+            review.visibility = View.VISIBLE
+            if (item.feedback != "")
+                feedback.visibility = View.VISIBLE
+            review.visibility = View.VISIBLE
+            status.text = getString(R.string.your_order_is_completed)
+        }
+
+
     }
 
     override fun onStart() {

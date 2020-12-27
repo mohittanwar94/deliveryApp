@@ -92,8 +92,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/_40sdp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_40sdp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -320,23 +320,37 @@
 
                     <RatingBar
                         android:id="@+id/review"
+                        style="?android:attr/ratingBarStyleSmall"
                         android:layout_width="@dimen/_70sdp"
                         android:layout_height="@dimen/_20sdp"
-                        android:layout_gravity="end"
-                        android:letterSpacing="0.02"
+                        android:layout_gravity="center"
+                        android:clickable="false"
                         android:max="5"
+                        android:numStars="5"
                         android:paddingTop="@dimen/_2sdp"
                         android:paddingBottom="@dimen/_2sdp"
-                        android:rating="2.5"
+                        android:rating="0"
                         android:stepSize="0.5"
-                        android:text="@string/review"
-                        android:textColor="@color/color_ffb912"
-                        android:textSize="@dimen/_13sdp"
-                        android:textStyle="normal"
+                        android:theme="@style/progressBarTheme"
                         app:tint="@color/dark_yellow" />
 
 
                 </LinearLayout>
+
+                <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+                    android:id="@+id/feedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|center"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:letterSpacing="0.02"
+                    android:paddingStart="@dimen/_15sdp"
+                    android:paddingEnd="@dimen/_15sdp"
+                    android:text="@string/your_order_is_completed"
+                    android:textColor="@color/color_b2bdd1"
+                    android:textSize="@dimen/_13sdp"
+                    android:textStyle="normal"
+                    app:textFont="medium" />
 
 
                 <View
@@ -359,9 +373,9 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
+                    android:layout_height="0.01dp"
                     android:layout_marginTop="@dimen/_15sdp"
-                    android:background="@color/color_f2f4f7" />
+                    android:background="@color/dividerColor" />
 
 
                 <LinearLayout
@@ -477,10 +491,10 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
+                    android:layout_height="0.01dp"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:background="@color/color_f2f4f7" />
+                    android:background="@color/dividerColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -515,24 +529,6 @@
 
                 </LinearLayout>
             </LinearLayout>
-
-
-            <com.ezymd.restaurantapp.delivery.customviews.SnapButton
-                android:id="@+id/trackOrder"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_margin="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_40sdp"
-                android:background="@drawable/ic_gray_btn_pressed"
-                android:letterSpacing="0.01"
-                android:lineSpacingExtra="5sp"
-                android:text="@string/assign_for_delivey"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_13sdp"
-                android:textStyle="normal"
-                app:buttonFont="bold" />
-
         </LinearLayout>
     </ScrollView>
 
