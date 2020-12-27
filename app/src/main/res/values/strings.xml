@@ -128,5 +128,6 @@
     <string name="assign_for_delivey">Assign for delivery</string>
     <string name="orders">Orders</string>
     <string name="deliver_order">Deliver Order</string>
+    <string name="order_has_been_delivered">Order has been delivered to</string>
 
 </resources>

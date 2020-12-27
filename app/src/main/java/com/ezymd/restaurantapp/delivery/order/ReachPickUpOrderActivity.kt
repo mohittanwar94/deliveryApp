@@ -263,7 +263,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             if (isSource) {
                 MapUtils.getSourceBitmap(this,R.drawable.ic_delivery_man)
             } else {
-                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining)
+                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
 
         return mMap!!.addMarker(

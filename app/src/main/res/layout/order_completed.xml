@@ -9,7 +9,7 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/_260sdp"
+        android:layout_marginBottom="@dimen/_200sdp"
         android:background="@color/white"
         android:orientation="vertical">
 
@@ -21,7 +21,7 @@
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize" />
+            android:layout_marginTop="@dimen/_40sdp" />
 
 
     </FrameLayout>
@@ -30,6 +30,7 @@
         layout="@layout/order_completed_details_with_customer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:behavior_peekHeight="@dimen/_200sdp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

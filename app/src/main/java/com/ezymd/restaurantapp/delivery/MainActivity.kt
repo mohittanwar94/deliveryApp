@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
 import com.ezymd.restaurantapp.delivery.order.CompleteOrderActivity
+import com.ezymd.restaurantapp.delivery.order.OrderCompletedActivity
 import com.ezymd.restaurantapp.delivery.order.OrderPickupActivity
 import com.ezymd.restaurantapp.delivery.order.ReachPickUpOrderActivity
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
@@ -179,9 +180,16 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
                     orderModel
                 ), JSONKeys.LOCATION_REQUEST
             )
-        }else if (orderModel.orderStatus == OrderStatus.ITEMS_PICKED_FROM_RESTAURANT) {
+        } else if (orderModel.orderStatus == OrderStatus.ITEMS_PICKED_FROM_RESTAURANT) {
             startActivityForResult(
                 Intent(this@MainActivity, CompleteOrderActivity::class.java).putExtra(
+                    JSONKeys.OBJECT,
+                    orderModel
+                ), JSONKeys.LOCATION_REQUEST
+            )
+        } else if (orderModel.orderStatus == OrderStatus.ORDER_COMPLETED) {
+            startActivityForResult(
+                Intent(this@MainActivity, OrderCompletedActivity::class.java).putExtra(
                     JSONKeys.OBJECT,
                     orderModel
                 ), JSONKeys.LOCATION_REQUEST

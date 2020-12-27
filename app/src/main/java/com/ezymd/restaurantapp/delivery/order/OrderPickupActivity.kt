@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_details.*
+import kotlinx.android.synthetic.main.order_item_pick_up.*
 
 
 class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
@@ -195,6 +196,14 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
             }
         })
 
+        trackViewModel.isLoading.observe(this, Observer {
+            progress.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
+
     }
 
 
@@ -214,7 +223,7 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
             if (isSource) {
                 MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
             } else {
-                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining)
+                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
 
         return mMap!!.addMarker(

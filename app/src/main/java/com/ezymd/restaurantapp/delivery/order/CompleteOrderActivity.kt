@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.complete_order.*
+import kotlinx.android.synthetic.main.complete_order.navigate
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.address
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.items
@@ -198,9 +199,6 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun setObserver() {
-        //if (item.orderPickupStatus == OrderStatus.ORDER_ASSIGN_FOR_DELIVERY)
-        //  trackViewModel.startTimer(orderModel.orderId.toString(), userInfo!!)
-
         var lat = orderModel.delivery_lat.toDouble()
         var lng = orderModel.delivery_lang.toDouble()
         val source = LatLng(lat, lng)
@@ -250,6 +248,13 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     showError(false, it.message, null)
                 } else {
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    startActivityForResult(
+                        Intent(this, OrderCompletedActivity::class.java).putExtra(
+                            JSONKeys.OBJECT,
+                            orderModel
+                        ), JSONKeys.LOCATION_REQUEST
+                    )
+                    overridePendingTransition(R.anim.left_in, R.anim.left_out)
                     setResult(Activity.RESULT_OK)
                     this.finish()
                 }
@@ -257,6 +262,14 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             }
         })
 
+
+        trackViewModel.isLoading.observe(this, Observer {
+            progress.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
 
     }
 
@@ -399,9 +412,9 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this,R.drawable.ic_dining)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_user_location)
             } else {
-                MapUtils.getDestinationBitmap(this,R.drawable.ic_user_location)
+                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
 
         return mMap!!.addMarker(
@@ -436,9 +449,9 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         blackPolylineOptions.width(12f)
         blackPolyline = mMap!!.addPolyline(blackPolylineOptions)
 
-        originMarker = addOriginDestinationMarkerAndGet(false, latLngList[0])
+        originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
         originMarker?.isDraggable = false
-        destinationMarker = addOriginDestinationMarkerAndGet(true, latLngList[latLngList.size - 1])
+        destinationMarker = addOriginDestinationMarkerAndGet(false, latLngList[latLngList.size - 1])
         destinationMarker?.isDraggable = false
 
         val polylineAnimator = AnimationUtils.polylineAnimator()
