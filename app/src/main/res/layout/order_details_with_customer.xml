@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,14 +14,12 @@
         app:cardBackgroundColor="@android:color/white"
         app:cardElevation="0dp"
         app:cardUseCompatPadding="false"
-        app:contentPadding="@dimen/_5sdp"
-        tools:ignore="MissingConstraints">
+        app:contentPadding="@dimen/_5sdp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_9sdp"
-            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <LinearLayout
@@ -50,7 +47,7 @@
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.01"
                         android:text=""
-                        android:textColor="@color/color_b2bdd1"
+                        android:textColor="@color/color_002366"
                         android:textSize="@dimen/_15sdp"
                         android:textStyle="normal"
                         app:textFont="medium" />
@@ -64,13 +61,14 @@
                         android:enabled="false"
                         android:gravity="start|center"
                         android:paddingEnd="@dimen/_10sdp"
-                        android:textColor="@color/color_667ba3"
+                        android:textColor="@color/color_b2bdd1"
                         android:textSize="@dimen/_13sdp"
                         app:textFont="roman" />
 
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/restCall"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:layout_gravity="center"
@@ -83,7 +81,7 @@
                 android:id="@+id/showDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/hide_details"
@@ -95,15 +93,18 @@
 
             <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
                 android:id="@+id/items"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_15sdp"
-                android:gravity="center_horizontal"
+                android:gravity="left"
                 android:text=""
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/items_bg"
                 android:textColor="@color/color_667ba3"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 app:textFont="roman" />
 
 
@@ -133,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.01"
                         android:text=""
-                        android:textColor="@color/color_b2bdd1"
+                        android:textColor="@color/color_002366"
                         android:textSize="@dimen/_15sdp"
                         android:textStyle="normal"
                         app:textFont="medium" />
@@ -147,13 +148,14 @@
                         android:enabled="false"
                         android:gravity="start|center"
                         android:paddingEnd="@dimen/_10sdp"
-                        android:textColor="@color/color_667ba3"
+                        android:textColor="@color/color_b2bdd1"
                         android:textSize="@dimen/_13sdp"
                         app:textFont="roman" />
 
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/userCall"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:layout_gravity="center"
@@ -190,4 +192,4 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

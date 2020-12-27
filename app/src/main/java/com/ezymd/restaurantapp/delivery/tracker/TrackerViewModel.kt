@@ -26,10 +26,10 @@ class TrackerViewModel : ViewModel() {
     val locationUpdate = MutableLiveData<BaseResponse>()
     val acceptRequest = MutableLiveData<OrderAcceptResponse>()
     val isLoading: MutableLiveData<Boolean>
-    val timer = Timer()
+
 
     override fun onCleared() {
-        timer.cancel()
+
         super.onCleared()
         viewModelScope.cancel()
     }
@@ -48,21 +48,21 @@ class TrackerViewModel : ViewModel() {
         firebaseResponse = MutableLiveData()
         isLoading = MutableLiveData()
         routeInfoResponse = MutableLiveData()
+
     }
 
 
-    fun startTimer(order_id: String, userInfo: UserInfo) {
+    /*fun startTimer(order_id: String, userInfo: UserInfo) {
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                val baseRequest = BaseRequest(userInfo)
-                baseRequest.paramsMap["id"] = order_id
-                downloadLatestCoordinates(baseRequest)
+                isRunUpdate.postValue(true)
+
 
             }
 
 
         }, 120000, 120000);
-    }
+    }*/
 
     private fun showNetworkError() {
         errorRequest.postValue(EzymdApplication.getInstance().networkErrorMessage)

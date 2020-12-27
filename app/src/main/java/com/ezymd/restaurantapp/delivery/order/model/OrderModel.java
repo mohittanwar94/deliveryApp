@@ -35,6 +35,9 @@ public class OrderModel implements Serializable {
     @SerializedName("phone_no")
     @Expose
     private String phoneNo;
+    @SerializedName("restaurant_phone_no")
+    @Expose
+    private String restPhoneNO;
     @SerializedName("total")
     @Expose
     private Double total;
@@ -277,6 +280,13 @@ public class OrderModel implements Serializable {
         this.scheduleType = scheduleType;
     }
 
+    public String getRestPhoneNO() {
+        return TextUtils.isEmpty(restPhoneNO) ? "" : restPhoneNO;
+    }
+
+    public void setRestPhoneNO(String restPhoneNO) {
+        this.restPhoneNO = restPhoneNO;
+    }
 
     public Integer getOrderPickupStatus() {
         return orderPickupStatus;

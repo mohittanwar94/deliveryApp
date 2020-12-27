@@ -256,19 +256,14 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
-    private fun addCarMarkerAndGet(latLng: LatLng): Marker {
-        val bitmapDescriptor = MapUtils.getCarBitmap(this)
-        return mMap!!.addMarker(
-            MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor)
-        )
-    }
+
 
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this)
+                MapUtils.getSourceBitmap(this,R.drawable.ic_delivery_man)
             } else {
-                MapUtils.getDestinationBitmap(this)
+                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining)
             }
 
         return mMap!!.addMarker(

@@ -35,10 +35,10 @@ object MapUtils {
 
 
     fun getSourceBitmap(
-        context: Context
+        context: Context,drawable:Int
     ): BitmapDescriptor? {
         val vectorDrawable =
-            ContextCompat.getDrawable(context, R.drawable.ic_delivery_man) as VectorDrawable?
+            ContextCompat.getDrawable(context, drawable) as VectorDrawable?
 
         val h = vectorDrawable!!.intrinsicHeight
         val w = vectorDrawable.intrinsicWidth
@@ -55,10 +55,11 @@ object MapUtils {
 
 
     fun getDestinationBitmap(
-        context: Context
+        context: Context,
+        icUserLocation: Int
     ): BitmapDescriptor? {
         val vectorDrawable =
-            ContextCompat.getDrawable(context, R.drawable.ic_restaurant_location) as VectorDrawable?
+            ContextCompat.getDrawable(context, icUserLocation) as VectorDrawable?
 
         val h = vectorDrawable!!.intrinsicHeight
         val w = vectorDrawable.intrinsicWidth

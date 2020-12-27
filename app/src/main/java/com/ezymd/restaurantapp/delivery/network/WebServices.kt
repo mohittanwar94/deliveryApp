@@ -42,7 +42,6 @@ interface WebServices {
     ): BaseResponse
 
 
-
     @GET(ServerConfig.CREATE_ORDER)
     suspend fun orderList( @Header("Authorization") accessToken: String): OrderBaseModel
 

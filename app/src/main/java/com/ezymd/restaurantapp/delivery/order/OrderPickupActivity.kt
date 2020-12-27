@@ -109,7 +109,12 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
     private fun setOrderDetails() {
         val spannable = SpannableString(getString(R.string.show_order_details))
         spannable.setSpan(UnderlineSpan(), 0, spannable.length, 0)
-        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this,R.color.color_ffb912)), 0, spannable.length, 0)
+        spannable.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_ffb912)),
+            0,
+            spannable.length,
+            0
+        )
         showDetails.text = spannable
         showDetails.setOnClickListener {
             UIUtil.clickHandled(it)
@@ -121,8 +126,16 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
                     UnderlineSpan(),
                     0,
                     spannable.length,
-                0)
-                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this,R.color.color_ffb912)), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    0
+                )
+                spannable.setSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.color_ffb912
+                        )
+                    ), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
                 showDetails.text = spannable
             } else {
                 items.visibility = View.GONE
@@ -131,9 +144,16 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
                     UnderlineSpan(),
                     0,
                     spannable.length,
-                   0
+                    0
                 )
-                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this,R.color.color_ffb912)), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.color_ffb912
+                        )
+                    ), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
                 showDetails.text = spannable
             }
 
@@ -192,9 +212,9 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
             } else {
-                MapUtils.getDestinationBitmap(this)
+                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining)
             }
 
         return mMap!!.addMarker(

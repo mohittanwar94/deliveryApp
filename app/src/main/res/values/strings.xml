@@ -127,5 +127,6 @@
     <string name="your_order_is_cooking">"Your order is cooking "</string>
     <string name="assign_for_delivey">Assign for delivery</string>
     <string name="orders">Orders</string>
+    <string name="deliver_order">Deliver Order</string>
 
 </resources>
