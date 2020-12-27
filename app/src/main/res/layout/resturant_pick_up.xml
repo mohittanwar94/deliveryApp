@@ -21,7 +21,7 @@
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize" />
+            android:layout_marginTop="@dimen/_40sdp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/navigate"

@@ -14,7 +14,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
+import com.ezymd.restaurantapp.delivery.order.ReachPickUpOrderActivity
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
+import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.orderdetails.OrderDetailsActivity
 import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.utils.*
@@ -142,18 +144,30 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
                         ), JSONKeys.OTP_REQUEST
                     )
                     overridePendingTransition(R.anim.left_in, R.anim.left_out)
+
                 }
 
                 override fun onLongClick(position: Int, view: View?) {
-                    val baseRequest = BaseRequest(userInfo!!)
-                    baseRequest.paramsMap.put("order_id", "" + dataResturant[position].orderId)
-                    searchViewModel.assignOrder(baseRequest)
+                    navigateBaseOnStatus(dataResturant[position])
+
 
                 }
             }, dataResturant)
         resturantRecyclerView.adapter = restaurantAdapter
 
 
+    }
+
+    private fun navigateBaseOnStatus(orderModel: OrderModel) {
+        if (orderModel.orderStatus==OrderStatus.ORDER_ACCEPT_DELIVERY_BOY) {
+            startActivityForResult(
+                Intent(this@MainActivity, ReachPickUpOrderActivity::class.java).putExtra(
+                    JSONKeys.OBJECT,
+                    orderModel
+                ), JSONKeys.LOCATION_REQUEST
+            )
+        }
+        overridePendingTransition(R.anim.left_in, R.anim.left_out)
     }
 
 

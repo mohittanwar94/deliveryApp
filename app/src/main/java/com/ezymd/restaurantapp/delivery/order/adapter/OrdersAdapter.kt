@@ -77,12 +77,10 @@ class OrdersAdapter(
 
         holder.itemView.items.text = itemsString.toString()
         holder.itemView.created.text = TimeUtils.getReadableDate(item.created)
-        /*  holder.itemView.trackOrder.setOnClickListener {
-              val startIntent = Intent(holder.itemView.context, TrackerActivity::class.java)
-              startIntent.putExtra(JSONKeys.OBJECT, data[position])
-              (mContext as MainActivity).startActivity(startIntent)
+          holder.itemView.trackOrder.setOnClickListener {
+              onRecyclerView.onLongClick(position, it)
           }
-  */
+
 
         holder.itemView.setOnClickListener {
             onRecyclerView.onClick(position, it)
