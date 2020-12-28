@@ -24,7 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
 open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
-    private var size: Sizes? = null
+     var size: Sizes? = null
     val PERMISSIONS_REQUEST_CAMERA = 3333
     val PERMISSIONS_REQUEST_CAMERA_AUDIO = 3331
     val PERMISSIONS_REQUEST_READ_WRITE = 4444

@@ -21,7 +21,7 @@ public class TimeUtils {
     public static boolean isOrderLive(String duedate) {
         try {
            Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(duedate);
-            return System.currentTimeMillis() - date.getTime() <= 600000L;
+            return System.currentTimeMillis() - date.getTime() <= 60000L;
         } catch (ParseException e) {
             e.printStackTrace();
         }

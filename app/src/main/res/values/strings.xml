@@ -129,5 +129,6 @@
     <string name="orders">Orders</string>
     <string name="deliver_order">Deliver Order</string>
     <string name="order_has_been_delivered">Order has been delivered to</string>
+    <string name="processing">processing</string>
 
 </resources>
