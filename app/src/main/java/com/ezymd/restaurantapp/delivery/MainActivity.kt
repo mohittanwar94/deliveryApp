@@ -19,8 +19,6 @@ import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.font.CustomTypeFace
 import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.utils.ConnectivityReceiver
-import com.ezymd.vendor.order.CompletedFragment
-import com.ezymd.vendor.order.ProcessingFragment
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header_new.toolbar

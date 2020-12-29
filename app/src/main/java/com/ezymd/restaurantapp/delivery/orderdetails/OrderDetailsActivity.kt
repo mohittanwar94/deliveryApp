@@ -101,6 +101,9 @@ class OrderDetailsActivity : BaseActivity() {
         leftIcon.setOnClickListener {
             onBackPressed()
         }
+
+        if (!item.deliveryCharges.equals("0"))
+            shippingCharge.text=getString(R.string.dollor)+item.deliveryCharges
     }
 
     private fun setOrderStatus(orderStatus: Int) {

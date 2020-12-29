@@ -21,7 +21,7 @@ class OrderListRepository {
 
         return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
             apiServices.orderList(
-                 baseRequest.accessToken
+                baseRequest.paramsMap["order_status"]!!,  baseRequest.accessToken
             )
         }
 

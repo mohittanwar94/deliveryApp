@@ -1,4 +1,4 @@
-package com.ezymd.vendor.order
+package com.ezymd.restaurantapp.delivery
 
 import android.app.Activity
 import android.content.Intent
@@ -10,9 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ezymd.restaurantapp.delivery.BaseActivity
-import com.ezymd.restaurantapp.delivery.MainActivity
-import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.CompleteOrderActivity
 import com.ezymd.restaurantapp.delivery.order.OrderCompletedActivity
 import com.ezymd.restaurantapp.delivery.order.OrderPickupActivity
@@ -21,6 +18,7 @@ import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.orderdetails.OrderDetailsActivity
 import com.ezymd.restaurantapp.delivery.utils.*
+import com.ezymd.vendor.order.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
 import kotlinx.android.synthetic.main.fragment_orders.*
 
@@ -62,7 +60,9 @@ class ProcessingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (isNullViewRoot) {
             setAdapterRestaurant()
-            searchViewModel.orderList(BaseRequest(userInfo))
+            val baseRequest=BaseRequest(userInfo)
+            baseRequest.paramsMap["order_status"]="processing_for_delivery"
+            searchViewModel.orderList(baseRequest)
             setObservers()
         }
 
@@ -74,11 +74,15 @@ class ProcessingFragment : Fragment() {
         if (requestCode == JSONKeys.OTP_REQUEST && resultCode == Activity.RESULT_OK) {
             dataResturant.clear()
             restaurantAdapter?.clearData()
-            searchViewModel.orderList(BaseRequest(userInfo))
+            val baseRequest=BaseRequest(userInfo)
+            baseRequest.paramsMap["order_status"]="processing_for_delivery"
+            searchViewModel.orderList(baseRequest)
         } else if (requestCode == JSONKeys.LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
             dataResturant.clear()
             restaurantAdapter?.clearData()
-            searchViewModel.orderList(BaseRequest(userInfo))
+            val baseRequest=BaseRequest(userInfo)
+            baseRequest.paramsMap["order_status"]="processing_for_delivery"
+            searchViewModel.orderList(baseRequest)
         }
     }
 
@@ -170,7 +174,9 @@ class ProcessingFragment : Fragment() {
                 (activity as BaseActivity).showError(true, it.message, null)
                 dataResturant.clear()
                 restaurantAdapter?.clearData()
-                searchViewModel.orderList(BaseRequest(userInfo))
+                val baseRequest=BaseRequest(userInfo)
+                baseRequest.paramsMap["order_status"]="processing_for_delivery"
+                searchViewModel.orderList(baseRequest)
             } else {
                 (activity as BaseActivity).showError(false, it.message, null)
             }
