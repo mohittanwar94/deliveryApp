@@ -9,6 +9,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class OrderModel implements Serializable {
+
+    @SerializedName("discount")
+    @Expose
+    public String discount;
+
+
     @SerializedName("order_id")
     @Expose
     private Integer orderId;

@@ -76,6 +76,12 @@ class OrderDetailsActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
+
+        if (!item.discount.equals("0")) {
+            discountLay.visibility = View.VISIBLE
+            discount.text = getString(R.string.dollor) + String.format(item.discount, 0.2f);
+        }
+
         order_id.text = getString(R.string.orderID) + " #" + item.orderId
         restaurantname.text = item.restaurantName
         address.text = item.restaurantAddress
