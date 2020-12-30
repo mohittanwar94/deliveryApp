@@ -12,7 +12,7 @@ public class OrderModel implements Serializable {
 
     @SerializedName("discount")
     @Expose
-    public String discount;
+    private String discount;
 
 
     @SerializedName("order_id")
@@ -315,6 +315,15 @@ public class OrderModel implements Serializable {
 
     public void setDeliveryInstruction(String deliveryInstruction) {
         this.deliveryInstruction = deliveryInstruction;
+    }
+
+
+    public String getDiscount() {
+        return TextUtils.isEmpty(discount) ? "0.0" : discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
     }
 
     public Integer getScheduleType() {

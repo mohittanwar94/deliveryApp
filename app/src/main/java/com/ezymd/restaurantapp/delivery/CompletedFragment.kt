@@ -168,7 +168,13 @@ class CompletedFragment : Fragment() {
                 progress.visibility = View.VISIBLE
             }
         })
-
+        EzymdApplication.getInstance().isRefresh.observe(requireActivity(), Observer {
+            dataResturant.clear()
+            restaurantAdapter?.clearData()
+            val baseRequest = BaseRequest(userInfo)
+            baseRequest.paramsMap["order_status"] = "complete_for_delivery"
+            searchViewModel.orderList(baseRequest)
+        })
 
         searchViewModel.assignResponse.observe(requireActivity(), Observer {
             if (it != null && it.status == ErrorCodes.SUCCESS) {

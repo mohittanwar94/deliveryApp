@@ -168,7 +168,13 @@ class ProcessingFragment : Fragment() {
             }
         })
 
-
+        EzymdApplication.getInstance().isRefresh.observe(requireActivity(), Observer {
+            dataResturant.clear()
+            restaurantAdapter?.clearData()
+            val baseRequest = BaseRequest(userInfo)
+            baseRequest.paramsMap["order_status"] = "processing_for_delivery"
+            searchViewModel.orderList(baseRequest)
+        })
         searchViewModel.assignResponse.observe(requireActivity(), Observer {
             if (it != null && it.status == ErrorCodes.SUCCESS) {
                 (activity as BaseActivity).showError(true, it.message, null)

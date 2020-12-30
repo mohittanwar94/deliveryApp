@@ -34,7 +34,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
         EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
         setGUI()
         setWorkManager()
-
+        setLocationUpdates()
     }
 
     private fun setLocationUpdates() {
@@ -212,7 +212,8 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
 
     private fun setToolbar() {
         setSupportActionBar(toolbar)
-        toolbar.title = getString(R.string.orders)
+        headertext.text = userInfo!!.userName
+        toolbar.title = userInfo!!.userName
     }
 
 

@@ -15,13 +15,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
+import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
+import com.ezymd.restaurantapp.delivery.tracker.TrackerActivity.PERMISSIONS_REQUEST
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -78,6 +81,13 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
+
+        restCall.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            val intent = Intent(Intent.ACTION_DIAL)
+            intent.data = Uri.parse("tel:" + orderModel.restPhoneNO)
+            startActivity(intent)
+        }
         name.text = orderModel.restaurantName
         address.text = orderModel.restaurantAddress
         accept.text = getString(R.string.reached_for_pickup)
@@ -136,6 +146,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                 if (it.status != ErrorCodes.SUCCESS) {
                     showError(false, it.message, null)
                 } else {
+                    EzymdApplication.getInstance().isRefresh.postValue(true)
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     startActivityForResult(
                         Intent(
@@ -257,11 +268,10 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
 
-
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this,R.drawable.ic_delivery_man)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
             } else {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
@@ -300,9 +310,31 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
                 }
             }, null)
+        } else {
+
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST
+            )
+
         }
     }
 
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSIONS_REQUEST && grantResults.size == 1
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Start the service when the permission is granted
+            requestLocationUpdates()
+        } else {
+            showError(false, "location permission required", null)
+        }
+    }
 
     /**
      * This function is used to draw the path between the Origin and Destination.

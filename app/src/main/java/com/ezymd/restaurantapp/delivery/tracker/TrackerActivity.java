@@ -14,7 +14,7 @@ import com.ezymd.restaurantapp.delivery.BaseActivity;
 
 public class TrackerActivity extends BaseActivity {
 
-    static final int PERMISSIONS_REQUEST = 1;
+    public static final int PERMISSIONS_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

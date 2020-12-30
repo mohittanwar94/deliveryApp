@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
+import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
@@ -226,6 +227,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             }
         })
 
+
         trackViewModel.locationUpdate.observe(this, Observer {
             if (it != null) {
                 getUpdateRoot()
@@ -247,6 +249,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                 if (it.status != ErrorCodes.SUCCESS) {
                     showError(false, it.message, null)
                 } else {
+                    EzymdApplication.getInstance().isRefresh.postValue(true)
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     startActivityForResult(
                         Intent(this, OrderCompletedActivity::class.java).putExtra(

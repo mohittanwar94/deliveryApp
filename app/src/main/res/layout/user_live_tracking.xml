@@ -38,9 +38,10 @@
                     app:srcCompat="@drawable/ic_dining" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
@@ -68,7 +69,13 @@
                         app:textFont="roman" />
 
                 </LinearLayout>
-
+                <ImageView
+                    android:id="@+id/restCall"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    app:srcCompat="@drawable/ic_phone_call" />
             </LinearLayout>
 
 

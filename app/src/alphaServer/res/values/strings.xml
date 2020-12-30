@@ -2,7 +2,8 @@
 <resources>
     <string name="sender_id">210423936790</string>
     <string name="RAZORPAY_KEY">rzp_test_euFE6YNpadNtme</string>
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAYd5l8RoNEdMAsJiUO3JKpV7VE5XRXVq0</string>
+    <string name="google_maps_key" translatable="false">AIzaSyCMzUcX2dHRgEPgSI9e55ChEKvxiPe1G4E</string>
+    <string name="google_api_key" translatable="false">AIzaSyCMzUcX2dHRgEPgSI9e55ChEKvxiPe1G4E</string>
     <string name="google_places_api" templateMergeStrategy="preserve" translatable="false">AIzaSyAXXgHUcWKrnpoql8_9SPy6oQbYQQmX1GQ</string>
 
     <string name="facebook_app_id">679112216348170</string>
