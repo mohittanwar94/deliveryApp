@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ezymd.restaurantapp.delivery.order.CompleteOrderActivity
 import com.ezymd.restaurantapp.delivery.order.OrderCompletedActivity
 import com.ezymd.restaurantapp.delivery.order.OrderPickupActivity
@@ -22,7 +23,7 @@ import com.ezymd.vendor.order.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
 import kotlinx.android.synthetic.main.fragment_orders.*
 
-class ProcessingFragment : Fragment() {
+class ProcessingFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
 
     private var restaurantAdapter: OrdersAdapter? = null
     private var isNullViewRoot = false
@@ -86,7 +87,17 @@ class ProcessingFragment : Fragment() {
         }
     }
 
+    override fun onRefresh() {
+        swipeLayout.isRefreshing = true
+        dataResturant.clear()
+        restaurantAdapter?.clearData()
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["order_status"] = "processing_for_delivery"
+        searchViewModel.orderList(baseRequest)
+
+    }
     private fun setAdapterRestaurant() {
+        swipeLayout.setOnRefreshListener(this)
         resturantRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         resturantRecyclerView.addItemDecoration(
@@ -161,6 +172,7 @@ class ProcessingFragment : Fragment() {
     private fun setObservers() {
         searchViewModel.isLoading.observe(requireActivity(), androidx.lifecycle.Observer {
             if (!it) {
+                swipeLayout.isRefreshing=false
                 (activity as BaseActivity).enableEvents()
                 progress.visibility = View.GONE
             } else {

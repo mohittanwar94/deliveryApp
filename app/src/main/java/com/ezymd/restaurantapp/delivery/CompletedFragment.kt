@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ezymd.restaurantapp.delivery.order.CompleteOrderActivity
 import com.ezymd.restaurantapp.delivery.order.OrderCompletedActivity
 import com.ezymd.restaurantapp.delivery.order.OrderPickupActivity
@@ -22,7 +23,7 @@ import com.ezymd.vendor.order.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
 import kotlinx.android.synthetic.main.fragment_orders.*
 
-class CompletedFragment : Fragment() {
+class CompletedFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
 
     private var restaurantAdapter: OrdersAdapter? = null
     private var isNullViewRoot = false
@@ -69,7 +70,15 @@ class CompletedFragment : Fragment() {
 
     }
 
+    override fun onRefresh() {
+        swipeLayout.isRefreshing = true
+        dataResturant.clear()
+        restaurantAdapter?.clearData()
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["order_status"] = "complete_for_delivery"
+        searchViewModel.orderList(baseRequest)
 
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == JSONKeys.OTP_REQUEST && resultCode == Activity.RESULT_OK) {
@@ -88,6 +97,7 @@ class CompletedFragment : Fragment() {
     }
 
     private fun setAdapterRestaurant() {
+        swipeLayout.setOnRefreshListener(this)
         resturantRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         resturantRecyclerView.addItemDecoration(
@@ -164,6 +174,7 @@ class CompletedFragment : Fragment() {
             if (!it) {
                 (activity as BaseActivity).enableEvents()
                 progress.visibility = View.GONE
+                swipeLayout.isRefreshing=false
             } else {
                 progress.visibility = View.VISIBLE
             }
