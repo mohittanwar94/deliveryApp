@@ -165,8 +165,7 @@ public class EzymdApplication extends Application implements Application.Activit
                         json.toString(), OrderModel.class);
 
         user.setKey(dataSnapshot.getKey());
-        if (TimeUtils.isOrderLive(dataSnapshot.getKey()) && user.getOrderStatus() != OrderStatus.ORDER_ACCEPT_DELIVERY_BOY) {
-            isRefresh.postValue(true);
+        if (TimeUtils.isOrderLive(dataSnapshot.getKey()) && user.getOrderStatus() == OrderStatus.ORDER_ACCEPTED) {
             Intent intent = new Intent(getApplicationContext(), IncomingOrderActivity.class);
             intent.putExtra(JSONKeys.OBJECT, user);
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
+import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
@@ -133,6 +134,7 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
                 if (it.status != ErrorCodes.SUCCESS) {
                     showError(false, it.message, null)
                 } else {
+                    EzymdApplication.getInstance().isRefresh.postValue(true)
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     this.finish()
                 }
@@ -148,7 +150,8 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
         val baseRequest = BaseRequest(userInfo)
         baseRequest.paramsMap["order_id"] = "" + orderModel.orderId
         baseRequest.paramsMap["order_status"] = "" + OrderStatus.ORDER_ACCEPT_DELIVERY_BOY
-        baseRequest.paramsMap["firebase_path"] = FireBaseConstants.path + userInfo!!.userID+"/"+orderModel.key
+        baseRequest.paramsMap["firebase_path"] =
+            FireBaseConstants.path + userInfo!!.userID + "/" + orderModel.key
         trackViewModel.acceptOrder(baseRequest)
     }
 
