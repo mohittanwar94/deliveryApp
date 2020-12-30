@@ -20,7 +20,6 @@ import com.ezymd.restaurantapp.delivery.utils.AppSignatureHelper;
 import com.ezymd.restaurantapp.delivery.utils.ConnectivityReceiver;
 import com.ezymd.restaurantapp.delivery.utils.FireBaseConstants;
 import com.ezymd.restaurantapp.delivery.utils.JSONKeys;
-import com.ezymd.restaurantapp.delivery.utils.SingleLiveEvent;
 import com.ezymd.restaurantapp.delivery.utils.SnapLog;
 import com.ezymd.restaurantapp.delivery.utils.TimeUtils;
 import com.ezymd.restaurantapp.delivery.utils.UserInfo;
@@ -49,7 +48,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  */
 public class EzymdApplication extends Application implements Application.ActivityLifecycleCallbacks {
     private Activity mLastForegroundActivity;
-   public MutableLiveData<Boolean> isRefresh= new MutableLiveData<>();
+    public MutableLiveData<Boolean> isRefresh = new MutableLiveData<>();
     @Nullable
     public final String networkErrorMessage = "it seems network is not available right now";
 
@@ -93,13 +92,15 @@ public class EzymdApplication extends Application implements Application.Activit
         super.onCreate();
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         mInstance = this;
+        UserInfo userInfo = UserInfo.getInstance(mInstance);
+        if (userInfo.getUserID() != 0)
+            loginToFirebase(userInfo.getUserID());
         AppSignatureHelper appSignatureHelper = new AppSignatureHelper(this);
         appSignatureHelper.getAppSignatures();
         if (getResources() == null) {
             Process.killProcess(Process.myPid());
         }
 
-        UserInfo userInfo = UserInfo.getInstance(mInstance);
         if (userInfo.getDeviceID().length() < 1) {
             String deviceId = android.provider.Settings.System.getString(getContentResolver(),
                     android.provider.Settings.Secure.ANDROID_ID);

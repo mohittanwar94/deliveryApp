@@ -7,9 +7,9 @@ import android.view.animation.AlphaAnimation
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
+import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.MainActivity
 import com.ezymd.restaurantapp.delivery.R
-import com.ezymd.restaurantapp.delivery.location.LocationActivity
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import kotlinx.android.synthetic.main.login.*
@@ -109,6 +109,8 @@ class Login : BaseActivity() {
         userInfo?.userID = it.data.user.id
         userInfo?.phoneNumber = it.data.user.phone_no
         userInfo?.profilePic = it.data.user.profile_pic
+        if (userInfo!!.userID != 0)
+            EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
 

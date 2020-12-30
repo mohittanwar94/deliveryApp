@@ -31,7 +31,6 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
         setGUI()
         setWorkManager()
         setLocationUpdates()
