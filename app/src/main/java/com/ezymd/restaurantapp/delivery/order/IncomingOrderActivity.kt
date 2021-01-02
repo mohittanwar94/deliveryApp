@@ -72,6 +72,7 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
+        restCall.visibility=View.GONE
         name.text = orderModel.restaurantName
         address.text = orderModel.restaurantAddress
 
