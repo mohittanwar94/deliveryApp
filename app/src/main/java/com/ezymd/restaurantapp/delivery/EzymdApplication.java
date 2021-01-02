@@ -93,8 +93,6 @@ public class EzymdApplication extends Application implements Application.Activit
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         mInstance = this;
         UserInfo userInfo = UserInfo.getInstance(mInstance);
-        if (userInfo.getUserID() != 0)
-            loginToFirebase(userInfo.getUserID());
         AppSignatureHelper appSignatureHelper = new AppSignatureHelper(this);
         appSignatureHelper.getAppSignatures();
         if (getResources() == null) {
@@ -119,6 +117,7 @@ public class EzymdApplication extends Application implements Application.Activit
                 if (task.isSuccessful()) {
                     SnapLog.print(FireBaseConstants.path + userID);
                     subscribeToUpdates(FireBaseConstants.path + userID);
+                    SnapLog.print(FireBaseConstants.path + userID);
                     SnapLog.print("firebase auth success");
                 } else {
                     SnapLog.print("firebase auth failed");

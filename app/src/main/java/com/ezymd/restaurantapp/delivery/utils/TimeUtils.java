@@ -9,7 +9,7 @@ public class TimeUtils {
 
     public static String getReadableDate(String duedate) {
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(duedate);
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(duedate);
             duedate = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.ENGLISH).format(date);
             return duedate;
         } catch (ParseException e) {
@@ -20,7 +20,9 @@ public class TimeUtils {
 
     public static boolean isOrderLive(String duedate) {
         try {
-           Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(duedate);
+           Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(duedate);
+            assert date != null;
+            SnapLog.print(""+(System.currentTimeMillis() - date.getTime() <= 60000L));
             return System.currentTimeMillis() - date.getTime() <= 60000L;
         } catch (ParseException e) {
             e.printStackTrace();

@@ -109,8 +109,6 @@ class Login : BaseActivity() {
         userInfo?.userID = it.data.user.id
         userInfo?.phoneNumber = it.data.user.phone_no
         userInfo?.profilePic = it.data.user.profile_pic
-        if (userInfo!!.userID != 0)
-            EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
 

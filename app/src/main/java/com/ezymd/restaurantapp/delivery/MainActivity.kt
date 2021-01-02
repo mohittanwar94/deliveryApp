@@ -34,6 +34,8 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
         setGUI()
         setWorkManager()
         setLocationUpdates()
+        if (userInfo!!.userID != 0)
+            EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
     }
 
     private fun setLocationUpdates() {

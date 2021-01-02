@@ -1,7 +1,9 @@
 package com.ezymd.restaurantapp.delivery.order
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
@@ -72,6 +74,22 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
+        callUser.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            if (orderModel.delivery != null) {
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:" + orderModel.delivery.phoneNo)
+                startActivity(intent)
+            }
+        }
+
+        callRest.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            val intent = Intent(Intent.ACTION_DIAL)
+            intent.data = Uri.parse("tel:" + orderModel.restPhoneNO)
+            startActivity(intent)
+        }
+
         name.text = orderModel.restaurantName
         address.text = orderModel.restaurantAddress
 

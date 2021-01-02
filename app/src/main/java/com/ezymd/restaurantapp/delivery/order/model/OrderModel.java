@@ -113,6 +113,10 @@ public class OrderModel implements Serializable {
     @Expose
     private String deliveryCharges;
 
+    @SerializedName("delivery")
+    @Expose
+    private DeliveryBoy delivery;
+
     @SerializedName("order_items")
     @Expose
     private ArrayList<OrderItems> orderItems = new ArrayList<>();
@@ -335,7 +339,15 @@ public class OrderModel implements Serializable {
     }
 
     public String getRestPhoneNO() {
-        return TextUtils.isEmpty(restPhoneNO) ? "" : restPhoneNO;
+        return TextUtils.isEmpty(restPhoneNO) ? "0" : restPhoneNO;
+    }
+
+    public DeliveryBoy getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(DeliveryBoy delivery) {
+        this.delivery = delivery;
     }
 
     public void setRestPhoneNO(String restPhoneNO) {
