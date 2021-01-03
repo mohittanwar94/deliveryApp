@@ -38,9 +38,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
+import com.google.maps.android.PolyUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.complete_order.*
-import kotlinx.android.synthetic.main.complete_order.navigate
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.address
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.items
@@ -209,6 +209,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
         val hashMap = trackViewModel.getDirectionsUrl(
             source,
+            source,
             destination,
             getString(R.string.google_maps_key)
         )
@@ -230,7 +231,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
         trackViewModel.locationUpdate.observe(this, Observer {
             if (it != null) {
-                getUpdateRoot()
+                // getUpdateRoot()
             }
         })
         trackViewModel.showError().observe(this, Observer {
@@ -276,20 +277,23 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     }
 
-    private fun getUpdateRoot() {
-        var lat = orderModel.restaurant_lat.toDouble()
-        var lng = orderModel.restaurant_lang.toDouble()
-        val source = LatLng(lat, lng)
-        lat = orderModel.delivery_lat.toDouble()
-        lng = orderModel.delivery_lang.toDouble()
-        val destination = LatLng(lat, lng)
+    private fun getUpdateRoot(latlang: LatLng) {
+        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 50.0)) {
+            var lat = orderModel.restaurant_lat.toDouble()
+            var lng = orderModel.restaurant_lang.toDouble()
+            val source = LatLng(lat, lng)
+            lat = orderModel.delivery_lat.toDouble()
+            lng = orderModel.delivery_lang.toDouble()
+            val destination = LatLng(lat, lng)
 
-        val hashMap = trackViewModel.getDirectionsUrl(
-            source,
-            destination,
-            getString(R.string.google_maps_key)
-        )
-        trackViewModel.downloadRoute(hashMap)
+            val hashMap = trackViewModel.getDirectionsUrl(
+                source,
+                latlang,
+                destination,
+                getString(R.string.google_maps_key)
+            )
+            trackViewModel.downloadRoute(hashMap)
+        }
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -327,6 +331,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                         baseRequest.paramsMap["lang"] = "" + location.longitude
 
                         trackViewModel.downloadLatestCoordinates(baseRequest)
+                        getUpdateRoot(latlang)
                         updateCarLocation(latlang)
 
                     }

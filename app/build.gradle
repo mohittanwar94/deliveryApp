@@ -159,7 +159,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     implementation "com.ncorti:slidetoact:0.9.0"
-
+    implementation 'com.google.maps.android:android-maps-utils:2.2.0'
     implementation 'com.github.chrisbanes:PhotoView:2.2.0'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.github.mumayank:AirLocation:2.4'

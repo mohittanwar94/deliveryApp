@@ -31,7 +31,8 @@ interface WebServices {
         @Query("sensor") sensor: String,
         @Query("destination") destination: String,
         @Query("mode") mode: String,
-        @Query("key") key: String
+        @Query("key") key: String,
+        @Query("waypoints") waypoints: String
     ): JsonObject
 
     @FormUrlEncoded
@@ -43,7 +44,10 @@ interface WebServices {
 
 
     @GET(ServerConfig.CREATE_ORDER)
-    suspend fun orderList( @Query("order_status") order_status:String,@Header("Authorization") accessToken: String): OrderBaseModel
+    suspend fun orderList(
+        @Query("order_status") order_status: String,
+        @Header("Authorization") accessToken: String
+    ): OrderBaseModel
 
     @FormUrlEncoded
     @POST(ServerConfig.ACCEPT_ORDER)
@@ -54,7 +58,10 @@ interface WebServices {
 
     @FormUrlEncoded
     @POST(ServerConfig.ASSIGN_ORDER_DELIVERY)
-    suspend fun assignOrder(@Field("order_id") restaurant_id:String, @Header("Authorization") accessToken: String): OrderAcceptResponse
+    suspend fun assignOrder(
+        @Field("order_id") restaurant_id: String,
+        @Header("Authorization") accessToken: String
+    ): OrderAcceptResponse
 
 }
 

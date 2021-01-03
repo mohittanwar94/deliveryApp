@@ -77,6 +77,7 @@ class TrackerViewModel : ViewModel() {
 
     fun getDirectionsUrl(
         origin: LatLng,
+        wayPoints: LatLng,
         dest: LatLng,
         key: String
     ): ConcurrentHashMap<String, String> {
@@ -90,7 +91,7 @@ class TrackerViewModel : ViewModel() {
         haspMap.put("sensor", "false")
         haspMap.put("mode", "driving")
         haspMap.put("key", key)
-
+        haspMap.put("waypoints","via:" + wayPoints.latitude + "," + wayPoints.longitude)
         return haspMap
     }
 

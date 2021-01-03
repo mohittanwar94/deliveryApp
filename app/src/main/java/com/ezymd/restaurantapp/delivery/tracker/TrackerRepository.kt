@@ -48,7 +48,8 @@ class TrackerRepository private constructor() {
                 url.get("sensor")!!,
                 url.get("destination")!!,
                 url.get("mode")!!,
-                url.get("key")!!
+                url.get("key")!!,
+                url.get("waypoints")!!
             )
         }
 

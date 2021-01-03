@@ -207,6 +207,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
         val hashMap = trackViewModel.getDirectionsUrl(
             source,
+            defaultLocation,
             destination,
             getString(R.string.google_maps_key)
         )
