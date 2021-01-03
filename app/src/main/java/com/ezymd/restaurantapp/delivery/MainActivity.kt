@@ -136,7 +136,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
                 if (i == 0) {
                     getString(R.string.completed)
                 } else {
-                    getString(R.string.processing)
+                    getString(R.string.processing_large)
 
                 }
             )

@@ -79,7 +79,7 @@ class OrderDetailsActivity : BaseActivity() {
 
         if (item.discount != "0.0") {
             discountLay.visibility = View.VISIBLE
-            discount.text = getString(R.string.dollor) + String.format(item.discount, 0.2f);
+            discount.text = getString(R.string.dollor) + String.format("%.2f",item.discount.toDouble())
         }
 
         order_id.text = getString(R.string.orderID) + " #" + item.orderId
@@ -102,14 +102,14 @@ class OrderDetailsActivity : BaseActivity() {
         setOrderStatus(item.orderStatus)
 
 
-        serviceCharge.text = getString(R.string.dollor) + "" + item.transactionCharges
+        serviceCharge.text = getString(R.string.dollor) + String.format("%.2f",item.transactionCharges.toDouble())
 
         leftIcon.setOnClickListener {
             onBackPressed()
         }
 
         if (!item.deliveryCharges.equals("0"))
-            shippingCharge.text=getString(R.string.dollor)+item.deliveryCharges
+            shippingCharge.text=getString(R.string.dollor) + String.format("%.2f",item.deliveryCharges.toDouble())
     }
 
     private fun setOrderStatus(orderStatus: Int) {
