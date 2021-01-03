@@ -145,11 +145,11 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun setObserver() {
 
-        var lat = orderModel.delivery_lat.toDouble()
-        var lng = orderModel.delivery_lang.toDouble()
+        var lat = orderModel.restaurant_lat.toDouble()
+        var lng = orderModel.restaurant_lang.toDouble()
         val source = LatLng(lat, lng)
-        lat = orderModel.restaurant_lat.toDouble()
-        lng = orderModel.restaurant_lang.toDouble()
+        lat = orderModel.delivery_lat.toDouble()
+        lng = orderModel.delivery_lang.toDouble()
         val destination = LatLng(lat, lng)
 
         val hashMap = trackViewModel.getDirectionsUrl(
