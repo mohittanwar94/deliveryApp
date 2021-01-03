@@ -154,6 +154,7 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
 
         val hashMap = trackViewModel.getDirectionsUrl(
             source,
+            source,
             destination,
             getString(R.string.google_maps_key)
         )
