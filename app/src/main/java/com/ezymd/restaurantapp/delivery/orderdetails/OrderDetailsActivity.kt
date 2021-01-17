@@ -39,6 +39,7 @@ class OrderDetailsActivity : BaseActivity() {
         } else {
             super.onBackPressed()
         }
+        overridePendingTransition(R.anim.right_in,R.anim.right_out)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +103,7 @@ class OrderDetailsActivity : BaseActivity() {
         setOrderStatus(item.orderStatus)
 
 
-        serviceCharge.text = getString(R.string.dollor) + String.format("%.2f",item.transactionCharges.toDouble())
+        //serviceCharge.text = getString(R.string.dollor) + String.format("%.2f",item.transactionCharges.toDouble())
 
         leftIcon.setOnClickListener {
             onBackPressed()

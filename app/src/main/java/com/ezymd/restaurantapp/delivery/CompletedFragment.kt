@@ -23,7 +23,7 @@ import com.ezymd.vendor.order.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
 import kotlinx.android.synthetic.main.fragment_orders.*
 
-class CompletedFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
+class CompletedFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var restaurantAdapter: OrdersAdapter? = null
     private var isNullViewRoot = false
@@ -79,6 +79,7 @@ class CompletedFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
         searchViewModel.orderList(baseRequest)
 
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == JSONKeys.OTP_REQUEST && resultCode == Activity.RESULT_OK) {
@@ -174,7 +175,7 @@ class CompletedFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
             if (!it) {
                 (activity as BaseActivity).enableEvents()
                 progress.visibility = View.GONE
-                swipeLayout.isRefreshing=false
+                swipeLayout.isRefreshing = false
             } else {
                 progress.visibility = View.VISIBLE
             }
@@ -216,7 +217,8 @@ class CompletedFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
         })
 
         searchViewModel.errorRequest.observe(this, androidx.lifecycle.Observer {
-            (activity as BaseActivity).showError(false, it, null)
+            if (it != null)
+                (activity as BaseActivity).showError(false, it, null)
         })
 
 
