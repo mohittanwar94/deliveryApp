@@ -300,7 +300,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap = map
         mMap!!.setMaxZoomPreference(25f)
         defaultLocation =
-            LatLng(orderModel.delivery_lat.toDouble(), orderModel.delivery_lang.toDouble())
+            LatLng(orderModel.restaurant_lat.toDouble(), orderModel.restaurant_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         showDefaultLocationOnMap(defaultLocation)
         setObserver()

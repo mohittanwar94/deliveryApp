@@ -97,7 +97,7 @@ class TrackerViewModel : ViewModel() {
 
 
     fun downloadLatestCoordinates(baseRequest: BaseRequest) {
-        isLoading.postValue(true)
+      //  isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             val result = loginRepository!!.updateCoordinates(
                 baseRequest,
@@ -138,7 +138,7 @@ class TrackerViewModel : ViewModel() {
 
 
     fun downloadRoute(url: ConcurrentHashMap<String, String>) {
-        isLoading.postValue(true)
+       // isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             val result = loginRepository!!.downloadRouteInfo(
                 url,

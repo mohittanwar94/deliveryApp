@@ -99,6 +99,7 @@
                 app:slider_icon_color="@color/color_002366"
                 app:slider_icon="@drawable/ic_right_arrow"
                 app:slider_locked="false"
+                app:rotate_icon="false"
                 app:text="@string/slide_to_accept"
                 app:bump_vibration="300"
                 app:text_size="@dimen/_15sdp" />

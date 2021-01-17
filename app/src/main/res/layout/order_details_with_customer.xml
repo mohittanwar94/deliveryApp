@@ -186,6 +186,7 @@
                 app:slider_icon_color="@color/color_002366"
                 app:slider_locked="false"
                 app:text="@string/slide_to_accept"
+                app:rotate_icon="false"
                 app:text_color="@color/white"
                 app:text_size="@dimen/_15sdp" />
 
