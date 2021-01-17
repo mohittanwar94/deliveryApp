@@ -278,7 +278,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getUpdateRoot(latlang: LatLng) {
-        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 50.0)) {
+        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 5.0)) {
             var lat = orderModel.restaurant_lat.toDouble()
             var lng = orderModel.restaurant_lang.toDouble()
             val source = LatLng(lat, lng)
@@ -298,7 +298,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMaxZoomPreference(16f)
+        mMap!!.setMaxZoomPreference(25f)
         defaultLocation =
             LatLng(orderModel.delivery_lat.toDouble(), orderModel.delivery_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
@@ -406,7 +406,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
-        val cameraPosition = CameraPosition.Builder().target(latLng).zoom(15.5f).build()
+        val zoom: Float = mMap!!.cameraPosition.zoom
+        val cameraPosition = CameraPosition.Builder().target(latLng).zoom(zoom).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
@@ -420,9 +421,9 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_user_location)
-            } else {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
+            } else {
+                MapUtils.getSourceBitmap(this, R.drawable.ic_user_location)
             }
 
         return mMap!!.addMarker(

@@ -138,7 +138,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                 if (pointsList.size > 0)
                     showPath(pointsList)
                 showDefaultLocationOnMap(defaultLocation)
-                // showMovingCab(pointsList)
+                //showMovingCab(pointsList)
             }
         })
         trackViewModel.acceptRequest.observe(this, Observer {
