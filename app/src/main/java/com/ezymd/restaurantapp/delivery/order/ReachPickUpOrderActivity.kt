@@ -289,8 +289,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 120000
-        request.fastestInterval = 60000
+        request.interval = 15000
+        request.fastestInterval = 15000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val client = LocationServices.getFusedLocationProviderClient(this)
         val permission = ContextCompat.checkSelfPermission(

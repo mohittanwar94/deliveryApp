@@ -39,6 +39,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.maps.android.PolyUtil
+import com.google.maps.android.SphericalUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.complete_order.*
 import kotlinx.android.synthetic.main.header_new.*
@@ -278,7 +279,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getUpdateRoot(latlang: LatLng) {
-        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 5.0)) {
+        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 20.0)) {
             var lat = orderModel.restaurant_lat.toDouble()
             var lng = orderModel.restaurant_lang.toDouble()
             val source = LatLng(lat, lng)
@@ -309,8 +310,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 30000
-        request.fastestInterval = 30000
+        request.interval = 15000
+        request.fastestInterval = 15000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val client = LocationServices.getFusedLocationProviderClient(this)
         val permission = ContextCompat.checkSelfPermission(
@@ -483,7 +484,6 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             currentLatLng = latLng
             previousLatLng = currentLatLng
             movingCabMarker?.position = currentLatLng
-            movingCabMarker?.setAnchor(0.5f, 0.5f)
             animateCamera(currentLatLng!!)
         } else {
             previousLatLng = currentLatLng
@@ -497,11 +497,9 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                         multiplier * currentLatLng!!.longitude + (1 - multiplier) * previousLatLng!!.longitude
                     )
                     movingCabMarker?.position = nextLocation
-                    val rotation = MapUtils.getRotation(previousLatLng!!, nextLocation)
-                    if (!rotation.isNaN()) {
-                        movingCabMarker?.rotation = rotation
-                    }
-                    movingCabMarker?.setAnchor(0.5f, 0.5f)
+                    val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
+                    movingCabMarker?.rotation = heading.toFloat()
+
                     animateCamera(nextLocation)
                 }
             }
