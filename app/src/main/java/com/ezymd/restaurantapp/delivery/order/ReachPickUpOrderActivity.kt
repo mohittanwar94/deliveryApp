@@ -36,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.PolyUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.resturant_pick_up.*
@@ -198,26 +199,27 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getUpdateRoot(defaultLocation: LatLng) {
-        var lat = defaultLocation.latitude
-        var lng = defaultLocation.longitude
-        val source = LatLng(lat, lng)
-        lat = orderModel.restaurant_lat.toDouble()
-        lng = orderModel.restaurant_lang.toDouble()
-        val destination = LatLng(lat, lng)
+            var lat = defaultLocation.latitude
+            var lng = defaultLocation.longitude
+            val source = LatLng(lat, lng)
+            lat = orderModel.restaurant_lat.toDouble()
+            lng = orderModel.restaurant_lang.toDouble()
+            val destination = LatLng(lat, lng)
 
-        val hashMap = trackViewModel.getDirectionsUrl(
-            source,
-            defaultLocation,
-            destination,
-            getString(R.string.google_maps_key)
-        )
-        trackViewModel.downloadRoute(hashMap)
+            val hashMap = trackViewModel.getDirectionsUrl(
+                source,
+                defaultLocation,
+                destination,
+                getString(R.string.google_maps_key)
+            )
+            trackViewModel.downloadRoute(hashMap)
+
     }
 
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMaxZoomPreference(16f)
+        mMap!!.setMaxZoomPreference(25f)
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         requestLocationUpdates()
         setObserver()
@@ -264,7 +266,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
-        val cameraPosition = CameraPosition.Builder().target(latLng).zoom(15.5f).build()
+        val cameraPosition = CameraPosition.Builder().target(latLng).zoom(mMap!!.cameraPosition.zoom).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
