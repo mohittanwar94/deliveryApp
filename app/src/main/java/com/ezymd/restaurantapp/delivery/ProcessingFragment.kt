@@ -209,7 +209,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 restaurantAdapter?.getData()?.let { it1 ->
                     dataResturant.addAll(it1)
                 }
-
+                showEmpty(dataResturant.size)
             } else {
                 (activity as BaseActivity).showError(false, it.message, null)
             }
@@ -232,6 +232,9 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
+    fun showEmpty(size: Int) {
+        emptyView.visibility = if (size == 0) View.VISIBLE else View.GONE
+    }
 
     override fun onStop() {
         super.onStop()
