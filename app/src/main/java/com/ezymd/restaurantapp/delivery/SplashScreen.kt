@@ -3,11 +3,15 @@ package com.ezymd.restaurantapp.delivery
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
@@ -27,30 +31,35 @@ class SplashScreen : BaseActivity() {
 
     private fun createNotificationChannel() {
 
-        val mNotificationManager =
-            this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            /*  val audioAttributes = AudioAttributes.Builder()
-                  .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                  .setUsage(AudioAttributes.USAGE_ALARM)
-                  .build()
-            */
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val notificationChannel = NotificationChannel(
 
-                getString(R.string.NOTIFICATION_CHANNEL_ID),
-                getString(R.string.notification_channel_name),
-                importance
-            )
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.RED
-            notificationChannel.enableVibration(true)
-            notificationChannel.vibrationPattern =
-                longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
-            //notificationChannel.setSound(sound, audioAttributes)
-            mNotificationManager.createNotificationChannel(notificationChannel)
+        try {
+            val mNotifyManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotifyManager.getNotificationChannel(
+                    getString(R.string.default_notification_channel_id)) != null) {
+                mNotifyManager.deleteNotificationChannel(getString(R.string.default_notification_channel_id))
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotifyManager.getNotificationChannel(
+                    getString(R.string.default_notification_channel_id)) == null) {
+                val mChannel = NotificationChannel(
+                    getString(R.string.default_notification_channel_id),
+                    "EzymdDel",
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+                val attributes = AudioAttributes.Builder()
+                    .setLegacyStreamType(AudioManager.STREAM_RING)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .build()
+                mChannel.enableLights(true)
+                mChannel.enableVibration(true)
+                mChannel.setSound(
+                    Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/" + R.raw.sound),
+                    attributes
+                )
+                mNotifyManager.createNotificationChannel(mChannel)
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
-
 
     }
 
