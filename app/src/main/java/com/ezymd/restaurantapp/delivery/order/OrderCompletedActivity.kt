@@ -188,7 +188,7 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMaxZoomPreference(13f)
+        mMap!!.setMaxZoomPreference(25f)
         defaultLocation =
             LatLng(orderModel.delivery_lat.toDouble(), orderModel.delivery_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
@@ -218,7 +218,8 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
-        val cameraPosition = CameraPosition.Builder().target(latLng).zoom(15.5f).build()
+        val zoom = mMap!!.cameraPosition.zoom
+        val cameraPosition = CameraPosition.Builder().target(latLng).zoom(zoom).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 

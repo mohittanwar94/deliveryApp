@@ -94,6 +94,7 @@
         <activity
             android:name=".order.IncomingOrderActivity"
             android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
         <activity
