@@ -132,5 +132,6 @@
     <string name="processing">processing</string>
     <string name="processing_large">Processing</string>
     <string name="your_order_cancel">Order has been cancelled</string>
+    <string name="cancel_order">Cancelled</string>
 
 </resources>

@@ -127,7 +127,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
     }
 
     fun showStudentParentNames() {
-        for (i in 0 until 2) {
+        for (i in 0 until 3) {
             val studentName = SnapTextView(this)
             studentName.setTypeface(CustomTypeFace.bold)
             studentName.setSingleLine()
@@ -135,9 +135,11 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
             studentName.setText(
                 if (i == 0) {
                     getString(R.string.completed)
-                } else {
+                } else if (i == 1) {
                     getString(R.string.processing_large)
 
+                } else {
+                    getString(R.string.cancel_order)
                 }
             )
             if (i == 0) {
@@ -181,7 +183,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
     }
 
     private fun setAdapter() {
-        mPager.offscreenPageLimit = 2
+        mPager.offscreenPageLimit = 3
         val teacherPageAdapter = TeacherPageAdapter(supportFragmentManager)
         mPager.adapter = teacherPageAdapter
         tabLayout!!.setSelectedTabIndicatorColor(
@@ -240,6 +242,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
             val fragment = when (position) {
                 0 -> CompletedFragment()
                 1 -> ProcessingFragment()
+                2 -> CancelledFragment()
                 else -> ProcessingFragment()
             }
             mPageReferenceMap.put(position, fragment)
@@ -247,7 +250,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
         }
 
         override fun getCount(): Int {
-            return 2
+            return 3
         }
 
         override fun destroyItem(container: ViewGroup, position: Int, anyO: Any) {
