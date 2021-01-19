@@ -77,9 +77,9 @@ class OrdersAdapter(
         holder.itemView.created.text = TimeUtils.getReadableDate(item.created)
         if (item.orderStatus == OrderStatus.ORDER_CANCEL) {
             holder.itemView.trackOrder.text = "Cancelled"
-        } else if (item.orderStatus == OrderStatus.ORDER_COMPLETED)
+        } else if (item.orderStatus == OrderStatus.ORDER_COMPLETED) {
             holder.itemView.trackOrder.visibility = View.GONE
-        else {
+        }else {
             holder.itemView.trackOrder.visibility = View.VISIBLE
             holder.itemView.trackOrder.setOnClickListener {
                 onRecyclerView.onLongClick(position, it)
