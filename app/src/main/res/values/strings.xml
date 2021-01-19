@@ -131,5 +131,6 @@
     <string name="order_has_been_delivered">Order has been delivered to</string>
     <string name="processing">processing</string>
     <string name="processing_large">Processing</string>
+    <string name="your_order_cancel">Order has been cancelled</string>
 
 </resources>

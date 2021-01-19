@@ -2,6 +2,7 @@ package com.ezymd.restaurantapp.delivery.orderdetails
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -39,7 +40,7 @@ class OrderDetailsActivity : BaseActivity() {
         } else {
             super.onBackPressed()
         }
-        overridePendingTransition(R.anim.right_in,R.anim.right_out)
+        overridePendingTransition(R.anim.right_in, R.anim.right_out)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +81,8 @@ class OrderDetailsActivity : BaseActivity() {
 
         if (item.discount != "0.0") {
             discountLay.visibility = View.VISIBLE
-            discount.text = getString(R.string.dollor) + String.format("%.2f",item.discount.toDouble())
+            discount.text =
+                getString(R.string.dollor) + String.format("%.2f", item.discount.toDouble())
         }
 
         order_id.text = getString(R.string.orderID) + " #" + item.orderId
@@ -110,7 +112,8 @@ class OrderDetailsActivity : BaseActivity() {
         }
 
         if (!item.deliveryCharges.equals("0"))
-            shippingCharge.text=getString(R.string.dollor) + String.format("%.2f",item.deliveryCharges.toDouble())
+            shippingCharge.text =
+                getString(R.string.dollor) + String.format("%.2f", item.deliveryCharges.toDouble())
     }
 
     private fun setOrderStatus(orderStatus: Int) {
@@ -118,15 +121,17 @@ class OrderDetailsActivity : BaseActivity() {
         feedback.visibility = View.GONE
         review.rating = item.delivery_rating.toFloat()
         feedback.text = item.feedback
-        if (orderStatus != OrderStatus.ORDER_COMPLETED) {
-            status.text = getString(R.string.your_order_processing)
-        } else {
-
+        if (orderStatus == OrderStatus.ORDER_CANCEL) {
+            status.text = getString(R.string.your_order_cancel)
+            status.setTextColor(Color.RED)
+        } else if (orderStatus == OrderStatus.ORDER_COMPLETED) {
             review.visibility = View.VISIBLE
             if (item.feedback != "")
                 feedback.visibility = View.VISIBLE
             review.visibility = View.VISIBLE
             status.text = getString(R.string.your_order_is_completed)
+        } else {
+            status.text = getString(R.string.your_order_processing)
         }
 
 
