@@ -76,8 +76,21 @@ class OrderDetailsActivity : BaseActivity() {
 
     }
 
+    private fun getTotalPrice(arrayList: ArrayList<OrderItems>): Double {
+        var price = 0.0
+        for (itemModel in arrayList) {
+            price += (itemModel.price * itemModel.qty)
+        }
+
+
+
+        return price
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
+        subTotal.text =
+            getString(R.string.dollor) + String.format("%.2f", getTotalPrice(item.orderItems))
 
         if (item.discount != "0.0") {
             discountLay.visibility = View.VISIBLE
