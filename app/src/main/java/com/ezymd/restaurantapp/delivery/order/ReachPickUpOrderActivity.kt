@@ -36,6 +36,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.PolyUtil
+import com.google.maps.android.SphericalUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.resturant_pick_up.*
@@ -50,6 +52,9 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     val DASH: PatternItem = Dash(PATTERN_DASH_LENGTH_PX.toFloat())
     val GAP: PatternItem = Gap(PATTERN_GAP_LENGTH_PX.toFloat())
     val PATTERN_POLYGON_ALPHA: List<PatternItem> = Arrays.asList(GAP, DASH)
+    private var movingCabMarker: Marker? = null
+    private var previousLatLng: LatLng? = null
+    private var currentLatLng: LatLng? = null
 
     private lateinit var defaultLocation: LatLng
     private var originMarker: Marker? = null
@@ -199,7 +204,26 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getUpdateRoot(defaultLocation: LatLng) {
+    private fun getUpdateRoot(latlang: LatLng) {
+        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 50.0)) {
+            var lat = latlang.latitude
+            var lng = latlang.longitude
+            val source = LatLng(lat, lng)
+            lat = orderModel.restaurant_lat.toDouble()
+            lng = orderModel.restaurant_lang.toDouble()
+            val destination = LatLng(lat, lng)
+
+            val hashMap = trackViewModel.getDirectionsUrl(
+                source,
+                latlang,
+                destination,
+                getString(R.string.google_maps_key)
+            )
+            trackViewModel.downloadRoute(hashMap)
+        }
+    }
+
+    /*private fun getUpdateRoot(defaultLocation: LatLng) {
         var lat = defaultLocation.latitude
         var lng = defaultLocation.longitude
         val source = LatLng(lat, lng)
@@ -217,10 +241,13 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     }
 
-
+*/
     override fun onMapReady(map: GoogleMap) {
         mMap = map
         mMap!!.setMaxZoomPreference(25f)
+        mMap!!.isTrafficEnabled = false;
+        mMap!!.isIndoorEnabled = false;
+        mMap!!.isBuildingsEnabled = true;
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         requestLocationUpdates()
         setObserver()
@@ -268,8 +295,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun animateCamera(latLng: LatLng) {
         var zoom: Float = mMap!!.cameraPosition.zoom
-        if (zoom < 16f)
-            zoom = 16f
+        if (zoom < 17f)
+            zoom = 17f
         val cameraPosition = CameraPosition.Builder().target(latLng).zoom(
             zoom
         ).build()
@@ -280,13 +307,13 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_driver_location)
             } else {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
 
         return mMap!!.addMarker(
-            MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor)
+            MarkerOptions().position(latLng).flat(true).draggable(false).icon(bitmapDescriptor)
         )
     }
 
@@ -315,6 +342,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                         val latlang = LatLng(location.latitude, location.longitude)
                         defaultLocation = latlang
                         getUpdateRoot(defaultLocation)
+                        updateCarLocation(latlang)
                     }
 
                 }
@@ -383,6 +411,45 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             blackPolyline?.points = grayPolyline?.points!!.subList(0, index)
         }
         polylineAnimator.start()
+    }
+
+    private fun addCarMarkerAndGet(latLng: LatLng): Marker {
+        val bitmapDescriptor = MapUtils.getCarBitmap(this)
+        return mMap!!.addMarker(
+            MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor)
+        )
+    }
+
+
+    private fun updateCarLocation(latLng: LatLng) {
+        if (movingCabMarker == null) {
+            movingCabMarker = addCarMarkerAndGet(latLng)
+        }
+        if (previousLatLng == null) {
+            currentLatLng = latLng
+            previousLatLng = currentLatLng
+            movingCabMarker?.position = currentLatLng
+            animateCamera(currentLatLng!!)
+        } else {
+            previousLatLng = currentLatLng
+            currentLatLng = latLng
+            val valueAnimator = AnimationUtils.carAnimator()
+            valueAnimator.addUpdateListener { va ->
+                if (currentLatLng != null && previousLatLng != null) {
+                    val multiplier = va.animatedFraction
+                    val nextLocation = LatLng(
+                        multiplier * currentLatLng!!.latitude + (1 - multiplier) * previousLatLng!!.latitude,
+                        multiplier * currentLatLng!!.longitude + (1 - multiplier) * previousLatLng!!.longitude
+                    )
+                    movingCabMarker?.position = nextLocation
+                    val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
+                    movingCabMarker?.rotation = heading.toFloat()
+
+                    animateCamera(nextLocation)
+                }
+            }
+            valueAnimator.start()
+        }
     }
 
 }
