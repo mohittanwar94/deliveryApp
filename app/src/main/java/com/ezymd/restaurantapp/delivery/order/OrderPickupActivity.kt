@@ -71,6 +71,7 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
         headertext.visibility = View.VISIBLE
         val slideListener = object : SlideToActView.OnSlideCompleteListener {
             override fun onSlideComplete(view: SlideToActView) {
+                showItemDialog()
                 acceptOrder()
             }
 
@@ -84,6 +85,11 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
         }
 
         setOrderDetails()
+
+    }
+
+    private fun showItemDialog() {
+
 
     }
 

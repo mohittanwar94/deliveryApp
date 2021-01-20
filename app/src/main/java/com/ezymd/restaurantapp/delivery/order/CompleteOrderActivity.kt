@@ -3,6 +3,8 @@ package com.ezymd.restaurantapp.delivery.order
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -116,7 +118,11 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         headertext.visibility = View.VISIBLE
         val slideListener = object : SlideToActView.OnSlideCompleteListener {
             override fun onSlideComplete(view: SlideToActView) {
-                acceptOrder()
+                if (orderModel.paymentType == PaymentMethodTYPE.COD) {
+                    showConfirmationDialog()
+                } else {
+                    acceptOrder()
+                }
             }
 
         }
@@ -158,6 +164,28 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             startActivity(intent)
 
         }
+    }
+
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(this, R.style.alert_dialog_theme)
+        builder.setMessage("Have You Received Cash " + getString(R.string.dollor) + orderModel.total + "?")
+            .setCancelable(false)
+            .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, id: Int) {
+                    dialog?.dismiss()
+                    acceptOrder()
+                }
+            })
+            .setNegativeButton("No", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface, id: Int) {
+                    dialog.dismiss()
+
+                }
+            })
+        val alert: AlertDialog = builder.create()
+        alert.setTitle("Cancel Order")
+        alert.show()
+
     }
 
     private fun acceptOrder() {

@@ -15,10 +15,7 @@ import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
-import com.ezymd.restaurantapp.delivery.utils.BaseRequest
-import com.ezymd.restaurantapp.delivery.utils.ErrorCodes
-import com.ezymd.restaurantapp.delivery.utils.FireBaseConstants
-import com.ezymd.restaurantapp.delivery.utils.JSONKeys
+import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -72,7 +69,7 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
-        restCall.visibility=View.GONE
+        restCall.visibility = View.GONE
         name.text = orderModel.restaurantName
         address.text = orderModel.restaurantAddress
 
@@ -108,6 +105,9 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
 
         accept.typeFace = Typeface.BOLD
         accept.onSlideCompleteListener = slideListener
+
+        if (orderModel.paymentType == PaymentMethodTYPE.COD)
+            cash.visibility = View.VISIBLE
 
     }
 

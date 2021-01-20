@@ -304,4 +304,13 @@
         <item name="colorControlActivated">@color/color_ffb912</item>
     </style>
 
+    <style name="alert_dialog_theme" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="colorControlActivated">@color/color_ffb912</item>
+        <item name="colorAccent">@color/color_ffb912</item>
+        <item name="android:selectableItemBackgroundBorderless">@android:color/transparent</item>
+        <item name="colorControlHighlight">@color/color_002366</item>
+        <item name="colorPrimary">@color/color_ffb912</item>
+        <item name="colorPrimaryDark">@color/color_ffb912</item>
+    </style>
+
 </resources>
