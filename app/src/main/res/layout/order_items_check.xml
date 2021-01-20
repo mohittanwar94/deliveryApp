@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_8sdp"
+            android:text=""
+            android:textColor="@color/color_002366"
+            android:textSize="@dimen/_15sdp"
+            app:textFont="medium" />
+
+        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/qty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:text=""
+            android:textColor="@color/color_002366"
+            android:textSize="@dimen/_13sdp"
+            android:visibility="visible"
+            app:textFont="roman" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/chkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:checked="true"
+        android:theme="@style/progressBarTheme" />
+</LinearLayout>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:minHeight="@dimen/_200sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_10sdp"
+    app:cardElevation="0dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="@dimen/_10sdp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:gravity="left"
+            android:text="@string/verify_order_items"
+            android:textAllCaps="false"
+            android:textColor="@color/gray_333"
+            android:textSize="@dimen/_13sdp"
+            app:textFont="SourceSansPro_Bold" />
+
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:fadingEdge="vertical"
+            android:scrollbars="none"
+            android:smoothScrollbar="true"
+            android:soundEffectsEnabled="true" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_below="@android:id/list"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:background="@color/dividerColor" />
+
+        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+            android:id="@+id/error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center"
+            android:text=""
+            android:textAllCaps="false"
+            android:textColor="@color/red_bg_build"
+            android:textSize="@dimen/_10sdp"
+            android:visibility="gone"
+            app:textFont="SourceSansPro_Bold" />
+
+
+        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+            android:id="@+id/proceed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_below="@+id/error"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:background="@drawable/ic_gray_btn_pressed"
+            android:gravity="center"
+            android:text="@string/btn_submit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13sdp"
+            app:textFont="SourceSansPro_Bold" />
+
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

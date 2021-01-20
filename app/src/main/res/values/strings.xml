@@ -138,5 +138,7 @@
     <string name="payment_mode">Payment Mode</string>
     <string name="card">Card</string>
     <string name="wallet">Wallet</string>
+    <string name="verify_order_items">Verify Order Items</string>
+    <string name="btn_submit">Submit</string>
 
 </resources>

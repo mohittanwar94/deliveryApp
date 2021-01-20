@@ -17,6 +17,8 @@ public class OrderItems implements Serializable {
     @Expose
     private Integer qty;
 
+    private boolean isSelected;
+
     public String getItem() {
         return item;
     }
@@ -41,4 +43,11 @@ public class OrderItems implements Serializable {
         this.qty = qty;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }

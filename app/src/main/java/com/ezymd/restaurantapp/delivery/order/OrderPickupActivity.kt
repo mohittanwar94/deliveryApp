@@ -37,6 +37,7 @@ import kotlinx.android.synthetic.main.order_item_pick_up.*
 
 
 class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
+    private var markAsSpamDialogFragment: ItemsDialogFragment? = null
     private var originMarker: Marker? = null
     private var destinationMarker: Marker? = null
 
@@ -72,7 +73,6 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
         val slideListener = object : SlideToActView.OnSlideCompleteListener {
             override fun onSlideComplete(view: SlideToActView) {
                 showItemDialog()
-                acceptOrder()
             }
 
         }
@@ -89,6 +89,12 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun showItemDialog() {
+        markAsSpamDialogFragment?.dismissAllowingStateLoss()
+        markAsSpamDialogFragment = ItemsDialogFragment.newInstance(orderModel.orderItems)
+        markAsSpamDialogFragment!!.show(supportFragmentManager, "fragment_mark_as_spam")
+        markAsSpamDialogFragment!!.setOnClickListener {
+            acceptOrder()
+        }
 
 
     }
