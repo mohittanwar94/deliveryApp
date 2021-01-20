@@ -92,6 +92,21 @@
 
 
             <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
+                android:id="@+id/cash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+                android:text="@string/cash_on_delivery"
+                android:textColor="@color/color_002366"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="normal"
+                app:textFont="bold" />
+
+
+            <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
                 android:id="@+id/items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

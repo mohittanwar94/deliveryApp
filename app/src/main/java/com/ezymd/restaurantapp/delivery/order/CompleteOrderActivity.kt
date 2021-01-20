@@ -164,6 +164,11 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             startActivity(intent)
 
         }
+
+        if (orderModel.paymentType == PaymentMethodTYPE.COD) {
+            cash.visibility = View.VISIBLE
+            cash.text = "Cash to be collected " + getString(R.string.dollor) + orderModel.total
+        }
     }
 
     private fun showConfirmationDialog() {
