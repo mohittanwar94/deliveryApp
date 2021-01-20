@@ -189,6 +189,10 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         mMap = map
         mMap!!.setMaxZoomPreference(25f)
+        mMap!!.isTrafficEnabled = false
+        mMap!!.isIndoorEnabled = false
+        mMap!!.isBuildingsEnabled = true
+
         defaultLocation =
             LatLng(orderModel.delivery_lat.toDouble(), orderModel.delivery_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false

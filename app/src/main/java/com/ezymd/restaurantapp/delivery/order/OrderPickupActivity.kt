@@ -227,6 +227,10 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
         mMap = map
         mMap!!.setMaxZoomPreference(16f)
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
+        mMap!!.isTrafficEnabled = false
+        mMap!!.isIndoorEnabled = false
+        mMap!!.isBuildingsEnabled = true
+
         setObserver()
         val latLng =
             LatLng(orderModel.restaurant_lat.toDouble(), orderModel.restaurant_lang.toDouble())

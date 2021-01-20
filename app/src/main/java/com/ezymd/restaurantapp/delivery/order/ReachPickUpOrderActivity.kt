@@ -245,9 +245,9 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         mMap = map
         mMap!!.setMaxZoomPreference(25f)
-        mMap!!.isTrafficEnabled = false;
-        mMap!!.isIndoorEnabled = false;
-        mMap!!.isBuildingsEnabled = true;
+        mMap!!.isTrafficEnabled = false
+        mMap!!.isIndoorEnabled = false
+        mMap!!.isBuildingsEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         requestLocationUpdates()
         setObserver()

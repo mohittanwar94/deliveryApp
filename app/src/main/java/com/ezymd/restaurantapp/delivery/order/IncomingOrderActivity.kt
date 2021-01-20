@@ -160,6 +160,10 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         mMap = map
         mMap!!.setMaxZoomPreference(16f)
+        mMap!!.isTrafficEnabled = false
+        mMap!!.isIndoorEnabled = false
+        mMap!!.isBuildingsEnabled = true
+
         val defaultLocation =
             LatLng(orderModel.restaurant_lat.toDouble(), orderModel.restaurant_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
