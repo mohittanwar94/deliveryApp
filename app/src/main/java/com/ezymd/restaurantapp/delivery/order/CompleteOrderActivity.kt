@@ -184,11 +184,12 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             .setNegativeButton("No", object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface, id: Int) {
                     dialog.dismiss()
+                    accept.resetSlider()
 
                 }
             })
         val alert: AlertDialog = builder.create()
-        alert.setTitle("Cancel Order")
+        alert.setTitle("Cash Collected?")
         alert.show()
 
     }
