@@ -31,6 +31,25 @@ class OrderListRepository {
     }
 
 
+    suspend fun cancelOrders(
+        baseRequest: BaseRequest,
+        dispatcher: CoroutineDispatcher
+    ): ResultWrapper<OrderBaseModel> {
+
+        val apiServices = ApiClient.client!!.create(WebServices::class.java)
+
+        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
+            apiServices.cancelOrderList(
+                baseRequest.paramsMap["device_token"]!!,
+                baseRequest.paramsMap["device_id"]!!,
+                baseRequest.paramsMap["order_status"]!!,
+                baseRequest.paramsMap["delivery_boy_id"]!!, baseRequest.accessToken
+            )
+        }
+
+
+    }
+
 
     suspend fun assignOrder(
         baseRequest: BaseRequest,

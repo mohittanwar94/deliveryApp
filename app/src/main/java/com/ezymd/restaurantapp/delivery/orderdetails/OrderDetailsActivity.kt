@@ -87,8 +87,18 @@ class OrderDetailsActivity : BaseActivity() {
         return price
     }
 
+    private fun getPaymentMode(paymentType: Int): String {
+        if (paymentType == PaymentMethodTYPE.COD)
+            return getString(R.string.cash_on_delivery)
+        else if (paymentType == PaymentMethodTYPE.ONLINE)
+            return getString(R.string.card)
+        else
+            return getString(R.string.wallet)
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setGUI() {
+        paymentMode.text = getPaymentMode(item.paymentType)
         subTotal.text =
             getString(R.string.dollor) + String.format("%.2f", getTotalPrice(item.orderItems))
 

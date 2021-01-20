@@ -46,6 +46,9 @@ interface WebServices {
     @GET(ServerConfig.CREATE_ORDER)
     suspend fun orderList(@Query("device_token") device_token:String,@Query("device_id") device_id:String,@Query("order_status") order_status:String, @Header("Authorization") accessToken: String): OrderBaseModel
 
+    @GET(ServerConfig.CREATE_ORDER)
+    suspend fun cancelOrderList(@Query("device_token") device_token:String,@Query("device_id") device_id:String,@Query("order_status") order_status:String,@Query("delivery_boy_id") delivery_boy_id:String, @Header("Authorization") accessToken: String): OrderBaseModel
+
     @FormUrlEncoded
     @POST(ServerConfig.ACCEPT_ORDER)
     suspend fun acceptOrder(

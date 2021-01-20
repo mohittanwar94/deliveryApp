@@ -53,7 +53,7 @@ class OrderViewModel : ViewModel() {
     fun orderList(baseRequest: BaseRequest) {
         isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
-            val result = loginRepository!!.listOrders(
+            val result = loginRepository!!.cancelOrders(
                 baseRequest,
                 Dispatchers.IO
             )

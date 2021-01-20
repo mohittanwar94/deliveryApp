@@ -75,6 +75,10 @@ public class OrderModel implements Serializable {
     @Expose
     private String restaurant_rating;
 
+    @SerializedName("payment_type")
+    @Expose
+    private int paymentType = 1;
+
     // for deliverty type self or delivery
     @SerializedName("order_pickup_status")
     @Expose
@@ -191,6 +195,10 @@ public class OrderModel implements Serializable {
 
     public void setTransactionCharges(String transactionCharges) {
         this.transactionCharges = transactionCharges;
+    }
+
+    public void setPaymentType(int paymentType) {
+        this.paymentType = paymentType;
     }
 
     public String getDeliveryCharges() {
@@ -319,6 +327,10 @@ public class OrderModel implements Serializable {
 
     public void setDeliveryInstruction(String deliveryInstruction) {
         this.deliveryInstruction = deliveryInstruction;
+    }
+
+    public int getPaymentType() {
+        return paymentType;
     }
 
 

@@ -37,6 +37,7 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         restaurantAdapter?.clearData()
         val baseRequest = BaseRequest(userInfo)
         baseRequest.paramsMap["order_status"] = "cancelled"
+        baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
         searchViewModel.orderList(baseRequest)
     }
 
@@ -66,6 +67,7 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             setAdapterRestaurant()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "cancelled"
+            baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
             searchViewModel.orderList(baseRequest)
             setObservers()
 
@@ -81,6 +83,7 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             restaurantAdapter?.clearData()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "cancelled"
+            baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
             searchViewModel.orderList(baseRequest)
         }
     }
