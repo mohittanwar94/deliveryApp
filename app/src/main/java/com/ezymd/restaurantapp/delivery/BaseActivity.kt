@@ -24,7 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
 open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
-     var size: Sizes? = null
+    var size: Sizes? = null
     val PERMISSIONS_REQUEST_CAMERA = 3333
     val PERMISSIONS_REQUEST_CAMERA_AUDIO = 3331
     val PERMISSIONS_REQUEST_READ_WRITE = 4444
@@ -397,7 +397,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
                         Snackbar.LENGTH_INDEFINITE
                     )
                 val sbView = netWorkChange!!.view
-                sbView.setBackgroundColor(Color.parseColor("#CC0001"))
+                sbView.setBackgroundColor(Color.parseColor("#ff7212"))
                 val textView =
                     sbView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
                 textView.setTextColor(Color.WHITE)
@@ -456,7 +456,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             val sbView = snackbar!!.view
             sbView.setBackgroundColor(
                 if (noError) Color.parseColor("#3bb162") else Color.parseColor(
-                    "#CC0001"
+                    "#ff7212"
                 )
             )
             val textView =
@@ -503,7 +503,14 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             if (snackbar != null && snackbar!!.isShown) snackbar!!.dismiss()
             snackbar = Snackbar.make(view!!, message!!, 5000)
             val sbView = snackbar!!.view
-            //            sbView.setBackgroundColor(noError ? Color.parseColor("#3bb162") : Color.parseColor("#CC0001"));
+            sbView.setBackgroundColor(
+                if (noError) {
+
+                    Color.parseColor("#3bb162")
+                } else {
+                    Color.parseColor("#ff7212")
+                }
+            )
             val textView =
                 sbView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
             textView.setTextColor(Color.WHITE)
@@ -531,7 +538,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             val sbView = snackbar!!.view
             sbView.setBackgroundColor(
                 if (noError) Color.parseColor("#3bb162") else Color.parseColor(
-                    "#ff6666"
+                    "#ff7212"
                 )
             )
             val textView =

@@ -140,5 +140,6 @@
     <string name="wallet">Wallet</string>
     <string name="verify_order_items">Verify Order Items</string>
     <string name="btn_submit">Submit</string>
+    <string name="picked">Picked</string>
 
 </resources>

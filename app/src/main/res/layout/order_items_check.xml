@@ -15,7 +15,9 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:text=""
             android:textColor="@color/color_002366"
             android:textSize="@dimen/_15sdp"
@@ -26,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:text=""
             android:textColor="@color/color_002366"
             android:textSize="@dimen/_13sdp"
@@ -41,6 +44,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:checked="true"
+        android:checked="false"
         android:theme="@style/progressBarTheme" />
 </LinearLayout>

@@ -73,6 +73,8 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
         val slideListener = object : SlideToActView.OnSlideCompleteListener {
             override fun onSlideComplete(view: SlideToActView) {
                 showItemDialog()
+                accept.resetSlider()
+
             }
 
         }

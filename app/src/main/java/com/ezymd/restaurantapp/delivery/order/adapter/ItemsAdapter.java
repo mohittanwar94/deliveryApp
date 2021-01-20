@@ -40,7 +40,7 @@ public class ItemsAdapter extends BaseAdapter {
         return 0;
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint({"InflateParams", "SetTextI18n"})
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -51,12 +51,20 @@ public class ItemsAdapter extends BaseAdapter {
         SnapTextView name = convertView.findViewById(R.id.name);
         name.setText(item.getItem());
         SnapTextView qty = convertView.findViewById(R.id.qty);
-        name.setText("qty - " + item.getQty());
+        qty.setText("Qty - " + item.getQty());
         CheckBox chkbox = convertView.findViewById(R.id.chkbox);
+        chkbox.setClickable(false);
         convertView.setOnClickListener(v -> {
-            mData.get(position).setSelected(chkbox.isChecked());
-            if (chkbox.isChecked())
-                chkbox.toggle();
+            OrderItems itme = mData.get(position);
+
+            if (chkbox.isChecked()) {
+                chkbox.setChecked(false);
+                itme.setSelected(false);
+            } else {
+                chkbox.setChecked(true);
+                itme.setSelected(true);
+            }
+            mData.set(position, itme);
         });
         return convertView;
     }
