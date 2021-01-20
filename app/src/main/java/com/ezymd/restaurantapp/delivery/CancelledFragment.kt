@@ -38,7 +38,7 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val baseRequest = BaseRequest(userInfo)
         baseRequest.paramsMap["order_status"] = "cancelled"
         baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
-        searchViewModel.orderList(baseRequest)
+        searchViewModel.cancelOrder(baseRequest)
     }
 
     override fun onCreateView(
@@ -68,7 +68,7 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "cancelled"
             baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
-            searchViewModel.orderList(baseRequest)
+            searchViewModel.cancelOrder(baseRequest)
             setObservers()
 
         }
@@ -84,7 +84,7 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "cancelled"
             baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
-            searchViewModel.orderList(baseRequest)
+            searchViewModel.cancelOrder(baseRequest)
         }
     }
 

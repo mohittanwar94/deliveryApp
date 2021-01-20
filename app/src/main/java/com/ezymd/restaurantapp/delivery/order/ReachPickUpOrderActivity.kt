@@ -133,7 +133,9 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             if (it != null) {
                 grayPolyline?.remove()
                 blackPolyline?.remove()
-                pointsList.clear()
+                originMarker?.remove()
+                destinationMarker?.remove()
+                pointsList . clear ()
                 generateRouteOnMap(it)
                 if (pointsList.size > 0)
                     showPath(pointsList)
@@ -265,9 +267,9 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
+        val zoom: Float = mMap!!.cameraPosition.zoom
         val cameraPosition = CameraPosition.Builder().target(latLng).zoom(
-            if (mMap!!.cameraPosition.zoom < 25f)
-                25f else mMap!!.cameraPosition.zoom
+            zoom
         ).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }

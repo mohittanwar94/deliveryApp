@@ -53,6 +53,27 @@ class OrderViewModel : ViewModel() {
     fun orderList(baseRequest: BaseRequest) {
         isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
+            val result = loginRepository!!.listOrders(
+                baseRequest,
+                Dispatchers.IO
+            )
+            isLoading.postValue(false)
+            when (result) {
+                is ResultWrapper.NetworkError -> showNetworkError()
+                is ResultWrapper.GenericError -> showGenericError(result.error)
+                is ResultWrapper.Success -> {
+                    baseResponse.postValue(result.value)
+
+                }
+            }
+        }
+
+    }
+
+
+    fun cancelOrder(baseRequest: BaseRequest) {
+        isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
             val result = loginRepository!!.cancelOrders(
                 baseRequest,
                 Dispatchers.IO

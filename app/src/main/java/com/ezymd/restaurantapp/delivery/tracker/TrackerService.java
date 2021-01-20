@@ -138,7 +138,7 @@ public class TrackerService extends LifecycleService {
         UserInfo userInfo = UserInfo.getInstance(this);
         BaseRequest baseRequest = new BaseRequest(userInfo);
         baseRequest.paramsMap.put("lat", "" + location.getLatitude());
-        baseRequest.paramsMap.put("lang", "" + location.getLatitude());
+        baseRequest.paramsMap.put("lang", "" + location.getLongitude());
         baseRequest.paramsMap.put("user_id", "" + userInfo.getUserID());
         viewModel.downloadLatestCoordinates(baseRequest);
         // baseRequest.paramsMap.put("order_id",""+location.get());
