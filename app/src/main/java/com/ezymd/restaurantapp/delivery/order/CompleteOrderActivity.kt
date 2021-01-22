@@ -12,6 +12,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.VectorDrawable
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
@@ -363,20 +365,40 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     val location = locationResult.lastLocation
                     location?.let {
                         val latlang = LatLng(location.latitude, location.longitude)
+
+                        // save on server
                         val baseRequest = BaseRequest(userInfo)
                         baseRequest.paramsMap["id"] = "" + orderModel.orderId
                         baseRequest.paramsMap["lat"] = "" + location.latitude
                         baseRequest.paramsMap["lang"] = "" + location.longitude
-
                         trackViewModel.downloadLatestCoordinates(baseRequest)
+
                         getUpdateRoot(latlang)
-                        updateCarLocation(latlang)
+
+                        if (previousLatLng == null) {
+                            updateCarLocation(latlang)
+                        } else {
+                            if (distanceBetween(previousLatLng!!, latlang) > 10f) {
+                                updateCarLocation(latlang)
+
+                            }
+                        }
 
                     }
 
                 }
             }, null)
         }
+    }
+
+    private fun distanceBetween(latLng1: LatLng, latLng2: LatLng): Float {
+        val loc1 = Location(LocationManager.GPS_PROVIDER)
+        val loc2 = Location(LocationManager.GPS_PROVIDER)
+        loc1.latitude = latLng1.latitude
+        loc1.longitude = latLng1.longitude
+        loc2.latitude = latLng2.latitude
+        loc2.longitude = latLng2.longitude
+        return loc1.distanceTo(loc2)
     }
 
     private fun setMarker(dataSnapshot: DataSnapshot) {
@@ -535,7 +557,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat()
+                    movingCabMarker?.rotation = heading.toFloat() - 90f
 
                     animateCamera(nextLocation)
                 }
