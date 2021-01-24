@@ -78,14 +78,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void generateNotification(Context context, RemoteMessage remoteData) throws JSONException {
         Map<String, String> data = remoteData.getData();
         String value = data.get("order");
-        if (EzymdApplication.isAppForeground(this)) {
+       /* if (EzymdApplication.isAppForeground(this)) {
             OrderModel orderModel = new Gson().fromJson(value, OrderModel.class);
             SnapLog.print(value);
             Intent mIntent = new Intent(this, IncomingOrderActivity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             mIntent.putExtra(JSONKeys.OBJECT, orderModel);
             startActivity(mIntent);
-        } else {
+        } else {*/
             OrderModel orderModel = new Gson().fromJson(value, OrderModel.class);
             String subTitle = data.get(JSONKeys.SUB_TITLE);
             String title = data.get(JSONKeys.TITLE);
@@ -127,7 +127,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.notify((int) System.currentTimeMillis(), notification.build());
         }
 
-    }
+   // }
 
 
 }
