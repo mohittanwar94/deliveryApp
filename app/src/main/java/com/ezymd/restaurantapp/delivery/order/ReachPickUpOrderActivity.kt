@@ -352,6 +352,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                         if (previousLatLng == null) {
                             updateCarLocation(latlang)
                         } else {
+                            SnapLog.print("distanceBetween(previousLatLng!!, latlang)"+distanceBetween(previousLatLng!!, latlang))
                             if (distanceBetween(previousLatLng!!, latlang) > 10f) {
                                 updateCarLocation(latlang)
 
