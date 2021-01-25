@@ -18,6 +18,8 @@ class OrderViewModel : ViewModel() {
 
     var errorRequest: SingleLiveEvent<String>
     val baseResponse: MutableLiveData<OrderBaseModel>
+    val cancelResponse: MutableLiveData<OrderBaseModel>
+    val processingResponse: MutableLiveData<OrderBaseModel>
     val assignResponse: MutableLiveData<OrderAcceptResponse>
     private var loginRepository: OrderListRepository? = null
     val isLoading: MutableLiveData<Boolean>
@@ -35,6 +37,8 @@ class OrderViewModel : ViewModel() {
         baseResponse = MutableLiveData()
         errorRequest = SingleLiveEvent()
         assignResponse = MutableLiveData()
+        cancelResponse= MutableLiveData()
+        processingResponse= MutableLiveData()
 
 
     }
@@ -70,6 +74,26 @@ class OrderViewModel : ViewModel() {
 
     }
 
+    fun processingOrderList(baseRequest: BaseRequest) {
+        isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = loginRepository!!.listOrders(
+                baseRequest,
+                Dispatchers.IO
+            )
+            isLoading.postValue(false)
+            when (result) {
+                is ResultWrapper.NetworkError -> showNetworkError()
+                is ResultWrapper.GenericError -> showGenericError(result.error)
+                is ResultWrapper.Success -> {
+                    processingResponse.postValue(result.value)
+
+                }
+            }
+        }
+
+    }
+
 
     fun cancelOrder(baseRequest: BaseRequest) {
         isLoading.postValue(true)
@@ -83,7 +107,7 @@ class OrderViewModel : ViewModel() {
                 is ResultWrapper.NetworkError -> showNetworkError()
                 is ResultWrapper.GenericError -> showGenericError(result.error)
                 is ResultWrapper.Success -> {
-                    baseResponse.postValue(result.value)
+                    cancelResponse.postValue(result.value)
 
                 }
             }

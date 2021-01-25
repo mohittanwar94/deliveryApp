@@ -144,11 +144,12 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 dataResturant.clear()
                 restaurantAdapter?.clearData()
                 val baseRequest = BaseRequest(userInfo)
-                baseRequest.paramsMap["order_status"] = "complete_for_restaurant"
-                searchViewModel.orderList(baseRequest)
+                baseRequest.paramsMap["order_status"] = "cancelled"
+                baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
+                searchViewModel.cancelOrder(baseRequest)
             }
         })
-        searchViewModel.baseResponse.observe(requireActivity(), androidx.lifecycle.Observer {
+        searchViewModel.cancelResponse.observe(requireActivity(), androidx.lifecycle.Observer {
             if (it.status == ErrorCodes.SUCCESS && it.data != null) {
                 dataResturant.clear()
                 restaurantAdapter?.clearData()

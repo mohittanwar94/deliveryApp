@@ -63,7 +63,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             setAdapterRestaurant()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
-            searchViewModel.orderList(baseRequest)
+            searchViewModel.processingOrderList(baseRequest)
             setObservers()
         }
 
@@ -77,13 +77,13 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             restaurantAdapter?.clearData()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
-            searchViewModel.orderList(baseRequest)
+            searchViewModel.processingOrderList(baseRequest)
         } else if (requestCode == JSONKeys.LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
             dataResturant.clear()
             restaurantAdapter?.clearData()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
-            searchViewModel.orderList(baseRequest)
+            searchViewModel.processingOrderList(baseRequest)
         }
     }
 
@@ -93,7 +93,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         restaurantAdapter?.clearData()
         val baseRequest = BaseRequest(userInfo)
         baseRequest.paramsMap["order_status"] = "processing_for_delivery"
-        searchViewModel.orderList(baseRequest)
+        searchViewModel.processingOrderList(baseRequest)
 
     }
 
@@ -186,7 +186,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             restaurantAdapter?.clearData()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
-            searchViewModel.orderList(baseRequest)
+            searchViewModel.processingOrderList(baseRequest)
         })
         searchViewModel.assignResponse.observe(requireActivity(), Observer {
             if (it != null && it.status == ErrorCodes.SUCCESS) {
@@ -195,13 +195,13 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 restaurantAdapter?.clearData()
                 val baseRequest = BaseRequest(userInfo)
                 baseRequest.paramsMap["order_status"] = "processing_for_delivery"
-                searchViewModel.orderList(baseRequest)
+                searchViewModel.processingOrderList(baseRequest)
             } else {
                 (activity as BaseActivity).showError(false, it.message, null)
             }
 
         })
-        searchViewModel.baseResponse.observe(requireActivity(), androidx.lifecycle.Observer {
+        searchViewModel.processingResponse.observe(requireActivity(), androidx.lifecycle.Observer {
             if (it.status == ErrorCodes.SUCCESS && it.data != null) {
                 dataResturant.clear()
                 restaurantAdapter?.clearData()
