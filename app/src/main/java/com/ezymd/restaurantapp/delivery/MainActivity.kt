@@ -180,6 +180,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
         setToolbar()
         setAdapter()
         showStudentParentNames()
+        mPager.currentItem=1
     }
 
     private fun setAdapter() {
