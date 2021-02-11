@@ -85,7 +85,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/hide_details"
-                android:textColor="@color/color_ffb912"
+                android:textColor="@color/color_ffe600"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="normal"
                 app:textFont="bold" />
