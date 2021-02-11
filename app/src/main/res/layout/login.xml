@@ -59,6 +59,7 @@
                 android:inputType="text"
                 android:letterSpacing="0.08"
                 android:paddingStart="@dimen/_9sdp"
+                android:textCursorDrawable="@color/color_002366"
                 android:paddingEnd="@dimen/_9sdp"
                 android:text=""
                 android:textColor="@color/blue_002366"
@@ -78,6 +79,7 @@
                 android:letterSpacing="0.08"
                 android:paddingStart="@dimen/_9sdp"
                 android:paddingEnd="@dimen/_9sdp"
+                android:textCursorDrawable="@color/color_002366"
                 android:text=""
                 android:textColor="@color/blue_002366"
                 android:textColorHint="@color/gray_B2BDD1"
@@ -108,13 +110,13 @@
                 <com.ezymd.restaurantapp.delivery.customviews.SnapButton
                     android:id="@+id/next"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_48sdp"
+                    android:layout_height="@dimen/_40sdp"
                     android:layout_gravity="center"
                     android:background="@drawable/ic_gray_btn_pressed"
                     android:gravity="center"
                     android:text="@string/login"
                     android:textAllCaps="false"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/color_002366"
                     android:textSize="@dimen/_17sdp"
                     app:buttonFont="bold" />
 

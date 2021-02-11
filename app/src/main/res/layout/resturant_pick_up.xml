@@ -30,7 +30,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/_15sdp"
             android:contentDescription="@string/navigate"
-            app:backgroundTint="@color/color_ffb912"
+            app:backgroundTint="@color/color_ffe600"
             app:useCompatPadding="false"
             app:pressedTranslationZ="@dimen/_4sdp"
             android:src="@drawable/ic_navigate"

@@ -79,7 +79,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/hide_details"
-                android:textColor="@color/color_ffb912"
+                android:textColor="@color/color_ffe600"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="normal"
                 app:textFont="bold" />
@@ -115,14 +115,14 @@
                 app:complete_icon="@drawable/ic_check"
                 app:icon_margin="@dimen/_5sdp"
                 app:inner_color="@color/white"
-                app:outer_color="@color/color_ffb912"
+                app:outer_color="@color/color_ffe600"
                 app:slider_height="@dimen/_35sdp"
                 app:slider_icon="@drawable/ic_right_arrow"
                 app:slider_icon_color="@color/color_002366"
                 app:slider_locked="false"
                 app:rotate_icon="false"
                 app:text="@string/slide_to_accept"
-                app:text_color="@color/white"
+                app:text_color="@color/color_002366"
                 app:text_size="@dimen/_15sdp" />
 
         </LinearLayout>

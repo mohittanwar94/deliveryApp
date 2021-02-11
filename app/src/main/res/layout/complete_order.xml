@@ -31,7 +31,7 @@
             android:layout_margin="@dimen/_15sdp"
             android:contentDescription="@string/navigate"
             android:src="@drawable/ic_navigate"
-            app:backgroundTint="@color/color_ffb912"
+            app:backgroundTint="@color/color_ffe600"
             app:fabSize="normal"
             app:pressedTranslationZ="@dimen/_4sdp"
             app:rippleColor="@color/white"

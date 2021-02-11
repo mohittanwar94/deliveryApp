@@ -31,7 +31,7 @@
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:layout_gravity="top"
-                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
                     app:srcCompat="@drawable/ic_dining_without_bg" />
 
                 <LinearLayout
@@ -85,7 +85,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/hide_details"
-                android:textColor="@color/color_ffb912"
+                android:textColor="@color/color_ffe600"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="normal"
                 app:textFont="bold" />
@@ -98,11 +98,11 @@
                 android:layout_marginStart="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center_horizontal"
-                android:visibility="gone"
                 android:text="@string/cash_on_delivery"
                 android:textColor="@color/color_002366"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 app:textFont="bold" />
 
 
@@ -112,10 +112,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_15sdp"
-                android:gravity="left"
-                android:text=""
-                android:padding="@dimen/_5sdp"
                 android:background="@drawable/items_bg"
+                android:gravity="left"
+                android:padding="@dimen/_5sdp"
+                android:text=""
                 android:textColor="@color/color_667ba3"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="normal"
@@ -195,14 +195,14 @@
                 app:complete_icon="@drawable/ic_check"
                 app:icon_margin="@dimen/_5sdp"
                 app:inner_color="@color/white"
-                app:outer_color="@color/color_ffb912"
+                app:outer_color="@color/color_ffe600"
+                app:rotate_icon="false"
                 app:slider_height="@dimen/_35sdp"
                 app:slider_icon="@drawable/ic_right_arrow"
                 app:slider_icon_color="@color/color_002366"
                 app:slider_locked="false"
                 app:text="@string/slide_to_accept"
-                app:rotate_icon="false"
-                app:text_color="@color/white"
+                app:text_color="@color/blue_002366"
                 app:text_size="@dimen/_15sdp" />
 
         </LinearLayout>
