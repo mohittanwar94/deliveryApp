@@ -126,7 +126,7 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
         val spannable = SpannableString(getString(R.string.show_order_details))
         spannable.setSpan(UnderlineSpan(), 0, spannable.length, 0)
         spannable.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_ffb912)),
+            ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_ffe600)),
             0,
             spannable.length,
             0
@@ -148,7 +148,7 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
                     ForegroundColorSpan(
                         ContextCompat.getColor(
                             this,
-                            R.color.color_ffb912
+                            R.color.color_ffe600
                         )
                     ), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
@@ -166,7 +166,7 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
                     ForegroundColorSpan(
                         ContextCompat.getColor(
                             this,
-                            R.color.color_ffb912
+                            R.color.color_ffe600
                         )
                     ), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )

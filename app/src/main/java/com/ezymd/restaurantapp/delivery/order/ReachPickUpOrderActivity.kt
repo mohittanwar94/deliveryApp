@@ -468,7 +468,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat() - 90f
+                    movingCabMarker?.rotation = heading.toFloat()
 
                     animateCamera(nextLocation)
                 }

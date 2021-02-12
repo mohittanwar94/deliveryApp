@@ -7,6 +7,6 @@
         android:name="check"
         android:fillColor="#00000000"
         android:pathData="m7.21,25.35l10.3,10.37l23.29,-23.43"
-        android:strokeColor="#FFFFFF"
+        android:strokeColor="#1e222a"
         android:strokeWidth="3.5"/>
 </vector>

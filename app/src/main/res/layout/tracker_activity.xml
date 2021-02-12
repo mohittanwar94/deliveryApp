@@ -33,7 +33,7 @@
             app:progressBackgroundColor="#eee"
             app:progressColor="@color/color_002366"
             app:progressText=""
-            app:progressTextColor="@color/white"
+            app:progressTextColor="@color/color_002366"
             app:startingPoint="bottom"
             app:suffix=""
             app:textSize="@dimen/_30sdp" />
