@@ -76,10 +76,10 @@
                         android:fillViewport="true"
                         android:paddingLeft="@dimen/_10sdp"
                         android:paddingRight="@dimen/_10sdp"
-                        app:tabIndicatorColor="@color/blue"
+                        app:tabIndicatorColor="@color/color_002366"
                         app:tabIndicatorHeight="@dimen/_3sdp"
                         app:tabMode="scrollable"
-                        app:tabSelectedTextColor="@color/blue" />
+                        app:tabSelectedTextColor="@color/color_002366" />
 
 
                     <View
