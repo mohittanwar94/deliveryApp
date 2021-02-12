@@ -190,7 +190,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
         tabLayout!!.setSelectedTabIndicatorColor(
             ContextCompat.getColor(
                 this,
-                R.color.teacherheader
+                R.color.color_002366
             )
         )
 

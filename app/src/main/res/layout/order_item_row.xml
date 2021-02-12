@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -59,7 +60,7 @@
         android:maxLines="1"
         android:paddingBottom="@dimen/_5sdp"
         android:text="@string/pizza"
-        android:textColor="@color/color_667ba3"
+        android:textColor="@color/color_787a7f"
         android:textSize="@dimen/_12sdp"
         app:textFont="roman" />
 
@@ -82,7 +83,7 @@
         android:gravity="start"
         android:letterSpacing="0.01"
         android:text="@string/completed"
-        android:textColor="@color/color_667ba3"
+        android:textColor="@color/color_787a7f"
         android:textSize="@dimen/_12sdp"
         app:textFont="roman" />
 
@@ -99,30 +100,24 @@
         android:lineSpacingExtra="@dimen/_4sdp"
         android:maxLines="1"
         android:text="@string/resurant_name"
-        android:textColor="@color/color_b2bdd1"
+        android:textColor="@color/color_bbbcbf"
         android:textSize="@dimen/_11sdp"
         app:textFont="roman" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <com.ezymd.restaurantapp.delivery.customviews.SnapButton
+        android:id="@+id/trackOrder"
+        android:layout_width="@dimen/_110sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_gravity="start"
+        android:background="@drawable/ic_gray_btn_pressed"
+        android:gravity="center"
+        android:letterSpacing="0.01"
+        android:text="@string/track_order"
+        android:textAllCaps="true"
+        android:textColor="@color/color_002366"
+        android:textSize="@dimen/_12sdp"
+        app:textFont="bold" />
 
-        <com.ezymd.restaurantapp.delivery.customviews.SnapTextView
-            android:id="@+id/trackOrder"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_gravity="start"
-            android:background="@drawable/ic_gray_btn_pressed"
-            android:gravity="center"
-            android:letterSpacing="0.01"
-            android:text="@string/track_order"
-            android:textAllCaps="true"
-            android:textColor="@color/color_002366"
-            android:textSize="@dimen/_11sdp"
-            app:textFont="roman" />
-
-      </LinearLayout>
 
 </LinearLayout>
