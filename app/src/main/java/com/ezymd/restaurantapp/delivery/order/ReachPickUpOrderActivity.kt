@@ -244,11 +244,11 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 */
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMinZoomPreference(17f)
-        mMap!!.setMinZoomPreference(20f)
+        mMap!!.setMinZoomPreference(15f)
+        mMap!!.setMinZoomPreference(25f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
-        mMap!!.isBuildingsEnabled = true
+        mMap!!.isBuildingsEnabled = false
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         requestLocationUpdates()
         setObserver()
@@ -275,8 +275,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     fun generateRouteOnMap(result: List<List<HashMap<String, String>>>) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.IO) {
+       /* lifecycleScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {*/
                 SnapLog.print("generate route======")
                 for (element in result) {
                     val path: List<HashMap<String, String>> = element
@@ -289,8 +289,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     }
 
 
-                }
-            }
+              //  }
+           // }
         }
     }
 
@@ -404,12 +404,13 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
      * This function is used to draw the path between the Origin and Destination.
      */
     private fun showPath(latLngList: ArrayList<LatLng>) {
+       // mMap!!.clear()
         val builder = LatLngBounds.Builder()
         for (latLng in latLngList) {
             builder.include(latLng)
         }
         val bounds = builder.build()
-        mMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 2))
+      //  mMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 2))
 
         val polylineOptions = PolylineOptions()
         polylineOptions.color(Color.GRAY)
