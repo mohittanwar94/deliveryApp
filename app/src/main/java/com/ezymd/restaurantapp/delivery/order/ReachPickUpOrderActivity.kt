@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.R
@@ -38,12 +39,14 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.maps.android.PolyUtil
 import com.google.maps.android.SphericalUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.resturant_pick_up.*
 import kotlinx.android.synthetic.main.user_live_tracking.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -138,10 +141,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
         trackViewModel.routeInfoResponse.observe(this, Observer {
             if (it != null) {
-                grayPolyline?.remove()
-                blackPolyline?.remove()
-                originMarker?.remove()
-                destinationMarker?.remove()
+
                 pointsList.clear()
                 generateRouteOnMap(it)
                 if (pointsList.size > 0)
@@ -207,22 +207,20 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getUpdateRoot(latlang: LatLng) {
-        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 50.0)) {
-            var lat = latlang.latitude
-            var lng = latlang.longitude
-            val source = LatLng(lat, lng)
-            lat = orderModel.restaurant_lat.toDouble()
-            lng = orderModel.restaurant_lang.toDouble()
-            val destination = LatLng(lat, lng)
+        var lat = latlang.latitude
+        var lng = latlang.longitude
+        val source = LatLng(lat, lng)
+        lat = orderModel.restaurant_lat.toDouble()
+        lng = orderModel.restaurant_lang.toDouble()
+        val destination = LatLng(lat, lng)
 
-            val hashMap = trackViewModel.getDirectionsUrl(
-                source,
-                latlang,
-                destination,
-                getString(R.string.google_maps_key)
-            )
-            trackViewModel.downloadRoute(hashMap)
-        }
+        val hashMap = trackViewModel.getDirectionsUrl(
+            source,
+            latlang,
+            destination,
+            getString(R.string.google_maps_key)
+        )
+        trackViewModel.downloadRoute(hashMap)
     }
 
     /*private fun getUpdateRoot(defaultLocation: LatLng) {
@@ -246,7 +244,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 */
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMaxZoomPreference(25f)
+        mMap!!.setMinZoomPreference(17f)
+        mMap!!.setMinZoomPreference(20f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
         mMap!!.isBuildingsEnabled = true
@@ -276,18 +275,23 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     fun generateRouteOnMap(result: List<List<HashMap<String, String>>>) {
-        SnapLog.print("generate route======")
-        for (element in result) {
-            val path: List<HashMap<String, String>> = element
-            for (j in path.indices) {
-                val point: HashMap<String, String> = path[j]
-                val lat: Double = point.get("lat")!!.toDouble()
-                val lng: Double = point.get("lng")!!.toDouble()
-                val position = LatLng(lat, lng)
-                pointsList.add(position)
+        lifecycleScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
+                SnapLog.print("generate route======")
+                for (element in result) {
+                    val path: List<HashMap<String, String>> = element
+                    for (j in path.indices) {
+                        val point: HashMap<String, String> = path[j]
+                        val lat: Double = point.get("lat")!!.toDouble()
+                        val lng: Double = point.get("lng")!!.toDouble()
+                        val position = LatLng(lat, lng)
+                        pointsList.add(position)
+                    }
+
+
+                }
             }
         }
-
     }
 
 
@@ -296,9 +300,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
-        var zoom: Float = mMap!!.cameraPosition.zoom
-        if (zoom < 17f)
-            zoom = 17f
+        val zoom: Float = mMap!!.cameraPosition.zoom
         val cameraPosition = CameraPosition.Builder().target(latLng).zoom(
             zoom
         ).build()
@@ -309,7 +311,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_driver_location)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
             } else {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
@@ -341,15 +343,15 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                 override fun onLocationResult(locationResult: LocationResult) {
                     val location = locationResult.lastLocation
                     location?.let {
-                        val latlang = LatLng(location.latitude, location.longitude)
+                        val latlang = LatLng(it.latitude, it.longitude)
                         val baseRequest = BaseRequest(userInfo)
                         baseRequest.paramsMap["id"] = "" + orderModel.orderId
-                        baseRequest.paramsMap["lat"] = "" + location.latitude
-                        baseRequest.paramsMap["lang"] = "" + location.longitude
+                        baseRequest.paramsMap["lat"] = "" + it.latitude
+                        baseRequest.paramsMap["lang"] = "" + it.longitude
                         trackViewModel.downloadLatestCoordinates(baseRequest)
                         defaultLocation = latlang
                         getUpdateRoot(defaultLocation)
-                        if (previousLatLng == null) {
+                        /*if (previousLatLng == null) {
                             updateCarLocation(latlang)
                         } else {
                             SnapLog.print("distanceBetween(previousLatLng!!, latlang)"+distanceBetween(previousLatLng!!, latlang))
@@ -357,7 +359,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                                 updateCarLocation(latlang)
 
                             }
-                        }
+                        }*/
 
                     }
 
@@ -414,17 +416,23 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         polylineOptions.width(0f)
         polylineOptions.addAll(latLngList)
         polylineOptions.pattern(PATTERN_POLYGON_ALPHA)
+        //grayPolyline?.remove()
         grayPolyline = mMap!!.addPolyline(polylineOptions)
 
         val blackPolylineOptions = PolylineOptions()
         blackPolylineOptions.color(ContextCompat.getColor(this, R.color.color_002366))
         blackPolylineOptions.width(8f)
         blackPolylineOptions.pattern(PATTERN_POLYGON_ALPHA)
+        //blackPolyline?.remove()
         blackPolyline = mMap!!.addPolyline(blackPolylineOptions)
+
+        originMarker?.remove()
 
         originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
         //originMarker?.setAnchor(0.5f, 0.5f)
         originMarker?.isDraggable = false
+
+        // destinationMarker?.remove()
         destinationMarker = addOriginDestinationMarkerAndGet(false, latLngList[latLngList.size - 1])
         //destinationMarker?.setAnchor(0.5f, 0.5f)
         destinationMarker?.isDraggable = false
