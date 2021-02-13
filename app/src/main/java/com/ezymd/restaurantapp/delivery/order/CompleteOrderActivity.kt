@@ -557,7 +557,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat()
+                    movingCabMarker?.rotation = heading.toFloat()-90
 
                     animateCamera(nextLocation)
                 }
