@@ -257,7 +257,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                 grayPolyline?.remove()
                 blackPolyline?.remove()
                 pointsList.clear()
-                generateRouteOnMap(it)
+                pointsList.addAll(it)
                 if (pointsList.size > 0)
                     showPath(pointsList)
 
@@ -315,7 +315,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getUpdateRoot(latlang: LatLng) {
-        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 20.0)) {
+        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 50.0)) {
             var lat = orderModel.restaurant_lat.toDouble()
             var lng = orderModel.restaurant_lang.toDouble()
             val source = LatLng(lat, lng)

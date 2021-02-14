@@ -165,7 +165,7 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
                 grayPolyline?.remove()
                 blackPolyline?.remove()
                 pointsList.clear()
-                generateRouteOnMap(it)
+                pointsList.addAll(it)
                 if (pointsList.size > 0)
                     showPath(pointsList)
 

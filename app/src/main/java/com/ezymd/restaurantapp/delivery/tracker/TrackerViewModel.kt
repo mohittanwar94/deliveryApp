@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
 class TrackerViewModel : ViewModel() {
     var errorRequest: MutableLiveData<String>
     private var loginRepository: TrackerRepository? = null
-    val routeInfoResponse: MutableLiveData<ArrayList<List<HashMap<String, String>>>>
+    val routeInfoResponse: MutableLiveData<ArrayList<LatLng>>
     val firebaseResponse: MutableLiveData<DataSnapshot>
     val locationUpdate = MutableLiveData<BaseResponse>()
     val acceptRequest = MutableLiveData<OrderAcceptResponse>()
@@ -165,7 +165,8 @@ class TrackerViewModel : ViewModel() {
 
     }
 
-    private fun parseResponse(value: String): ArrayList<List<HashMap<String, String>>> {
+    private fun parseResponse(value: String): ArrayList<LatLng> {
+        val pointsList = ArrayList<LatLng>()
         val routes = ArrayList<List<HashMap<String, String>>>()
         try {
             val jsonObject = JSONObject(value)
@@ -174,7 +175,20 @@ class TrackerViewModel : ViewModel() {
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
-        return routes
+
+        SnapLog.print("generate route======")
+        for (element in routes) {
+            val path: List<HashMap<String, String>> = element
+            for (j in path.indices) {
+                val point: HashMap<String, String> = path[j]
+                val lat: Double = point.get("lat")!!.toDouble()
+                val lng: Double = point.get("lng")!!.toDouble()
+                val position = LatLng(lat, lng)
+                pointsList.add(position)
+            }
+
+        }
+        return pointsList
 
 
     }
