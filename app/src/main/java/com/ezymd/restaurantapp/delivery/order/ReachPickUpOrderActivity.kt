@@ -244,11 +244,11 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 */
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMinZoomPreference(15f)
-        mMap!!.setMinZoomPreference(25f)
+        mMap!!.setMinZoomPreference(10f)
+        mMap!!.setMaxZoomPreference(25f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
-        mMap!!.isBuildingsEnabled = false
+        mMap!!.isBuildingsEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         requestLocationUpdates()
         setObserver()
@@ -430,10 +430,10 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         originMarker?.remove()
 
         originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
-        //originMarker?.setAnchor(0.5f, 0.5f)
+        originMarker?.setAnchor(0.5f, 0.5f)
         originMarker?.isDraggable = false
 
-        // destinationMarker?.remove()
+        destinationMarker?.remove()
         destinationMarker = addOriginDestinationMarkerAndGet(false, latLngList[latLngList.size - 1])
         //destinationMarker?.setAnchor(0.5f, 0.5f)
         destinationMarker?.isDraggable = false
