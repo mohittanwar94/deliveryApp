@@ -38,6 +38,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.PolyUtil
 import com.google.maps.android.SphericalUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.header_new.*
@@ -206,20 +207,19 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun getUpdateRoot(latlang: LatLng) {
-        var lat = latlang.latitude
-        var lng = latlang.longitude
-        val source = LatLng(lat, lng)
-        lat = orderModel.restaurant_lat.toDouble()
-        lng = orderModel.restaurant_lang.toDouble()
-        val destination = LatLng(lat, lng)
+        if (!PolyUtil.isLocationOnPath(latlang, pointsList, true, 50.0)) {
+            val lat = orderModel.restaurant_lat.toDouble()
+            val lng = orderModel.restaurant_lang.toDouble()
+            val destination = LatLng(lat, lng)
 
-        val hashMap = trackViewModel.getDirectionsUrl(
-            sourceLocation!!,
-            latlang,
-            destination,
-            getString(R.string.google_maps_key)
-        )
-        trackViewModel.downloadRoute(hashMap)
+            val hashMap = trackViewModel.getDirectionsUrl(
+                sourceLocation!!,
+                latlang,
+                destination,
+                getString(R.string.google_maps_key)
+            )
+            trackViewModel.downloadRoute(hashMap)
+        }
     }
 
     /*private fun getUpdateRoot(defaultLocation: LatLng) {
