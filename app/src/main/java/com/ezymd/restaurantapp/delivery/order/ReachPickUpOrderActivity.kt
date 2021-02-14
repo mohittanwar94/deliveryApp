@@ -58,6 +58,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     private var currentLatLng: LatLng? = null
 
     private lateinit var defaultLocation: LatLng
+    private var sourceLocation: LatLng? = null
     private var originMarker: Marker? = null
     private var destinationMarker: Marker? = null
     private var grayPolyline: Polyline? = null
@@ -144,20 +145,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     showPath(pointsList)
                 showDefaultLocationOnMap(defaultLocation)
 
-                if (previousLatLng == null) {
-                    updateCarLocation(defaultLocation)
-                } else {
-                    SnapLog.print(
-                        "distanceBetween(previousLatLng!!, latlang)" + distanceBetween(
-                            previousLatLng!!,
-                            defaultLocation
-                        )
-                    )
-                    if (distanceBetween(previousLatLng!!, defaultLocation) > 10f) {
-                        updateCarLocation(defaultLocation)
 
-                    }
-                }
                 //showMovingCab(pointsList)
             }
         })
@@ -226,7 +214,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         val destination = LatLng(lat, lng)
 
         val hashMap = trackViewModel.getDirectionsUrl(
-            source,
+            sourceLocation!!,
             latlang,
             destination,
             getString(R.string.google_maps_key)
@@ -255,8 +243,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 */
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMinZoomPreference(17f)
-        mMap!!.setMaxZoomPreference(25f)
+        mMap!!.setMinZoomPreference(15f)
+        mMap!!.setMaxZoomPreference(20f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
         mMap!!.isBuildingsEnabled = true
@@ -325,7 +313,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_source)
             } else {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }
@@ -363,9 +351,23 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                         baseRequest.paramsMap["lat"] = "" + it.latitude
                         baseRequest.paramsMap["lang"] = "" + it.longitude
                         defaultLocation = latlang
+                        if (sourceLocation == null)
+                            sourceLocation = latlang
                         trackViewModel.downloadLatestCoordinates(baseRequest)
+                        if (previousLatLng == null) {
+                            updateCarLocation(latlang)
+                        } else {
+                            SnapLog.print(
+                                "distanceBetween(previousLatLng!!, latlang)" + distanceBetween(
+                                    previousLatLng!!,
+                                    latlang
+                                )
+                            )
+                            if (distanceBetween(previousLatLng!!, latlang) > 10f) {
+                                updateCarLocation(latlang)
 
-
+                            }
+                        }
 
                     }
 
@@ -433,11 +435,11 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         blackPolyline?.remove()
         blackPolyline = mMap!!.addPolyline(blackPolylineOptions)
 
-        // originMarker?.remove()
+        originMarker?.remove()
 
-        // originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
-        // originMarker?.setAnchor(0.5f, 0.5f)
-        // originMarker?.isDraggable = false
+        originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
+        //originMarker?.setAnchor(0.5f, 0.5f)
+        originMarker?.isDraggable = false
 
         destinationMarker?.remove()
         destinationMarker = addOriginDestinationMarkerAndGet(false, latLngList[latLngList.size - 1])
@@ -469,6 +471,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             currentLatLng = latLng
             previousLatLng = currentLatLng
             movingCabMarker?.position = currentLatLng
+            movingCabMarker?.setAnchor(0.5f, 0.5f)
             animateCamera(currentLatLng!!)
         } else {
             previousLatLng = currentLatLng
