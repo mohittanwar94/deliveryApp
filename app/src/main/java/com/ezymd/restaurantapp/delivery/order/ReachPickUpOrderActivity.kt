@@ -243,6 +243,10 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 */
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json));
+
         mMap!!.setMinZoomPreference(15f)
         mMap!!.setMaxZoomPreference(20f)
         mMap!!.isTrafficEnabled = false
@@ -308,6 +312,16 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         ).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
+    private fun animateCamera(latLng: LatLng,bearing:Float) {
+        var zoom = mMap!!.cameraPosition.zoom
+        if (zoom < 16f)
+            zoom = 16f
+
+        val cameraPosition = CameraPosition.Builder().target(latLng).bearing(bearing).zoom(
+            zoom
+        ).build()
+        mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
 
 
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
@@ -319,7 +333,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             }
 
         return mMap!!.addMarker(
-            MarkerOptions().position(latLng).flat(true).draggable(false).icon(bitmapDescriptor)
+            MarkerOptions().position(latLng).flat(true).zIndex(1000F).draggable(false).icon(bitmapDescriptor)
         )
     }
 
@@ -467,11 +481,12 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
+        movingCabMarker?.zIndex=1000F
         if (previousLatLng == null) {
             currentLatLng = latLng
             previousLatLng = currentLatLng
             movingCabMarker?.position = currentLatLng
-            movingCabMarker?.setAnchor(0.5f, 0.5f)
+//            movingCabMarker?.setAnchor(0.5f, 0.5f)
             animateCamera(currentLatLng!!)
         } else {
             previousLatLng = currentLatLng
@@ -486,9 +501,10 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat() - 90
+                    val bearing=heading.toFloat() - 90
+                    movingCabMarker?.rotation = bearing
 
-                    animateCamera(nextLocation)
+                    animateCamera(nextLocation,bearing)
                 }
             }
             valueAnimator.start()

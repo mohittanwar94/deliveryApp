@@ -335,6 +335,10 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json));
+
         mMap!!.setMaxZoomPreference(25f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
@@ -471,6 +475,12 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
+    private fun animateCamera(latLng: LatLng,bearing:Float) {
+        val zoom: Float = mMap!!.cameraPosition.zoom
+        val cameraPosition = CameraPosition.Builder().target(latLng).bearing(bearing).zoom(zoom).build()
+        mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
     private fun addCarMarkerAndGet(latLng: LatLng): Marker {
         val bitmapDescriptor = MapUtils.getCarBitmap(this)
         return mMap!!.addMarker(
@@ -483,7 +493,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             if (isSource) {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             } else {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_user_location)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
             }
 
         return mMap!!.addMarker(
@@ -539,6 +549,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
+        movingCabMarker?.zIndex=1000F
         if (previousLatLng == null) {
             currentLatLng = latLng
             previousLatLng = currentLatLng
@@ -557,9 +568,10 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat()-90
+                    val bearing=heading.toFloat()-90
+                    movingCabMarker?.rotation = bearing
 
-                    animateCamera(nextLocation)
+                    animateCamera(nextLocation,bearing)
                 }
             }
             valueAnimator.start()

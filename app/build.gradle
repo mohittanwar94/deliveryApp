@@ -13,10 +13,9 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
     def keys = new Properties()
-    file("/keys.properties").withInputStream {
+    file("keys.properties").withInputStream {
         stream -> keys.load(stream)
     }
     signingConfigs {
