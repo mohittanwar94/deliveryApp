@@ -30,6 +30,7 @@ import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
+import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -337,7 +338,9 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap = map
         mMap?.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
-                this, R.raw.style_json));
+                this, R.raw.style_json
+            )
+        );
 
         mMap!!.setMaxZoomPreference(25f)
         mMap!!.isTrafficEnabled = false
@@ -349,6 +352,16 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         showDefaultLocationOnMap(defaultLocation)
         setObserver()
         requestLocationUpdates()
+        startTrackerService()
+    }
+
+    private fun startTrackerService() {
+        startService(
+            Intent(this, TrackerService::class.java).putExtra(
+                JSONKeys.ID,
+                orderModel.orderId
+            )
+        )
     }
 
     private fun requestLocationUpdates() {
@@ -371,11 +384,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                         val latlang = LatLng(location.latitude, location.longitude)
 
                         // save on server
-                        val baseRequest = BaseRequest(userInfo)
-                        baseRequest.paramsMap["id"] = "" + orderModel.orderId
-                        baseRequest.paramsMap["lat"] = "" + location.latitude
-                        baseRequest.paramsMap["lang"] = "" + location.longitude
-                        trackViewModel.downloadLatestCoordinates(baseRequest)
+
 
                         getUpdateRoot(latlang)
 
@@ -475,9 +484,10 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
-    private fun animateCamera(latLng: LatLng,bearing:Float) {
+    private fun animateCamera(latLng: LatLng, bearing: Float) {
         val zoom: Float = mMap!!.cameraPosition.zoom
-        val cameraPosition = CameraPosition.Builder().target(latLng).bearing(bearing).zoom(zoom).build()
+        val cameraPosition =
+            CameraPosition.Builder().target(latLng).bearing(bearing).zoom(zoom).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
@@ -493,7 +503,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             if (isSource) {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             } else {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
+                MapUtils.getSourceBitmap(this, R.drawable.ic_user_location)
             }
 
         return mMap!!.addMarker(
@@ -549,7 +559,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
-        movingCabMarker?.zIndex=1000F
+        movingCabMarker?.zIndex = 1000F
         if (previousLatLng == null) {
             currentLatLng = latLng
             previousLatLng = currentLatLng
@@ -568,15 +578,24 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    val bearing=heading.toFloat()-90
+                    val bearing = heading.toFloat() - 90
                     movingCabMarker?.rotation = bearing
 
-                    animateCamera(nextLocation,bearing)
+                    animateCamera(nextLocation, bearing)
                 }
             }
             valueAnimator.start()
         }
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(
+            Intent(
+                this, TrackerService::class.java
+            )
+        )
+    }
 
 }

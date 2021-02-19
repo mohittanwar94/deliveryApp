@@ -11,12 +11,14 @@ import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 
 import com.ezymd.restaurantapp.delivery.R;
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest;
+import com.ezymd.restaurantapp.delivery.utils.JSONKeys;
 import com.ezymd.restaurantapp.delivery.utils.UserInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -31,14 +33,21 @@ import com.google.firebase.auth.FirebaseAuth;
 public class TrackerService extends LifecycleService {
 
     private static final String TAG = TrackerService.class.getSimpleName();
-
+    private int order_id = -1;
     private TrackerViewModel viewModel;
+
+    @Override
+    public void onStart(@Nullable Intent intent, int startId) {
+        super.onStart(intent, startId);
+        order_id = intent.getIntExtra(JSONKeys.ID, -1);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
         super.onBind(intent);
         return null;
     }
+
 
     @Override
     public void onCreate() {
@@ -102,8 +111,8 @@ public class TrackerService extends LifecycleService {
 
     private void requestLocationUpdates() {
         LocationRequest request = new LocationRequest();
-        request.setInterval(120000);
-        request.setFastestInterval(60000);
+        request.setInterval(5000);
+        request.setFastestInterval(3000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
         // final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
@@ -140,6 +149,7 @@ public class TrackerService extends LifecycleService {
         baseRequest.paramsMap.put("lat", "" + location.getLatitude());
         baseRequest.paramsMap.put("lang", "" + location.getLongitude());
         baseRequest.paramsMap.put("user_id", "" + userInfo.getUserID());
+        baseRequest.paramsMap.put("id", "" + order_id);
         viewModel.downloadLatestCoordinates(baseRequest);
         // baseRequest.paramsMap.put("order_id",""+location.get());
     }
