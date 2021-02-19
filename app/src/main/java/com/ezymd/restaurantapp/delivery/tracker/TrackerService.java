@@ -59,17 +59,16 @@ public class TrackerService extends LifecycleService {
     }
 
     private void buildNotification() {
-        String stop = "stop";
-        registerReceiver(stopReceiver, new IntentFilter(stop));
         PendingIntent broadcastIntent = PendingIntent.getBroadcast(
-                this, 0, new Intent(stop), PendingIntent.FLAG_UPDATE_CURRENT);
+                this, 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
         // Create the persistent notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.NOTIFICATION_CHANNEL_ID))
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.tracking_location))
                 .setOngoing(true)
+                .setSilent(true)
                 .setContentIntent(broadcastIntent)
-                .setSmallIcon(R.drawable.ic_menu_icon);
+                .setSmallIcon(R.drawable.ic_location);
         startForeground(1, builder.build());
     }
 
@@ -85,11 +84,7 @@ public class TrackerService extends LifecycleService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            unregisterReceiver(stopReceiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     private void loginToFirebase() {

@@ -86,7 +86,7 @@ class MainActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverLi
     }
 
     private fun startTrackerService() {
-        startService(Intent(this, TrackerService::class.java))
+      //  startService(Intent(this, TrackerService::class.java))
     }
 
 
