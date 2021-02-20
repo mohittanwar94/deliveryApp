@@ -242,7 +242,7 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
+                MapUtils.getSourceBitmapPng(this, R.drawable.ic_delivery_man)
             } else {
                 MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
             }

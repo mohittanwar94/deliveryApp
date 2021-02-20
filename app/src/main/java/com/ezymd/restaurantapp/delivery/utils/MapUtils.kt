@@ -54,6 +54,26 @@ object MapUtils {
     }
 
 
+    fun getSourceBitmapPng(
+        context: Context,drawable:Int
+    ): BitmapDescriptor? {
+        /*val vectorDrawable =
+            ContextCompat.getDrawable(context, drawable) as VectorDrawable?
+
+        val h = vectorDrawable!!.intrinsicHeight
+        val w = vectorDrawable.intrinsicWidth
+
+        vectorDrawable.setBounds(0, 0, w, h)
+
+        val bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bm)
+        vectorDrawable.draw(canvas)
+*/
+        return BitmapDescriptorFactory.fromResource(R.drawable.ic_delivery_man)
+
+    }
+
+
     fun getDestinationBitmap(
         context: Context,
         icUserLocation: Int
