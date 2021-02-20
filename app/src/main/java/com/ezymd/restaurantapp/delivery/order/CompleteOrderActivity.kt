@@ -65,6 +65,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     private val mMarkers: HashMap<String, Marker> = HashMap()
     private var originMarker: Marker? = null
     private var destinationMarker: Marker? = null
+    private var isDrawFirst = false
 
     val pointsList = ArrayList<LatLng>()
 
@@ -259,8 +260,25 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                 blackPolyline?.remove()
                 pointsList.clear()
                 pointsList.addAll(it)
-                if (pointsList.size > 0)
-                    showPath(pointsList)
+                if (pointsList.size > 0) {
+                    if (!isDrawFirst) {
+                        showPath(pointsList)
+                    } else {
+                        val polylineOptions = PolylineOptions()
+                        polylineOptions.color(Color.GRAY)
+                        polylineOptions.width(12f)
+                        polylineOptions.addAll(pointsList)
+
+                        grayPolyline = mMap!!.addPolyline(polylineOptions)
+                        val polylineOptions1 = PolylineOptions()
+                        polylineOptions1.color(Color.BLACK)
+                        polylineOptions1.width(12f)
+                        polylineOptions1.addAll(pointsList)
+                        blackPolyline = mMap!!.addPolyline(polylineOptions1)
+
+
+                    }
+                }
 
 
             }
@@ -346,6 +364,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
         mMap!!.isBuildingsEnabled = true
+        mMap!!.uiSettings.isCompassEnabled = false
         defaultLocation =
             LatLng(orderModel.restaurant_lat.toDouble(), orderModel.restaurant_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
@@ -375,8 +394,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 15000
-        request.fastestInterval = 15000
+        request.interval = 5000
+        request.fastestInterval = 5000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val client = LocationServices.getFusedLocationProviderClient(this)
         val permission = ContextCompat.checkSelfPermission(
@@ -399,9 +418,15 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
                         if (previousLatLng == null) {
                             updateCarLocation(latlang)
+                            val heading = SphericalUtil.computeHeading(previousLatLng, latlang);
+                            val bearing = heading.toFloat()
+                            movingCabMarker?.rotation = bearing
                         } else {
-                            if (distanceBetween(previousLatLng!!, latlang) > 10f) {
+                            if (distanceBetween(previousLatLng!!, latlang) > 7f) {
                                 updateCarLocation(latlang)
+                                val heading = SphericalUtil.computeHeading(previousLatLng, latlang);
+                                val bearing = heading.toFloat()
+                                movingCabMarker?.rotation = bearing
 
                             }
                         }
@@ -533,8 +558,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         for (latLng in latLngList) {
             builder.include(latLng)
         }
-        val bounds = builder.build()
-        mMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 2))
+         val bounds = builder.build()
+         mMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 2))
 
         val polylineOptions = PolylineOptions()
         polylineOptions.color(Color.GRAY)
@@ -559,6 +584,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             blackPolyline?.points = grayPolyline?.points!!.subList(0, index)
         }
         polylineAnimator.start()
+        isDrawFirst = true
     }
 
     /**

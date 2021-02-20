@@ -27,6 +27,7 @@ import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.tracker.TrackerActivity.PERMISSIONS_REQUEST
+import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -49,6 +50,7 @@ import kotlin.collections.ArrayList
 
 
 class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
+    private var isDrawFirst = false
     val PATTERN_DASH_LENGTH_PX = 30
     val PATTERN_GAP_LENGTH_PX = 20
     val DASH: PatternItem = Dash(PATTERN_DASH_LENGTH_PX.toFloat())
@@ -84,7 +86,25 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
 
+        startTrackerService()
+    }
 
+    private fun startTrackerService() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        } else {
+            startService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -142,8 +162,25 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
                 pointsList.clear()
                 pointsList.addAll(it)
-                if (pointsList.size > 0)
-                    showPath(pointsList)
+                if (pointsList.size > 0) {
+                    if (!isDrawFirst)
+                        showPath(pointsList)
+                    else {
+                        val polylineOptions = PolylineOptions()
+                        polylineOptions.color(Color.GRAY)
+                        polylineOptions.width(12f)
+                        polylineOptions.addAll(pointsList)
+
+                        grayPolyline = mMap!!.addPolyline(polylineOptions)
+                        val polylineOptions1 = PolylineOptions()
+                        polylineOptions1.color(Color.BLACK)
+                        polylineOptions1.width(12f)
+                        polylineOptions1.addAll(pointsList)
+                        blackPolyline = mMap!!.addPolyline(polylineOptions1)
+
+
+                    }
+                }
                 showDefaultLocationOnMap(defaultLocation)
 
 
@@ -245,14 +282,15 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap = map
         mMap?.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
-                this, R.raw.style_json));
+                this, R.raw.style_json
+            )
+        );
 
-        mMap!!.setMinZoomPreference(15f)
-        mMap!!.setMaxZoomPreference(20f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
         mMap!!.isBuildingsEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
+        mMap!!.uiSettings.isCompassEnabled = false
         requestLocationUpdates()
         setObserver()
     }
@@ -312,7 +350,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         ).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
-    private fun animateCamera(latLng: LatLng,bearing:Float) {
+
+    private fun animateCamera(latLng: LatLng, bearing: Float) {
         var zoom = mMap!!.cameraPosition.zoom
         if (zoom < 16f)
             zoom = 16f
@@ -333,7 +372,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             }
 
         return mMap!!.addMarker(
-            MarkerOptions().position(latLng).flat(true).zIndex(1000F).draggable(false).icon(bitmapDescriptor)
+            MarkerOptions().position(latLng).flat(true).zIndex(1000F).draggable(false)
+                .icon(bitmapDescriptor)
         )
     }
 
@@ -344,8 +384,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 15000
-        request.fastestInterval = 15000
+        request.interval = 5000
+        request.fastestInterval = 5000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val client = LocationServices.getFusedLocationProviderClient(this)
         val permission = ContextCompat.checkSelfPermission(
@@ -360,14 +400,10 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     val location = locationResult.lastLocation
                     location?.let {
                         val latlang = LatLng(it.latitude, it.longitude)
-                        val baseRequest = BaseRequest(userInfo)
-                        baseRequest.paramsMap["id"] = "" + orderModel.orderId
-                        baseRequest.paramsMap["lat"] = "" + it.latitude
-                        baseRequest.paramsMap["lang"] = "" + it.longitude
                         defaultLocation = latlang
                         if (sourceLocation == null)
                             sourceLocation = latlang
-                        trackViewModel.downloadLatestCoordinates(baseRequest)
+                        getUpdateRoot(latlang)
                         if (previousLatLng == null) {
                             updateCarLocation(latlang)
                         } else {
@@ -377,7 +413,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                                     latlang
                                 )
                             )
-                            if (distanceBetween(previousLatLng!!, latlang) > 10f) {
+                            if (distanceBetween(previousLatLng!!, latlang) > 3f) {
                                 updateCarLocation(latlang)
 
                             }
@@ -439,23 +475,19 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         polylineOptions.width(0f)
         polylineOptions.addAll(latLngList)
         polylineOptions.pattern(PATTERN_POLYGON_ALPHA)
-        grayPolyline?.remove()
         grayPolyline = mMap!!.addPolyline(polylineOptions)
 
         val blackPolylineOptions = PolylineOptions()
         blackPolylineOptions.color(ContextCompat.getColor(this, R.color.color_002366))
         blackPolylineOptions.width(8f)
         blackPolylineOptions.pattern(PATTERN_POLYGON_ALPHA)
-        blackPolyline?.remove()
         blackPolyline = mMap!!.addPolyline(blackPolylineOptions)
 
-        originMarker?.remove()
 
         originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
         //originMarker?.setAnchor(0.5f, 0.5f)
         originMarker?.isDraggable = false
 
-        destinationMarker?.remove()
         destinationMarker = addOriginDestinationMarkerAndGet(false, latLngList[latLngList.size - 1])
         //destinationMarker?.setAnchor(0.5f, 0.5f)
         destinationMarker?.isDraggable = false
@@ -467,6 +499,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             blackPolyline?.points = grayPolyline?.points!!.subList(0, index)
         }
         polylineAnimator.start()
+        isDrawFirst = true
     }
 
     private fun addCarMarkerAndGet(latLng: LatLng): Marker {
@@ -481,7 +514,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
-        movingCabMarker?.zIndex=1000F
+        movingCabMarker?.zIndex = 1000F
         if (previousLatLng == null) {
             currentLatLng = latLng
             previousLatLng = currentLatLng
@@ -500,15 +533,23 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                         multiplier * currentLatLng!!.longitude + (1 - multiplier) * previousLatLng!!.longitude
                     )
                     movingCabMarker?.position = nextLocation
-                    val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    val bearing=heading.toFloat() - 90
+                    val heading = SphericalUtil.computeHeading(previousLatLng, latLng);
+                    val bearing = heading.toFloat()
                     movingCabMarker?.rotation = bearing
 
-                    animateCamera(nextLocation,bearing)
+                    animateCamera(nextLocation, bearing)
                 }
             }
             valueAnimator.start()
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(
+            Intent(
+                this, TrackerService::class.java
+            )
+        )
+    }
 }
