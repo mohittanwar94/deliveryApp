@@ -1,14 +1,15 @@
 package com.ezymd.restaurantapp.delivery.tracker;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -31,7 +32,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class TrackerService extends LifecycleService {
-
+    private PowerManager.WakeLock wakeLock = null;
     private static final String TAG = TrackerService.class.getSimpleName();
     private int order_id = -1;
     private TrackerViewModel viewModel;
@@ -40,6 +41,15 @@ public class TrackerService extends LifecycleService {
     public void onStart(@Nullable Intent intent, int startId) {
         super.onStart(intent, startId);
         order_id = intent.getIntExtra(JSONKeys.ID, -1);
+    }
+
+    @SuppressLint("ServiceCast")
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        PowerManager manager=(PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"TrackService::lock");
+        wakeLock.acquire(30*60*1000L /*30 minutes*/);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -84,7 +94,8 @@ public class TrackerService extends LifecycleService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        if (wakeLock != null && wakeLock.isHeld())
+            wakeLock.release();
     }
 
     private void loginToFirebase() {

@@ -356,12 +356,21 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun startTrackerService() {
-        startService(
-            Intent(this, TrackerService::class.java).putExtra(
-                JSONKeys.ID,
-                orderModel.orderId
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
             )
-        )
+        } else {
+            startService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        }
     }
 
     private fun requestLocationUpdates() {
