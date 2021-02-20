@@ -417,13 +417,13 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                         getUpdateRoot(latlang)
 
                         if (previousLatLng == null) {
-                            updateCarLocation(latlang)
+                            updateCarLocation(location)
                             val heading = SphericalUtil.computeHeading(previousLatLng, latlang);
                             val bearing = heading.toFloat()
                             movingCabMarker?.rotation = bearing
                         } else {
                             if (distanceBetween(previousLatLng!!, latlang) > 7f) {
-                                updateCarLocation(latlang)
+                                updateCarLocation(location)
                                 val heading = SphericalUtil.computeHeading(previousLatLng, latlang);
                                 val bearing = heading.toFloat()
                                 movingCabMarker?.rotation = bearing
@@ -558,8 +558,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         for (latLng in latLngList) {
             builder.include(latLng)
         }
-         val bounds = builder.build()
-         mMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 2))
+        val bounds = builder.build()
+        mMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 2))
 
         val polylineOptions = PolylineOptions()
         polylineOptions.color(Color.GRAY)
@@ -590,7 +590,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     /**
      * This function is used to update the location of the Cab while moving from Origin to Destination
      */
-    private fun updateCarLocation(latLng: LatLng) {
+    private fun updateCarLocation(location: Location) {
+        val latLng = LatLng(location.latitude, location.longitude)
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
@@ -614,7 +615,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
                     val bearing = heading.toFloat()
-                    movingCabMarker?.rotation = bearing
+                    if (location.hasBearing())
+                        movingCabMarker?.rotation = location.bearing
 
                     animateCamera(nextLocation, bearing)
                 }
