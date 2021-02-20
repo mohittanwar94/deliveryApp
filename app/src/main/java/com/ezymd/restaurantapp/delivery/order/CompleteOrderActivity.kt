@@ -613,7 +613,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                     )
                     movingCabMarker?.position = nextLocation
                     val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    val bearing = heading.toFloat() - 90
+                    val bearing = heading.toFloat()
                     movingCabMarker?.rotation = bearing
 
                     animateCamera(nextLocation, bearing)
