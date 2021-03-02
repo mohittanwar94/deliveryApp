@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
-import com.ezymd.restaurantapp.delivery.MainActivity
+import com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment
 import com.ezymd.restaurantapp.delivery.OtpBroadcastReceiver
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.login.LoginRequest
@@ -320,7 +320,7 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
         userInfo?.userID = it.data.user.id
         userInfo?.phoneNumber = it.data.user.phone_no
         userInfo?.profilePic = it.data.user.profile_pic
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, MainOrderFragment::class.java))
         finish()
 
     }

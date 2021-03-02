@@ -7,17 +7,6 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_search"
-        android:icon="@drawable/ic_search"
-        android:title="@string/title_search" />
-
-    <item
-        android:id="@+id/navigation_cart"
-        android:icon="@drawable/ic_cart"
-        android:title="@string/title_cart" />
-
-
-    <item
         android:id="@+id/navigation_order"
         android:icon="@drawable/ic_my_order"
         android:title="@string/title_order" />

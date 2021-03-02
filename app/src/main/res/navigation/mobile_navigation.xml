@@ -5,34 +5,21 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
-    <keep_state_fragment
+    <fragment
         android:id="@+id/navigation_home"
-        android:name="com.ezymd.restaurantapp.ui.home.HomeFragment"
+        android:name="com.ezymd.restaurantapp.delivery.home.MainFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_main" />
 
-    <keep_state_fragment
-        android:id="@+id/navigation_search"
-        android:name="com.ezymd.restaurantapp.ui.search.SearchFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
-
-    <keep_state_fragment
-        android:id="@+id/navigation_cart"
-        android:name="com.ezymd.restaurantapp.ui.card.CartFragment"
-        android:label="@string/title_cart"
-        tools:layout="@layout/fragment_notifications" />
-
-    <keep_state_fragment
+    <fragment
         android:id="@+id/navigation_order"
-        android:name="com.ezymd.restaurantapp.ui.card.CartFragment"
+        android:name="com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment"
         android:label="@string/title_order"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_order" />
 
-
-    <keep_state_fragment
+    <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.ezymd.restaurantapp.ui.profile.ProfileFragment"
+        android:name="com.ezymd.restaurantapp.delivery.home.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 

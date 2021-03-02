@@ -4,11 +4,9 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.net.Uri
@@ -16,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment
 import com.ezymd.restaurantapp.delivery.login.Login
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import java.security.MessageDigest
@@ -67,7 +66,7 @@ class SplashScreen : BaseActivity() {
         super.onResume()
         printKeyHash(this)
         if (userInfo!!.userID != 0) {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, HomeScreen::class.java))
         } else
             startActivity(Intent(this, Login::class.java))
 

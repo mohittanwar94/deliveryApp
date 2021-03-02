@@ -46,9 +46,9 @@ public class TrackerService extends LifecycleService {
     @SuppressLint("ServiceCast")
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        PowerManager manager=(PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"TrackService::lock");
-        wakeLock.acquire(30*60*1000L /*30 minutes*/);
+        PowerManager manager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TrackService::lock");
+        wakeLock.acquire(30 * 60 * 1000L /*30 minutes*/);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -154,6 +154,8 @@ public class TrackerService extends LifecycleService {
         BaseRequest baseRequest = new BaseRequest(userInfo);
         baseRequest.paramsMap.put("lat", "" + location.getLatitude());
         baseRequest.paramsMap.put("lang", "" + location.getLongitude());
+        baseRequest.paramsMap.put("bearing", "" + location.getBearing());
+        baseRequest.paramsMap.put("hasBearing", "" + location.hasBearing());
         baseRequest.paramsMap.put("user_id", "" + userInfo.getUserID());
         baseRequest.paramsMap.put("id", "" + order_id);
         viewModel.downloadLatestCoordinates(baseRequest);

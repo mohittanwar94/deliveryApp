@@ -1,5 +1,6 @@
 package com.ezymd.restaurantapp.delivery.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface JSONKeys {
@@ -380,4 +381,5 @@ public interface JSONKeys {
     String digital_certificate = "digital_certificate";
     int LOCATION_REQUEST = 1232;
     int OTP_REQUEST = 1233;
+    String LOCATION_OBJECT="locationobj";
 }

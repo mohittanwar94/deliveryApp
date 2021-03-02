@@ -16,9 +16,14 @@ import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.SystemClock
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Interpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -44,7 +49,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.maps.android.PolyUtil
-import com.google.maps.android.SphericalUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.complete_order.*
 import kotlinx.android.synthetic.main.header_new.*
@@ -56,6 +60,7 @@ import kotlinx.android.synthetic.main.order_details_with_customer.*
 
 
 class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
+    private var start_rotation: Float=0f
     private lateinit var defaultLocation: LatLng
     private var grayPolyline: Polyline? = null
     private var blackPolyline: Polyline? = null
@@ -415,18 +420,14 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
 
                         getUpdateRoot(latlang)
-
+                        SnapLog.print("location.bearing====" + location.bearing)
                         if (previousLatLng == null) {
-                            updateCarLocation(location)
-                            val heading = SphericalUtil.computeHeading(previousLatLng, latlang);
-                            val bearing = heading.toFloat()
-                            movingCabMarker?.rotation = bearing
+                            updateCarLocation(latlang, location.bearing, location.hasBearing())
+
                         } else {
-                            if (distanceBetween(previousLatLng!!, latlang) > 7f) {
-                                updateCarLocation(location)
-                                val heading = SphericalUtil.computeHeading(previousLatLng, latlang);
-                                val bearing = heading.toFloat()
-                                movingCabMarker?.rotation = bearing
+                            if (distanceBetween(previousLatLng!!, latlang) > 3f) {
+                                updateCarLocation(latlang, location.bearing, location.hasBearing())
+
 
                             }
                         }
@@ -513,7 +514,9 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
-        val zoom: Float = mMap!!.cameraPosition.zoom
+        var zoom: Float = mMap!!.cameraPosition.zoom
+        if (zoom < 15f)
+            zoom = 15f
         val cameraPosition = CameraPosition.Builder().target(latLng).zoom(zoom).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
@@ -590,8 +593,8 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     /**
      * This function is used to update the location of the Cab while moving from Origin to Destination
      */
-    private fun updateCarLocation(location: Location) {
-        val latLng = LatLng(location.latitude, location.longitude)
+    private fun updateCarLocation(latLng: LatLng, bearing: Float, hasBearing: Boolean) {
+        SnapLog.print("updateCarLocation============")
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
@@ -600,29 +603,153 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             currentLatLng = latLng
             previousLatLng = currentLatLng
             movingCabMarker?.position = currentLatLng
+            movingCabMarker?.setAnchor(0.5f, 0.5f)
             animateCamera(currentLatLng!!)
         } else {
             previousLatLng = currentLatLng
             currentLatLng = latLng
-            val valueAnimator = AnimationUtils.carAnimator()
+
+
+            val updatedLocation = Location(LocationManager.GPS_PROVIDER)
+            updatedLocation.latitude = latLng.latitude
+            updatedLocation.longitude = latLng.longitude
+            moveVechile(movingCabMarker!!, updatedLocation)
+            rotateMarker(movingCabMarker!!, bearing, start_rotation, hasBearing)
+            /*val valueAnimator = AnimationUtils.carAnimator()
             valueAnimator.addUpdateListener { va ->
                 if (currentLatLng != null && previousLatLng != null) {
                     val multiplier = va.animatedFraction
+
+
                     val nextLocation = LatLng(
                         multiplier * currentLatLng!!.latitude + (1 - multiplier) * previousLatLng!!.latitude,
                         multiplier * currentLatLng!!.longitude + (1 - multiplier) * previousLatLng!!.longitude
                     )
-                    movingCabMarker?.position = nextLocation
-                    val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    val bearing = heading.toFloat()
-                    if (location.hasBearing())
-                        movingCabMarker?.rotation = location.bearing
 
-                    animateCamera(nextLocation, bearing)
+                    previousLng = currentLng
+                    currentLng = nextLocation
+
+                    val updatedLocation = Location(LocationManager.GPS_PROVIDER)
+                    updatedLocation.latitude = nextLocation.latitude
+                    updatedLocation.longitude = nextLocation.longitude
+                    val bearing = bearingBetweenLocations(previousLatLng!!, latLng).toFloat()
+
+
+                    movingCabMarker?.rotation = bearing
+                    SnapLog.print("bearing============$bearing")
+                    movingCabMarker?.position = nextLocation
+                    movingCabMarker?.setAnchor(0.5f, 0.5f)
+                    animateCamera(nextLocation)
                 }
             }
             valueAnimator.start()
         }
+*/
+        }
+    }
+
+
+    /*private fun rotateMarker(marker: Marker, toRotation: Float) {
+        if (!isMarkerRotating) {
+            val handler = Handler()
+            val start: Long = SystemClock.uptimeMillis()
+            val startRotation = marker.rotation
+            SnapLog.print("startRotation=====$startRotation")
+
+            val duration: Long = 1000
+            val interpolator: Interpolator = LinearInterpolator()
+            handler.post(object : Runnable {
+                override fun run() {
+                    isMarkerRotating = true
+                    val elapsed: Long = SystemClock.uptimeMillis() - start
+                    val t: Float = interpolator.getInterpolation(elapsed.toFloat() / duration)
+                    val rot = t * toRotation + (1 - t) * startRotation
+                    marker.rotation = if (-rot > 180) rot / 2 else rot
+                    SnapLog.print("final=====" + marker.rotation)
+
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16)
+                    } else {
+                        isMarkerRotating = false
+                    }
+                }
+            })
+        }
+    }*/
+    fun moveVechile(myMarker: Marker, finalPosition: Location) {
+        val startPosition = myMarker.position
+        val handler = Handler()
+        val start = SystemClock.uptimeMillis()
+        val interpolator: Interpolator = AccelerateDecelerateInterpolator()
+        val durationInMs = 3000f
+        val hideMarker = false
+        handler.post(object : Runnable {
+            var elapsed: Long = 0
+            var t = 0f
+            var v = 0f
+            override fun run() {
+                // Calculate progress using interpolator
+                elapsed = SystemClock.uptimeMillis() - start
+                t = elapsed / durationInMs
+                v = interpolator.getInterpolation(t)
+                val currentPosition = LatLng(
+                    startPosition.latitude * (1 - t) + finalPosition.latitude * t,
+                    startPosition.longitude * (1 - t) + finalPosition.longitude * t
+                )
+                myMarker.setPosition(currentPosition)
+                // myMarker.setRotation(finalPosition.getBearing());
+
+
+                // Repeat till progress is completeelse
+                if (t < 1) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16)
+                    // handler.postDelayed(this, 100);
+                } else {
+                    myMarker.isVisible = !hideMarker
+                }
+            }
+        })
+    }
+
+    fun rotateMarker(marker: Marker, toRotation: Float, st: Float, hasBearing: Boolean) {
+        if (!hasBearing)
+            return
+        val handler = Handler()
+        val start = SystemClock.uptimeMillis()
+        val startRotation = marker.rotation
+        val duration: Long = 1555
+        val interpolator: Interpolator = LinearInterpolator()
+        handler.post(object : Runnable {
+            override fun run() {
+                val elapsed = SystemClock.uptimeMillis() - start
+                val t = interpolator.getInterpolation(elapsed.toFloat() / duration)
+                val rot = t * toRotation + (1 - t) * startRotation
+                marker.rotation = if (-rot > 180) rot / 2 else rot
+                start_rotation = if (-rot > 180) rot / 2 else rot
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16)
+                }
+            }
+        })
+    }
+
+    fun bearingBetweenLocations(latLng1: LatLng, latLng2: LatLng): Double {
+        val PI = 3.14159
+        val lat1 = latLng1.latitude * PI / 180
+        val long1 = latLng1.longitude * PI / 180
+        val lat2 = latLng2.latitude * PI / 180
+        val long2 = latLng2.longitude * PI / 180
+        val dLon = long2 - long1
+        val y = Math.sin(dLon) * Math.cos(lat2)
+        val x = Math.cos(lat1) * Math.sin(lat2) - (Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon))
+        var brng = Math.atan2(y, x)
+        brng = Math.toDegrees(brng)
+        brng = (brng + 360) % 360
+        return brng
     }
 
 

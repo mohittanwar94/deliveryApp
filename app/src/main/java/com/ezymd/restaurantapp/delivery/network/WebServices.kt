@@ -2,6 +2,7 @@ package com.ezymd.restaurantapp.network
 
 
 import com.ezymd.restaurantapp.delivery.ServerConfig
+import com.ezymd.restaurantapp.delivery.home.profile.LogoutModel
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
@@ -17,6 +18,10 @@ interface WebServices {
         @FieldMap commonParameters: Map<String, String>
     ): OtpModel
 
+    @GET(ServerConfig.LOGOUT)
+    suspend fun logout(
+        @Header("Authorization") token: String
+    ): LogoutModel
 
     @FormUrlEncoded
     @POST(ServerConfig.LOGIN_USER)
