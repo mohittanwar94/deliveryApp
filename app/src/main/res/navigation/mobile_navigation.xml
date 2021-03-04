@@ -11,13 +11,13 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_main" />
 
-    <fragment
+    <keep_state_fragment
         android:id="@+id/navigation_order"
         android:name="com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment"
         android:label="@string/title_order"
         tools:layout="@layout/fragment_order" />
 
-    <fragment
+    <keep_state_fragment
         android:id="@+id/navigation_profile"
         android:name="com.ezymd.restaurantapp.delivery.home.profile.ProfileFragment"
         android:label="@string/title_profile"

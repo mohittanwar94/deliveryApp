@@ -63,17 +63,12 @@ class MainFragment : Fragment(), OnMapReadyCallback {
             val mapFragment = childFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment?
             mapFragment!!.getMapAsync(this)
-
-            setGUI()
             setObserver()
+
+
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun setGUI() {
-
-
-    }
 
     private fun setObserver() {
 
@@ -126,7 +121,7 @@ class MainFragment : Fragment(), OnMapReadyCallback {
         )
         mMap!!.isMyLocationEnabled = true
         mMap!!.setMaxZoomPreference(20f)
-        fusedLocationProviderClient = FusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         val isGranted = (activity as BaseActivity).checkLocationPermissions(object :
             BaseActivity.PermissionListener {
             override fun result(isGranted: Boolean) {
@@ -222,7 +217,8 @@ class MainFragment : Fragment(), OnMapReadyCallback {
                     val mLastLocation = task.result
 
                     val latLong = LatLng(mLastLocation.latitude, mLastLocation.longitude)
-
+                    SnapLog.print("mLastLocation.latitude" + mLastLocation.latitude)
+                    SnapLog.print("mLastLocation.longitude" + mLastLocation.longitude)
                     val cameraPosition = CameraPosition.Builder()
                         .target(latLong).zoom(17f).build()
 
