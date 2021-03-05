@@ -65,9 +65,9 @@ class CompletedFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "complete_for_delivery"
             searchViewModel.orderList(baseRequest)
-            setObservers()
 
         }
+        setObservers()
 
     }
 

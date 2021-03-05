@@ -65,8 +65,8 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
             searchViewModel.processingOrderList(baseRequest)
-            setObservers()
         }
+        setObservers()
 
     }
 

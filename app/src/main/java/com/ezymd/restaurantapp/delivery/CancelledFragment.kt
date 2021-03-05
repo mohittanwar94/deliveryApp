@@ -70,9 +70,9 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             baseRequest.paramsMap["order_status"] = "cancelled"
             baseRequest.paramsMap["delivery_boy_id"] = ""+userInfo?.userID
             searchViewModel.cancelOrder(baseRequest)
-            setObservers()
 
         }
+        setObservers()
 
     }
 
