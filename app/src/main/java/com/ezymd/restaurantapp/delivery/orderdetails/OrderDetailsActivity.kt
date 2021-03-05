@@ -5,8 +5,8 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.R
@@ -15,9 +15,11 @@ import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.orderdetails.adapter.OrderDetailsAdapter
 import com.ezymd.restaurantapp.delivery.utils.*
-import com.ezymd.vendor.order.OrderViewModel
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_order_details.*
 
+@AndroidEntryPoint
 class OrderDetailsActivity : BaseActivity() {
     private var actionTaken: Boolean = false
     private var restaurantAdapter: OrderDetailsAdapter? = null
@@ -29,9 +31,8 @@ class OrderDetailsActivity : BaseActivity() {
     }
 
 
-    private val searchViewModel by lazy {
-        ViewModelProvider(this).get(OrderViewModel::class.java)
-    }
+    private val searchViewModel: OrderViewModel by viewModels()
+
 
     override fun onBackPressed() {
         if (actionTaken) {

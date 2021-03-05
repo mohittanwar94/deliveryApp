@@ -1,5 +1,6 @@
-package com.ezymd.vendor.order
+package com.ezymd.restaurantapp.delivery.order.viewmodel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,18 +11,22 @@ import com.ezymd.restaurantapp.delivery.utils.BaseRequest
 import com.ezymd.restaurantapp.delivery.utils.ErrorResponse
 import com.ezymd.restaurantapp.delivery.utils.SingleLiveEvent
 import com.ezymd.restaurantapp.network.ResultWrapper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OrderViewModel : ViewModel() {
+class OrderViewModel @ViewModelInject constructor(
+    private val loginRepository: OrderListRepository
+    //private val networkHelper: NetworkHelper
+) : ViewModel() {
 
     var errorRequest: SingleLiveEvent<String>
     val baseResponse: MutableLiveData<OrderBaseModel>
     val cancelResponse: MutableLiveData<OrderBaseModel>
     val processingResponse: MutableLiveData<OrderBaseModel>
     val assignResponse: MutableLiveData<OrderAcceptResponse>
-    private var loginRepository: OrderListRepository? = null
     val isLoading: MutableLiveData<Boolean>
 
     override fun onCleared() {
@@ -32,13 +37,13 @@ class OrderViewModel : ViewModel() {
 
     init {
 
-        loginRepository = OrderListRepository.instance
+        // loginRepository = OrderListRepository.instance
         isLoading = MutableLiveData()
         baseResponse = MutableLiveData()
         errorRequest = SingleLiveEvent()
         assignResponse = MutableLiveData()
-        cancelResponse= MutableLiveData()
-        processingResponse= MutableLiveData()
+        cancelResponse = MutableLiveData()
+        processingResponse = MutableLiveData()
 
 
     }

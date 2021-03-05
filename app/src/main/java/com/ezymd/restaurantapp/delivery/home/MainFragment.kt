@@ -119,17 +119,19 @@ class MainFragment : Fragment(), OnMapReadyCallback {
                 requireActivity(), R.raw.style_json
             )
         )
-        mMap!!.isMyLocationEnabled = true
         mMap!!.setMaxZoomPreference(20f)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         val isGranted = (activity as BaseActivity).checkLocationPermissions(object :
             BaseActivity.PermissionListener {
             override fun result(isGranted: Boolean) {
                 setReadyLocation(mMap!!)
+
             }
         })
         if (isGranted) {
             setReadyLocation(mMap!!)
+            mMap!!.isMyLocationEnabled = true
+
         }
 
 
@@ -147,7 +149,7 @@ class MainFragment : Fragment(), OnMapReadyCallback {
             mTimerIsRunning = true
         })
 
-        googleMap.setOnCameraIdleListener(GoogleMap.OnCameraIdleListener { // Cleaning all the markers.
+        googleMap.setOnCameraIdleListener({ // Cleaning all the markers.
             googleMap.clear()
             if (mTimerIsRunning) {
                 val center = googleMap.cameraPosition.target

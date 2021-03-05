@@ -19,8 +19,10 @@ import com.ezymd.restaurantapp.delivery.utils.KeepStateNavigator
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_LABELED
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 class HomeScreen : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     @SuppressLint("RestrictedApi")

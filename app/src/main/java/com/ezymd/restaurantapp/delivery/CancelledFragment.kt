@@ -7,23 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.orderdetails.OrderDetailsActivity
 import com.ezymd.restaurantapp.delivery.utils.*
-import com.ezymd.vendor.order.OrderViewModel
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_orders.*
 
+@AndroidEntryPoint
 class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var restaurantAdapter: OrdersAdapter? = null
     private var isNullViewRoot = false
-    private lateinit var searchViewModel: OrderViewModel
+    private val searchViewModel : OrderViewModel by viewModels()
     private var viewRoot: View? = null
 
     private val dataResturant = ArrayList<OrderModel>()
@@ -47,7 +48,6 @@ class CancelledFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        searchViewModel = ViewModelProvider(this).get(OrderViewModel::class.java)
         isNullViewRoot = false
         if (viewRoot == null) {
             viewRoot = inflater.inflate(R.layout.fragment_orders, container, false)

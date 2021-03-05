@@ -3,9 +3,9 @@ package com.ezymd.restaurantapp.delivery.login.otp
 import com.ezymd.restaurantapp.delivery.login.LoginRequest
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
+import com.ezymd.restaurantapp.delivery.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.ezymd.restaurantapp.network.ApiClient
-import com.ezymd.restaurantapp.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
 import com.google.android.gms.auth.api.phone.SmsRetrieverClient

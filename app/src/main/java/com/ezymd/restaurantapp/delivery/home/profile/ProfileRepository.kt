@@ -1,8 +1,8 @@
 package com.ezymd.restaurantapp.delivery.home.profile
 
+import com.ezymd.restaurantapp.delivery.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
 import com.ezymd.restaurantapp.network.ApiClient
-import com.ezymd.restaurantapp.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
 import kotlinx.coroutines.CoroutineDispatcher

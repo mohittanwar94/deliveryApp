@@ -40,12 +40,15 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Map;
 
+import dagger.hilt.android.HiltAndroidApp;
+
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 
 /**
  * Created by Mohit on 10/17/20202.
  */
+@HiltAndroidApp
 public class EzymdApplication extends Application implements Application.ActivityLifecycleCallbacks {
     private Activity mLastForegroundActivity;
     public MutableLiveData<Boolean> isRefresh = new MutableLiveData<>();

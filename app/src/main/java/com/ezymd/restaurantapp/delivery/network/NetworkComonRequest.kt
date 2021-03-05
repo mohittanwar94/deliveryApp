@@ -8,29 +8,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
-class NetworkCommonRequest {
+class NetworkComonRequest {
 
-    companion object {
-        @Volatile
-        private var networkRequest: NetworkCommonRequest? = null
-
-        @JvmStatic
-        val instance: NetworkCommonRequest?
-            get() {
-                if (networkRequest == null) {
-                    synchronized(NetworkCommonRequest::class.java) {
-                        networkRequest = NetworkCommonRequest()
-                    }
-                }
-                return networkRequest
-            }
-    }
-
-    init {
-        if (networkRequest != null) {
-            //  throw RuntimeException("Use getInstance() method to get the single instance of NetworkCommonRequest class.")
-        }
-    }
 
     suspend fun <T> safeApiCall(
         dispatcher: CoroutineDispatcher,

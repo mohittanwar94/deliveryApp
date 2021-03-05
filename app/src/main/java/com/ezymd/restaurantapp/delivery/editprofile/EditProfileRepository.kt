@@ -2,10 +2,10 @@ package com.ezymd.restaurantapp.delivery.editprofile
 
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
+import com.ezymd.restaurantapp.delivery.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.ezymd.restaurantapp.network.ApiClient
-import com.ezymd.restaurantapp.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
 import kotlinx.coroutines.CoroutineDispatcher
