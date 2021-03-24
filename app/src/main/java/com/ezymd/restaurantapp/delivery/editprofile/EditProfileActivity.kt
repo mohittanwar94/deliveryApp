@@ -38,6 +38,8 @@ class EditProfileActivity : BaseActivity() {
         setToolBar()
         setGUI()
         setProfileData()
+        setObserver()
+
 
     }
 
@@ -89,11 +91,11 @@ class EditProfileActivity : BaseActivity() {
         return outputFileUri
     }
 
+    private var isEmailChange = false
+    private var isMobileChange = false
 
     private fun checkConditions(it: View) {
         UIUtil.clickHandled(it)
-        var isEmailChange = false
-        var isMobileChange = false
 
         if (name.text.toString().isEmpty()) {
             ShowDialog(this@EditProfileActivity).disPlayDialog(
@@ -148,6 +150,7 @@ class EditProfileActivity : BaseActivity() {
 
     private fun updateProfile(it: View) {
         UIUtil.clickHandled(it)
+        viewModel.updateProfileInfo(getProfileRequest())
 
     }
 
@@ -157,13 +160,25 @@ class EditProfileActivity : BaseActivity() {
             updateProfile(next)
         } else if (requestCode == OTP_REQUEST && resultCode != Activity.RESULT_OK) {
             SnapLog.print("back pressed")
-        } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == ErrorCodes.SUCCESS && resultCode == Activity.RESULT_OK) {
             val mybitmap = data!!.extras!!.get("data") as Bitmap
             myBitmap = getResizedBitmap(mybitmap, 120)
             if (userImage != null) {
                 userImage.setImageBitmap(myBitmap)
+                val isGranted = checkReadWritePermissions(object : PermissionListener {
+                    override fun result(isGranted: Boolean) {
+                        if (isGranted) {
+                            saveImageOnServer(myBitmap!!)
+                        }
 
-                saveImageOnServer(myBitmap!!)
+                    }
+                })
+
+                if (isGranted) {
+                    saveImageOnServer(myBitmap!!)
+                }
+
+
             }
 
 
@@ -173,47 +188,79 @@ class EditProfileActivity : BaseActivity() {
     }
 
     private fun saveImageOnServer(myBitmap: Bitmap) {
-        val f3: File = File(Environment.getExternalStorageDirectory().toString() + "/Ezymd/")
-        if (!f3.exists())
-            f3.mkdirs()
+        val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        if (!root.exists()) {
+            root.mkdirs()
+        }
+        val file = File(root, "profile.png")
         var outStream: OutputStream? = null
-        val file = File(
-            Environment.getExternalStorageDirectory().toString() + "/Ezymd/" + "profile" + ".png"
-        )
         try {
             outStream = FileOutputStream(file)
             myBitmap.compress(Bitmap.CompressFormat.PNG, 85, outStream)
             outStream.close()
             SnapLog.print("Saved")
             rotateManimation()
-            viewModel.saveImage(file)
+            viewModel.saveImage(file, getAvatarUpdateProfileRequest())
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
     }
 
+    private fun getProfileRequest(): BaseRequest {
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["name"] = name.text.toString().trim()
+
+        if (!isEmailChange && !isMobileChange) {
+            baseRequest.paramsMap["phone_no"] = userInfo!!.phoneNumber
+            baseRequest.paramsMap["email"] = userInfo!!.email
+            return baseRequest
+
+        }
+        if (isEmailChange && isMobileChange) {
+            baseRequest.paramsMap["phone_no"] = mobile.text.toString().trim()
+            baseRequest.paramsMap["email"] = userInfo!!.email
+            return baseRequest
+
+        }
+        if (isEmailChange) {
+            baseRequest.paramsMap["phone_no"] = userInfo!!.phoneNumber
+            baseRequest.paramsMap["email"] = email.text.toString().trim()
+            return baseRequest
+        }
+        if (isMobileChange) {
+            baseRequest.paramsMap["phone_no"] = mobile.text.toString().trim()
+            baseRequest.paramsMap["email"] = userInfo!!.email
+            return baseRequest
+        }
+        return baseRequest
+
+    }
+
+    private fun getAvatarUpdateProfileRequest(): BaseRequest {
+        val baseRequest = BaseRequest(userInfo)
+        return baseRequest
+
+    }
+
     override fun onStop() {
         super.onStop()
-        viewModel.otpResponse.removeObservers(this)
-        viewModel.isLoading.removeObservers(this)
-        viewModel.errorRequest.removeObservers(this)
-        userInfo!!.mUserUpdate.removeObservers(this)
-        rotateAnim?.cancel()
+
     }
 
     var rotateAnim: RotateAnimation? = null
     private fun rotateManimation() {
-        val rotateAnim = RotateAnimation(
+        rotateAnim = RotateAnimation(
             0.0f, 360f,
             RotateAnimation.RELATIVE_TO_SELF, 0.5f,
             RotateAnimation.RELATIVE_TO_SELF, 0.5f
         )
 
-        rotateAnim.repeatMode = Animation.INFINITE
-        rotateAnim.duration = 500
-        rotateAnim.repeatCount = -1
+        rotateAnim!!.repeatMode = Animation.INFINITE
+        rotateAnim?.duration = 500
+        rotateAnim?.repeatCount = -1
         rotatingImage.startAnimation(rotateAnim)
+
 
     }
 
@@ -264,23 +311,25 @@ class EditProfileActivity : BaseActivity() {
             if (it.isStatus != ErrorCodes.SUCCESS) {
                 showError(false, it.message, null)
             } else {
-                startActivityForResult(
-                    Intent(
-                        this,
-                        OTPScreen::class.java
-                    ).putExtra(JSONKeys.MOBILE_NO, text).putExtra(JSONKeys.IS_MOBILE, true),
-                    OTP_REQUEST
-                )
-                overridePendingTransition(R.anim.left_in, R.anim.left_out)
+                if (it.data != null) {
+                    val otp = it.data.otp
+                    startActivityForResult(
+                        Intent(
+                            this,
+                            OTPScreen::class.java
+                        ).putExtra(JSONKeys.MOBILE_NO, text).putExtra(JSONKeys.OTP, otp)
+                            .putExtra(JSONKeys.IS_MOBILE, true),
+                        OTP_REQUEST
+                    )
+                    overridePendingTransition(R.anim.left_in, R.anim.left_out)
+                }
             }
         })
     }
 
 
-
     override fun onResume() {
         super.onResume()
-        setObserver()
     }
 
 
@@ -289,6 +338,17 @@ class EditProfileActivity : BaseActivity() {
             setProfileData()
         })
 
+        viewModel.mResturantData.observe(this, Observer {
+            if (it.status == ErrorCodes.SUCCESS) {
+                showError(true, it.message, null)
+                userInfo?.userName = it.data.user.name
+                userInfo?.email = it.data.user.email
+                userInfo?.phoneNumber = it.data.user.phone_no
+                userInfo?.profilePic = it.data.user.profile_pic
+                setProfileData()
+            }
+
+        })
 
         viewModel.errorRequest.observe(this, Observer {
             showError(false, it, null)

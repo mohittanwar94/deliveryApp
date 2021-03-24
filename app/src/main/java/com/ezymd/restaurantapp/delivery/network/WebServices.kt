@@ -9,6 +9,7 @@ import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.order.model.OrderBaseModel
 import com.ezymd.restaurantapp.delivery.utils.BaseResponse
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface WebServices {
@@ -67,6 +68,23 @@ interface WebServices {
         @Field("order_id") restaurant_id: String,
         @Header("Authorization") accessToken: String
     ): OrderAcceptResponse
+
+
+    @Multipart
+    @POST(ServerConfig.UPDATE_PROFILE)
+    suspend fun updateProfile(
+        @Part avatar: MultipartBody.Part,
+        @Header("Authorization") token: String
+    ): LoginModel
+
+    @FormUrlEncoded
+    @POST(ServerConfig.UPDATE_PROFILE)
+    suspend fun updateWithoutImageProfile(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") token: String
+    ): LoginModel
+
+
 
 }
 
