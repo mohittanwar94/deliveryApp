@@ -84,6 +84,7 @@ class Login : BaseActivity() {
         val baseRequest = BaseRequest()
         baseRequest.paramsMap["email"] = userName.text.toString().trim()
         baseRequest.paramsMap["password"] = password.text.toString().trim()
+        baseRequest.paramsMap["role_id"] = "5"
         loginViewModel.login(baseRequest)
     }
 
