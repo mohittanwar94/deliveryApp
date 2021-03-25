@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import androidx.lifecycle.MutableLiveData;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 
 public class UserInfo {
@@ -119,7 +121,13 @@ public class UserInfo {
 
     }
 
+    public int getDutyStatus() {
+        return preferences.getInt("setDutyStatus"+getUserID(), 0);
+    }
 
+    public void setDutyStatus(int status) {
+        preferences.edit().putInt("setDutyStatus"+getUserID(), status).apply();
+    }
 
     public String getLat() {
         return preferences.getString("lat", "0.0");

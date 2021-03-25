@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
+import com.ezymd.restaurantapp.delivery.utils.ErrorCodes
 import com.ezymd.restaurantapp.delivery.utils.ErrorResponse
+import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.ezymd.restaurantapp.network.ResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -17,6 +19,7 @@ class ProfileViewModel : ViewModel() {
     private var loginRepository: ProfileRepository? = null
     val mResturantData: MutableLiveData<LogoutModel>
     val isLoading: MutableLiveData<Boolean>
+    val dutyStatus = MutableLiveData<Int>()
 
     override fun onCleared() {
         super.onCleared()
@@ -46,7 +49,7 @@ class ProfileViewModel : ViewModel() {
             when (result) {
                 is ResultWrapper.NetworkError -> showNetworkError()
                 is ResultWrapper.GenericError -> showGenericError(result.error)
-                is ResultWrapper.Success -> mResturantData.postValue(result.value)
+                is ResultWrapper.Success -> mResturantData.postValue(result.value!!)
             }
 
         }
@@ -55,7 +58,7 @@ class ProfileViewModel : ViewModel() {
 
 
     private fun showNetworkError() {
-        errorRequest.postValue(EzymdApplication.getInstance().networkErrorMessage)
+        errorRequest.postValue(EzymdApplication.getInstance().networkErrorMessage!!)
     }
 
 
@@ -63,5 +66,36 @@ class ProfileViewModel : ViewModel() {
         errorRequest.postValue(error?.message)
     }
 
+    fun changeDutyStatus(baseRequest: BaseRequest) {
+        isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = loginRepository!!.changeDutyStatus(
+                baseRequest,
+                Dispatchers.IO
+            )
+            isLoading.postValue(false)
+            when (result) {
+                is ResultWrapper.NetworkError -> showNetworkError()
+                is ResultWrapper.GenericError -> showGenericError(result.error)
+                is ResultWrapper.Success -> {
+                    SnapLog.print(result.value.toString())
+                    if (result.value.status == ErrorCodes.SUCCESS) {
+                        val value = dutyStatus.value
+                        dutyStatus.postValue(
+                            if (value == 0) {
+                                1
+                            } else {
+                                0
+                            }
+                        )
+                    } else {
+                        errorRequest.postValue(result.value.message)
+                    }
+
+                }
+            }
+        }
+
+    }
 
 }

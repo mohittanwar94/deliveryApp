@@ -73,6 +73,24 @@ class TrackerRepository private constructor() {
 
     }
 
+    suspend fun changeDutyStatus(
+        baseRequest: BaseRequest,
+        dispatcher: CoroutineDispatcher
+    ): ResultWrapper<OrderAcceptResponse> {
+
+        SnapLog.print("track repositry=====")
+        val apiServices = ApiClient.client!!.create(WebServices::class.java)
+
+        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
+            apiServices.changeDutyStatus(
+                baseRequest.paramsMap,baseRequest.accessToken
+            )
+        }
+
+
+    }
+
+
     companion object {
         @Volatile
         private var sportsFeeRepository: TrackerRepository? = null

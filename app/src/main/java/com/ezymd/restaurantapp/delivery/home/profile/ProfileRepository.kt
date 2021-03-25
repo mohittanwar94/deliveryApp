@@ -1,7 +1,9 @@
 package com.ezymd.restaurantapp.delivery.home.profile
 
 import com.ezymd.restaurantapp.delivery.network.NetworkCommonRequest
+import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
+import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.ezymd.restaurantapp.network.ApiClient
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
@@ -20,6 +22,22 @@ class ProfileRepository {
         return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
             apiServices.logout(
                 baseRequest.accessToken
+            )
+        }
+
+
+    }
+    suspend fun changeDutyStatus(
+        baseRequest: BaseRequest,
+        dispatcher: CoroutineDispatcher
+    ): ResultWrapper<OrderAcceptResponse> {
+
+        SnapLog.print("track repositry=====")
+        val apiServices = ApiClient.client!!.create(WebServices::class.java)
+
+        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
+            apiServices.changeDutyStatus(
+                baseRequest.paramsMap,baseRequest.accessToken
             )
         }
 

@@ -6,10 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
-import com.ezymd.restaurantapp.delivery.utils.BaseRequest
-import com.ezymd.restaurantapp.delivery.utils.BaseResponse
-import com.ezymd.restaurantapp.delivery.utils.ErrorResponse
-import com.ezymd.restaurantapp.delivery.utils.SnapLog
+import com.ezymd.restaurantapp.delivery.utils.*
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DataSnapshot
@@ -29,6 +26,7 @@ class TrackerViewModel : ViewModel() {
     val firebaseResponse: MutableLiveData<DataSnapshot>
     val locationUpdate = MutableLiveData<BaseResponse>()
     val acceptRequest = MutableLiveData<OrderAcceptResponse>()
+    val dutyStatus = MutableLiveData<Int>()
     val isLoading: MutableLiveData<Boolean>
 
 
@@ -69,7 +67,7 @@ class TrackerViewModel : ViewModel() {
     }*/
 
     private fun showNetworkError() {
-        errorRequest.postValue(EzymdApplication.getInstance().networkErrorMessage)
+        errorRequest.postValue(EzymdApplication.getInstance().networkErrorMessage!!)
     }
 
     fun showError() = errorRequest
@@ -113,7 +111,7 @@ class TrackerViewModel : ViewModel() {
                 is ResultWrapper.GenericError -> showGenericError(result.error)
                 is ResultWrapper.Success -> {
                     SnapLog.print(result.value.toString())
-                    locationUpdate.postValue(result.value)
+                    locationUpdate.postValue(result.value!!)
                 }
             }
         }
@@ -133,7 +131,39 @@ class TrackerViewModel : ViewModel() {
                 is ResultWrapper.GenericError -> showGenericError(result.error)
                 is ResultWrapper.Success -> {
                     SnapLog.print(result.value.toString())
-                    acceptRequest.postValue(result.value)
+                    acceptRequest.postValue(result.value!!)
+                }
+            }
+        }
+    }
+
+
+    fun changeDutyStatus(baseRequest: BaseRequest) {
+        isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = loginRepository!!.changeDutyStatus(
+                baseRequest,
+                Dispatchers.IO
+            )
+            isLoading.postValue(false)
+            when (result) {
+                is ResultWrapper.NetworkError -> showNetworkError()
+                is ResultWrapper.GenericError -> showGenericError(result.error)
+                is ResultWrapper.Success -> {
+                    SnapLog.print(result.value.toString())
+                    if (result.value.status == ErrorCodes.SUCCESS) {
+                        val value = dutyStatus.value
+                        dutyStatus.postValue(
+                            if (value == 0) {
+                                1
+                            } else {
+                                0
+                            }
+                        )
+                    } else {
+                        errorRequest.postValue(result.value.message)
+                    }
+
                 }
             }
         }

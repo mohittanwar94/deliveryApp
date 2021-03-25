@@ -19,6 +19,8 @@ public class OrderItems implements Serializable {
     @Expose
     private Integer qty;
 
+    private boolean isSelected;
+
     @SerializedName("product_option_id")
     @Expose
     private String product_option_id = "";
@@ -69,4 +71,11 @@ public class OrderItems implements Serializable {
         this.product_option_name = product_option_name;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }

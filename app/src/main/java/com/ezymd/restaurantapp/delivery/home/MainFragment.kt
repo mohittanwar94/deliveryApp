@@ -27,7 +27,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import kotlinx.android.synthetic.main.tracker_activity.*
+import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.tracker_activity.progress
 
 
 class MainFragment : Fragment(), OnMapReadyCallback {
@@ -63,10 +64,20 @@ class MainFragment : Fragment(), OnMapReadyCallback {
             val mapFragment = childFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment?
             mapFragment!!.getMapAsync(this)
+            setGUI()
             setObserver()
 
 
         }
+    }
+
+    private fun setGUI() {
+        trackViewModel.dutyStatus.postValue(userInfo.dutyStatus)
+        switchButton.setOnCheckedChangeListener { buttonView, isChecked ->
+
+            changeStatus(isChecked)
+        }
+
     }
 
 
@@ -98,16 +109,21 @@ class MainFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
+        trackViewModel.dutyStatus.observe(viewLifecycleOwner, Observer {
+            userInfo.dutyStatus=it
+            switchButton.isChecked = it == 1
 
+        })
     }
 
-    private fun changeStatus() {
+    private fun changeStatus(isChecked: Boolean) {
         val baseRequest = BaseRequest(userInfo)
-        /*    baseRequest.paramsMap["order_id"] = "" + orderModel.orderId
-            baseRequest.paramsMap["order_status"] = "" + OrderStatus.ORDER_ACCEPT_DELIVERY_BOY
-            baseRequest.paramsMap["firebase_path"] =
-                FireBaseConstants.path + userInfo!!.userID + "/" + orderModel.key
-        */    trackViewModel.acceptOrder(baseRequest)
+        baseRequest.paramsMap["duty"] = if (isChecked) {
+            "1"
+        } else {
+            "0"
+        }
+        trackViewModel.changeDutyStatus(baseRequest)
     }
 
 
@@ -120,7 +136,8 @@ class MainFragment : Fragment(), OnMapReadyCallback {
             )
         )
         mMap!!.setMaxZoomPreference(20f)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
         val isGranted = (activity as BaseActivity).checkLocationPermissions(object :
             BaseActivity.PermissionListener {
             override fun result(isGranted: Boolean) {

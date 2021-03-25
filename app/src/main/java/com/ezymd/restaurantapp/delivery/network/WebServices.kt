@@ -62,6 +62,15 @@ interface WebServices {
         @Header("Authorization") accessToken: String
     ): OrderAcceptResponse
 
+
+    @FormUrlEncoded
+    @POST(ServerConfig.CHANGE_DUTY_STATUS)
+    suspend fun changeDutyStatus(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") accessToken: String
+    ): OrderAcceptResponse
+
+
     @FormUrlEncoded
     @POST(ServerConfig.ASSIGN_ORDER_DELIVERY)
     suspend fun assignOrder(
