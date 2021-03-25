@@ -58,6 +58,12 @@ class OrderDetailsAdapter(
 
         holder.itemView.qty.text = "" + item.qty + "x" + item.price
 
+        if (item.product_option_name.equals("")) {
+            holder.itemView.sizeVariant.visibility = View.GONE
+        } else {
+            holder.itemView.sizeVariant.visibility = View.VISIBLE
+            holder.itemView.sizeVariant.text = item.product_option_name
+        }
 
     }
 

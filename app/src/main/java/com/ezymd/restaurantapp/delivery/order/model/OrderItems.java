@@ -1,5 +1,7 @@
 package com.ezymd.restaurantapp.delivery.order.model;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -17,7 +19,14 @@ public class OrderItems implements Serializable {
     @Expose
     private Integer qty;
 
-    private boolean isSelected;
+    @SerializedName("product_option_id")
+    @Expose
+    private String product_option_id = "";
+
+    @SerializedName("product_option_name")
+    @Expose
+    private String product_option_name = "";
+
 
     public String getItem() {
         return item;
@@ -43,11 +52,21 @@ public class OrderItems implements Serializable {
         this.qty = qty;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+
+    public String getProduct_option_id() {
+        return product_option_id;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    public void setProduct_option_id(String product_option_id) {
+        this.product_option_id = product_option_id;
     }
+
+    public String getProduct_option_name() {
+        return TextUtils.isEmpty(product_option_name) ? "" : product_option_name;
+    }
+
+    public void setProduct_option_name(String product_option_name) {
+        this.product_option_name = product_option_name;
+    }
+
 }
