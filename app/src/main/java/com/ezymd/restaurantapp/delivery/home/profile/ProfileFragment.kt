@@ -52,10 +52,15 @@ class ProfileFragment : Fragment() {
 
     private fun setGUI() {
         notificationsViewModel.dutyStatus.postValue(userInfo.dutyStatus)
-        switchButton.setOnCheckedChangeListener { buttonView, isChecked ->
-
-            changeStatus(isChecked)
+        switchButton.setOnClickListener {
+            if (userInfo.dutyStatus == 0) {
+                changeStatus(true)
+            } else {
+                changeStatus(false)
+            }
         }
+
+
         setProfileData()
         edit_profile.setOnClickListener {
             UIUtil.clickAlpha(it)
@@ -110,6 +115,7 @@ class ProfileFragment : Fragment() {
 
     private fun changeStatus(isChecked: Boolean) {
         val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["user_id"] = "" + userInfo.userID
         baseRequest.paramsMap["duty"] = if (isChecked) {
             "1"
         } else {

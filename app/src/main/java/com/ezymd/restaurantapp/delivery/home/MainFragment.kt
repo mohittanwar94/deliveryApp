@@ -28,6 +28,8 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.switchButton
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.tracker_activity.progress
 
 
@@ -73,9 +75,12 @@ class MainFragment : Fragment(), OnMapReadyCallback {
 
     private fun setGUI() {
         trackViewModel.dutyStatus.postValue(userInfo.dutyStatus)
-        switchButton.setOnCheckedChangeListener { buttonView, isChecked ->
-
-            changeStatus(isChecked)
+        switchButton.setOnClickListener {
+            if (userInfo.dutyStatus == 0) {
+                changeStatus(true)
+            } else {
+                changeStatus(false)
+            }
         }
 
     }
@@ -118,6 +123,7 @@ class MainFragment : Fragment(), OnMapReadyCallback {
 
     private fun changeStatus(isChecked: Boolean) {
         val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["user_id"] = ""+userInfo.userID
         baseRequest.paramsMap["duty"] = if (isChecked) {
             "1"
         } else {

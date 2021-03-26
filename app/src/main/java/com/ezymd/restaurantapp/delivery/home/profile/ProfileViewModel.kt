@@ -67,13 +67,11 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun changeDutyStatus(baseRequest: BaseRequest) {
-        isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             val result = loginRepository!!.changeDutyStatus(
                 baseRequest,
                 Dispatchers.IO
             )
-            isLoading.postValue(false)
             when (result) {
                 is ResultWrapper.NetworkError -> showNetworkError()
                 is ResultWrapper.GenericError -> showGenericError(result.error)
