@@ -87,6 +87,7 @@ class ProfileViewModel : ViewModel() {
                             }
                         )
                     } else {
+                        dutyStatus.postValue(dutyStatus.value)
                         errorRequest.postValue(result.value.message)
                     }
 
