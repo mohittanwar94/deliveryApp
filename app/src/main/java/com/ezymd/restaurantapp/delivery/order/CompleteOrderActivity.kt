@@ -32,9 +32,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.ServerConfig
 import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
+import com.ezymd.restaurantapp.delivery.push.CallScreenActivity
+import com.ezymd.restaurantapp.delivery.push.SinchService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
@@ -50,17 +53,21 @@ import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.maps.android.PolyUtil
 import com.ncorti.slidetoact.SlideToActView
+import com.sinch.android.rtc.SinchError
 import kotlinx.android.synthetic.main.complete_order.*
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.address
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.items
-import kotlinx.android.synthetic.main.order_completed_details_with_customer.name
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.showDetails
 import kotlinx.android.synthetic.main.order_details_with_customer.*
 
 
-class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
-    private var start_rotation: Float=0f
+class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback, SinchService.StartFailedListener {
+    private var restPhoneNO: String? = ""
+    private var nameUser: String? = ""
+    private var avatar: String? = ""
+
+    private var start_rotation: Float = 0f
     private lateinit var defaultLocation: LatLng
     private var grayPolyline: Polyline? = null
     private var blackPolyline: Polyline? = null
@@ -158,27 +165,120 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         }
 
         userCall.setOnClickListener {
-            UIUtil.clickAlpha(it)
-            val intent = Intent(Intent.ACTION_DIAL)
-            intent.data = Uri.parse("tel:" + orderModel.phoneNo)
-            startActivity(intent)
+            restPhoneNO = orderModel.phoneNo
+            nameUser = orderModel.username
+            avatar = ""
+            try {
+                val isGranted = checkPhoneAudioPermissions(object : PermissionListener {
+                    override fun result(isGranted: Boolean) {
+                        if (isGranted) {
+                            UIUtil.clickAlpha(it)
+                            loginClicked()
+                        }
+
+                    }
+                })
+
+                if (isGranted) {
+                    UIUtil.clickAlpha(it)
+                    loginClicked()
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
         }
 
 
         restCall.setOnClickListener {
-            UIUtil.clickAlpha(it)
-            val intent = Intent(Intent.ACTION_DIAL)
-            intent.data = Uri.parse("tel:" + orderModel.restPhoneNO)
-            startActivity(intent)
+            restPhoneNO = orderModel.restPhoneNO
+            nameUser = orderModel.restaurantName
+            avatar = ""
+            try {
+                val isGranted = checkPhoneAudioPermissions(object : PermissionListener {
+                    override fun result(isGranted: Boolean) {
+                        if (isGranted) {
+                            UIUtil.clickAlpha(it)
+                            loginClicked()
+                        }
+
+                    }
+                })
+
+                if (isGranted) {
+                    UIUtil.clickAlpha(it)
+                    loginClicked()
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
 
         }
+
 
         if (orderModel.paymentType == PaymentMethodTYPE.COD) {
             cash.visibility = View.VISIBLE
             cash.text = "Cash to be collected " + getString(R.string.dollor) + orderModel.total
         }
+
     }
+
+    override fun onServiceConnected() {
+        getSinchServiceInterface()?.setStartListener(this)
+    }
+
+
+    override fun onStartFailed(error: SinchError) {
+        Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
+    }
+
+    override fun onStarted() {
+        openPlaceCallActivity()
+    }
+
+    private fun loginClicked() {
+        val userName = "" + userInfo?.userID
+        if (userName != getSinchServiceInterface()?.userName) {
+            getSinchServiceInterface()?.stopClient()
+        }
+        if (!getSinchServiceInterface()?.isStarted!!) {
+            getSinchServiceInterface()?.startClient(userName)
+        } else {
+            openPlaceCallActivity()
+        }
+    }
+
+    private fun openPlaceCallActivity() {
+        //item.delivery.phoneNo
+        callConnect()
+
+    }
+
+    private fun callConnect() {
+        if (restPhoneNO.equals("")) {
+            showError(false, "Phone No is Not available", null)
+            return
+        }
+        val call = getSinchServiceInterface()!!.callPhoneNumber(
+            if (ServerConfig.IS_TESTING) {
+                "+46000000000"
+            } else {
+                restPhoneNO
+            }
+        )
+        val callId = call.callId
+        val callScreen = Intent(this, CallScreenActivity::class.java)
+        callScreen.putExtra(SinchService.CALL_ID, callId)
+        callScreen.putExtra(JSONKeys.NAME, nameUser)
+        callScreen.putExtra(JSONKeys.AVATAR, avatar)
+        startActivity(callScreen)
+    }
+
 
     private fun showConfirmationDialog() {
         val builder = AlertDialog.Builder(this, R.style.alert_dialog_theme)

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ezymd.restaurantapp.delivery.EzymdApplication
+import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
 import com.ezymd.restaurantapp.delivery.utils.ErrorCodes
 import com.ezymd.restaurantapp.delivery.utils.ErrorResponse
@@ -20,6 +21,7 @@ class ProfileViewModel : ViewModel() {
     val mResturantData: MutableLiveData<LogoutModel>
     val isLoading: MutableLiveData<Boolean>
     val dutyStatus = MutableLiveData<Int>()
+    val changePassword = MutableLiveData<OrderAcceptResponse>()
 
     override fun onCleared() {
         super.onCleared()
@@ -91,6 +93,23 @@ class ProfileViewModel : ViewModel() {
                         errorRequest.postValue(result.value.message)
                     }
 
+                }
+            }
+        }
+
+    }
+    fun changePasswordLinkGeneration(baseRequest: BaseRequest) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = loginRepository!!.changePassword(
+                baseRequest,
+                Dispatchers.IO
+            )
+            when (result) {
+                is ResultWrapper.NetworkError -> showNetworkError()
+                is ResultWrapper.GenericError -> showGenericError(result.error)
+                is ResultWrapper.Success -> {
+                    SnapLog.print(result.value.toString())
+                    changePassword.postValue(result.value)
                 }
             }
         }

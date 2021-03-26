@@ -43,6 +43,23 @@ class ProfileRepository {
 
 
     }
+    suspend fun changePassword(
+        baseRequest: BaseRequest,
+        dispatcher: CoroutineDispatcher
+    ): ResultWrapper<OrderAcceptResponse> {
+
+        SnapLog.print("track repositry=====")
+        val apiServices = ApiClient.client!!.create(WebServices::class.java)
+
+        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
+            apiServices.changePassword(
+                baseRequest.paramsMap,baseRequest.accessToken
+            )
+        }
+
+
+    }
+
 
 
     companion object {

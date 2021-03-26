@@ -94,6 +94,12 @@ interface WebServices {
     ): LoginModel
 
 
+    @FormUrlEncoded
+    @POST(ServerConfig.CHANGE_PASSWORD)
+    suspend fun changePassword(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") accessToken: String
+    ): OrderAcceptResponse
 
 }
 

@@ -175,7 +175,8 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.2.0'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.github.mumayank:AirLocation:2.4'
-    implementation 'androidx.activity:activity-ktx:1.2.0'
-
+    implementation 'androidx.activity:activity-ktx:1.2.2'
+    implementation 'androidx.browser:browser:1.3.0'
+    implementation project(path: ':sinch-android-rtc-3.17.5')
 
 }

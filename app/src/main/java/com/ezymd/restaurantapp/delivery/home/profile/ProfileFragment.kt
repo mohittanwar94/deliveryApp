@@ -1,11 +1,15 @@
 package com.ezymd.restaurantapp.delivery.home.profile
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsClient
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.HomeScreen
 import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.ServerConfig
 import com.ezymd.restaurantapp.delivery.editprofile.EditProfileActivity
 import com.ezymd.restaurantapp.delivery.login.Login
 import com.ezymd.restaurantapp.delivery.utils.*
@@ -52,6 +57,9 @@ class ProfileFragment : Fragment() {
 
     private fun setGUI() {
         notificationsViewModel.dutyStatus.postValue(userInfo.dutyStatus)
+        offlineLay.setOnClickListener {
+            switchButton.performClick()
+        }
         switchButton.setOnClickListener {
             if (userInfo.dutyStatus == 0) {
                 changeStatus(true)
@@ -59,8 +67,6 @@ class ProfileFragment : Fragment() {
                 changeStatus(false)
             }
         }
-
-
         setProfileData()
         edit_profile.setOnClickListener {
             UIUtil.clickAlpha(it)
@@ -74,6 +80,54 @@ class ProfileFragment : Fragment() {
             notificationsViewModel.logout(baseRequest)
 
         }
+
+        changePassword.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            notificationsViewModel.changePasswordLinkGeneration(getChangePasswordRequest())
+        }
+
+        faq.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            loadFaqs(it)
+        }
+
+    }
+
+    private fun loadFaqs(it: View) {
+        val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(ContextCompat.getColor(requireActivity(), R.color.colorPrimary))
+        builder.setShowTitle(true)
+        builder.setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+        builder.setCloseButtonIcon(
+            BitmapFactory.decodeResource(resources, R.drawable.ic_back)
+        )
+        builder.setStartAnimations(requireActivity(), R.anim.left_in, R.anim.left_out)
+        builder.setExitAnimations(requireActivity(), R.anim.right_in, R.anim.right_out)
+
+        val customTabsIntent = builder.build()
+
+        val list = ArrayList<String>()
+        list.add(ServerConfig.FAQ_URL)
+        val packageName = CustomTabsClient.getPackageName(requireContext(), list)
+        if (packageName == null) {
+            requireActivity().startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(ServerConfig.FAQ_URL)
+                )
+            )
+
+        } else {
+            customTabsIntent.intent.setPackage(packageName)
+            customTabsIntent.launchUrl(requireActivity(), Uri.parse(ServerConfig.FAQ_URL))
+        }
+
+    }
+
+    private fun getChangePasswordRequest(): BaseRequest {
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["user_id"] = "" + userInfo.userID
+        return baseRequest
     }
 
     override fun onResume() {
@@ -111,6 +165,10 @@ class ProfileFragment : Fragment() {
             switchButton.isChecked = it == 1
 
         })
+
+        notificationsViewModel.changePassword.observe(viewLifecycleOwner, Observer {
+            (activity as BaseActivity).showError(it.status == ErrorCodes.SUCCESS, it.message, null)
+        })
     }
 
     private fun changeStatus(isChecked: Boolean) {
@@ -123,7 +181,6 @@ class ProfileFragment : Fragment() {
         }
         notificationsViewModel.changeDutyStatus(baseRequest)
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -182,8 +239,6 @@ class ProfileFragment : Fragment() {
 
 
     private fun setProfileData() {
-
-
         userName.text = userInfo!!.userName
         if (userInfo!!.email != "")
             email.text = userInfo!!.email

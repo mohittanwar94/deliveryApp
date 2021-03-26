@@ -31,5 +31,7 @@ interface ServerConfig {
         const val ACCEPT_ORDER="updateOrderStatus"
         const val CHANGE_DUTY_STATUS="updateUserDuty"
         const val UPDATE_PROFILE = "updateProfile"
+        const val CHANGE_PASSWORD = "changePassword"
+        const val FAQ_URL="https://www.google.com"
     }
 }

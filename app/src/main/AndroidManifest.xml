@@ -20,6 +20,12 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -92,7 +98,7 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysVisible" />
         <activity
             android:name=".order.IncomingOrderActivity"
-            android:parentActivityName="com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment"
+            android:parentActivityName="com.ezymd.restaurantapp.delivery.HomeScreen"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
@@ -203,6 +209,14 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
+
+
+        <service android:name=".push.SinchService" />
+        <activity
+            android:name=".push.CallScreenActivity"
+            android:screenOrientation="portrait" />
+
+
 
     </application>
 
