@@ -55,7 +55,6 @@ object MapUtils {
 
 
     fun getSourceBitmapPng(
-        context: Context,drawable:Int
     ): BitmapDescriptor? {
         /*val vectorDrawable =
             ContextCompat.getDrawable(context, drawable) as VectorDrawable?

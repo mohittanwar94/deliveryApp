@@ -109,7 +109,7 @@ class ProfileViewModel : ViewModel() {
                 is ResultWrapper.GenericError -> showGenericError(result.error)
                 is ResultWrapper.Success -> {
                     SnapLog.print(result.value.toString())
-                    changePassword.postValue(result.value)
+                    changePassword.postValue(result.value!!)
                 }
             }
         }
