@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -127,6 +128,11 @@ class ProfileFragment : Fragment() {
     private fun getChangePasswordRequest(): BaseRequest {
         val baseRequest = BaseRequest(userInfo)
         baseRequest.paramsMap["user_id"] = "" + userInfo.userID
+        baseRequest.paramsMap["email"] = if (TextUtils.isEmpty(userInfo.email)) {
+            userInfo.phoneNumber
+        } else {
+            userInfo.email
+        }
         return baseRequest
     }
 
