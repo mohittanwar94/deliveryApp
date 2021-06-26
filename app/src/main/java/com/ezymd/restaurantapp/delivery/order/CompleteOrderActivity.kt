@@ -32,12 +32,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.EzymdApplication
 import com.ezymd.restaurantapp.delivery.R
-import com.ezymd.restaurantapp.delivery.ServerConfig
 import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
-import com.ezymd.restaurantapp.delivery.push.CallScreenActivity
-import com.ezymd.restaurantapp.delivery.push.SinchService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
@@ -53,7 +50,6 @@ import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.maps.android.PolyUtil
 import com.ncorti.slidetoact.SlideToActView
-import com.sinch.android.rtc.SinchError
 import kotlinx.android.synthetic.main.complete_order.*
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.address
@@ -62,7 +58,8 @@ import kotlinx.android.synthetic.main.order_completed_details_with_customer.show
 import kotlinx.android.synthetic.main.order_details_with_customer.*
 
 
-class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback, SinchService.StartFailedListener {
+class CompleteOrderActivity : BaseActivity(),
+    OnMapReadyCallback/*, SinchService.StartFailedListener*/ {
     private var restPhoneNO: String? = ""
     private var nameUser: String? = ""
     private var avatar: String? = ""
@@ -229,28 +226,28 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback, SinchService.S
     }
 
     override fun onServiceConnected() {
-        getSinchServiceInterface()?.setStartListener(this)
+        //  getSinchServiceInterface()?.setStartListener(this)
     }
 
 
-    override fun onStartFailed(error: SinchError) {
-        Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
-    }
+    /* override fun onStartFailed(error: SinchError) {
+         Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
+     }
 
-    override fun onStarted() {
-        openPlaceCallActivity()
-    }
-
+     override fun onStarted() {
+         openPlaceCallActivity()
+     }
+ */
     private fun loginClicked() {
         val userName = "" + userInfo?.userID
-        if (userName != getSinchServiceInterface()?.userName) {
-            getSinchServiceInterface()?.stopClient()
-        }
-        if (!getSinchServiceInterface()?.isStarted!!) {
-            getSinchServiceInterface()?.startClient(userName)
-        } else {
-            openPlaceCallActivity()
-        }
+        /* if (userName != getSinchServiceInterface()?.userName) {
+             getSinchServiceInterface()?.stopClient()
+         }
+         if (!getSinchServiceInterface()?.isStarted!!) {
+             getSinchServiceInterface()?.startClient(userName)
+         } else {
+        */     openPlaceCallActivity()
+
     }
 
     private fun openPlaceCallActivity() {
@@ -260,7 +257,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback, SinchService.S
     }
 
     private fun callConnect() {
-        if (restPhoneNO.equals("")) {
+        /*if (restPhoneNO.equals("")) {
             showError(false, "Phone No is Not available", null)
             return
         }
@@ -276,7 +273,12 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback, SinchService.S
         callScreen.putExtra(SinchService.CALL_ID, callId)
         callScreen.putExtra(JSONKeys.NAME, nameUser)
         callScreen.putExtra(JSONKeys.AVATAR, avatar)
-        startActivity(callScreen)
+        startActivity(callScreen)*/
+
+        val intent = Intent(Intent.ACTION_DIAL)
+        intent.data = Uri.parse("tel:" + restPhoneNO)
+        startActivity(intent)
+
     }
 
 

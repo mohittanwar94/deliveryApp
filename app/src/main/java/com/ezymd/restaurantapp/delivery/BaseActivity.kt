@@ -18,20 +18,18 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.font.CustomTypeFace
 import com.ezymd.restaurantapp.delivery.font.Sizes
-import com.ezymd.restaurantapp.delivery.push.SinchService
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
-open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener ,
-    ServiceConnection {
+open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener /*,
+    ServiceConnection*/ {
 
-    var mSinchServiceInterface: SinchService.SinchServiceInterface? = null
+    // var mSinchServiceInterface: SinchService.SinchServiceInterface? = null
     var size: Sizes? = null
     val PERMISSIONS_REQUEST_CAMERA = 3333
     val PERMISSIONS_REQUEST_CAMERA_AUDIO = 3331
@@ -52,7 +50,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     private var mLastTimeNoInternet = System.currentTimeMillis()
     private var handler: Handler? = null
 
-    override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder?) {
+    /*override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder?) {
         if ((SinchService::class.java.name == componentName.className)) {
             mSinchServiceInterface = iBinder as SinchService.SinchServiceInterface?
             onServiceConnected()
@@ -67,16 +65,18 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     }
 
 
+    */
     open fun onServiceConnected() {}
     open fun onServiceDisconnected() {}
-    fun getSinchServiceInterface(): SinchService.SinchServiceInterface? {
-        return mSinchServiceInterface
-    }
 
+    /* fun getSinchServiceInterface(): SinchService.SinchServiceInterface? {
+         return mSinchServiceInterface
+     }
+ */
     private val messenger = Messenger(object : Handler(Looper.getMainLooper()!!) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
-                SinchService.MESSAGE_PERMISSIONS_NEEDED -> {
+                /*SinchService.MESSAGE_PERMISSIONS_NEEDED -> {
                     val bundle = msg.data
                     val requiredPermission = bundle.getString(SinchService.REQUIRED_PERMISSION)
                     ActivityCompat.requestPermissions(
@@ -84,16 +84,15 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
                         arrayOf(requiredPermission),
                         0
                     )
-                }
+                }*/
             }
         }
     })
 
-
     private fun bindService() {
-        val serviceIntent = Intent(this, SinchService::class.java)
+       /* val serviceIntent = Intent(this, SinchService::class.java)
         serviceIntent.putExtra(SinchService.MESSENGER, messenger)
-        applicationContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)
+        applicationContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)*/
     }
 
 
@@ -130,6 +129,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         onNetWorkChange(isConnected)
     }
+
     fun checkPhoneAudioPermissions(listener: PermissionListener): Boolean {
         if (Build.VERSION.SDK_INT >= 23) {
             permissionListener = listener
