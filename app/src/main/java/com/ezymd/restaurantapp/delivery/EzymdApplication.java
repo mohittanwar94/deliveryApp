@@ -96,8 +96,9 @@ public class EzymdApplication extends Application implements Application.Activit
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         mInstance = this;
         UserInfo userInfo = UserInfo.getInstance(mInstance);
-        AppSignatureHelper appSignatureHelper = new AppSignatureHelper(this);
+        /*AppSignatureHelper appSignatureHelper = new AppSignatureHelper(this);
         appSignatureHelper.getAppSignatures();
+        */
         if (getResources() == null) {
             Process.killProcess(Process.myPid());
         }

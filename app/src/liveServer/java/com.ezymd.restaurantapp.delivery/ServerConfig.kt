@@ -7,7 +7,6 @@ interface ServerConfig {
     companion object {
 
         const val IS_TESTING = false
-        const val facebook = "JsmOX78jPApjOOP7ozZxtZL/Yto="
         const val BASE_URL = "http://app.ezymd.com/api/"
 
         const val OTP_HASH = "FCWFd3gBNu0"

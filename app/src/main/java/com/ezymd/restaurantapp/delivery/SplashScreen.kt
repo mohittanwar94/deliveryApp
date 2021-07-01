@@ -14,7 +14,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
-import com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment
 import com.ezymd.restaurantapp.delivery.login.Login
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import java.security.MessageDigest
@@ -34,11 +33,15 @@ class SplashScreen : BaseActivity() {
         try {
             val mNotifyManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotifyManager.getNotificationChannel(
-                    getString(R.string.default_notification_channel_id)) != null) {
+                    getString(R.string.default_notification_channel_id)
+                ) != null
+            ) {
                 mNotifyManager.deleteNotificationChannel(getString(R.string.default_notification_channel_id))
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotifyManager.getNotificationChannel(
-                    getString(R.string.default_notification_channel_id)) == null) {
+                    getString(R.string.default_notification_channel_id)
+                ) == null
+            ) {
                 val mChannel = NotificationChannel(
                     getString(R.string.default_notification_channel_id),
                     "EzymdDel",
@@ -64,7 +67,7 @@ class SplashScreen : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        printKeyHash(this)
+        //printKeyHash(this)
         if (userInfo!!.userID != 0) {
             startActivity(Intent(this, HomeScreen::class.java))
         } else

@@ -99,7 +99,7 @@ public class TrackerService extends LifecycleService {
     }
 
     private void loginToFirebase() {
-        String email = getString(R.string.firebase_email);
+       /* String email = getString(R.string.firebase_email);
         String password = getString(R.string.firebase_password);
         FirebaseAuth.getInstance().signInWithEmailAndPassword(
                 email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -112,11 +112,11 @@ public class TrackerService extends LifecycleService {
                     Log.d(TAG, "firebase auth failed");
                 }
             }
-        });
+        });*/
     }
 
     private void requestLocationUpdates() {
-        LocationRequest request = new LocationRequest();
+        LocationRequest request = LocationRequest.create();
         request.setInterval(5000);
         request.setFastestInterval(3000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
