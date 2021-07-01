@@ -10,9 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.login.LoginRepository
 import com.ezymd.restaurantapp.delivery.order.model.OrderItems
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderListRepository
 import com.ezymd.restaurantapp.delivery.orderdetails.adapter.OrderDetailsAdapter
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderViewModel

@@ -3,6 +3,7 @@ package com.ezymd.restaurantapp.delivery.di
 import com.ezymd.restaurantapp.delivery.BuildConfig
 import com.ezymd.restaurantapp.delivery.ServerConfig
 import com.ezymd.restaurantapp.delivery.network.NetworkComonRequest
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderListRepository
 import com.ezymd.restaurantapp.network.WebServices
 import dagger.Module
 import dagger.Provides
@@ -50,6 +51,10 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit) = retrofit.create(WebServices::class.java)
+
+    @Provides
+    @Singleton
+    fun provideOrderListRepository(service: WebServices, request: NetworkComonRequest) = OrderListRepository(service, request)
 
 
 }

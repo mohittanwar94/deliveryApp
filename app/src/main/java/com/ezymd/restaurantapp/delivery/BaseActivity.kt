@@ -2,10 +2,8 @@ package com.ezymd.restaurantapp.delivery
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
@@ -90,9 +88,9 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     })
 
     private fun bindService() {
-       /* val serviceIntent = Intent(this, SinchService::class.java)
-        serviceIntent.putExtra(SinchService.MESSENGER, messenger)
-        applicationContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)*/
+        /* val serviceIntent = Intent(this, SinchService::class.java)
+         serviceIntent.putExtra(SinchService.MESSENGER, messenger)
+         applicationContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)*/
     }
 
 
@@ -290,10 +288,10 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             .show()
     }
 
-    fun checkCameraPermissions(listener: PermissionListener): Boolean {
+    open fun checkCameraPermissions(listener: PermissionListener): Boolean {
         if (Build.VERSION.SDK_INT >= 23) {
             permissionListener = listener
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.ACCESS_MEDIA_LOCATION
@@ -301,7 +299,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             ) {
                 val notGranted = ArrayList<String>()
                 val permissions = arrayOf(
-                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
                 for (permission in permissions) {
@@ -310,7 +308,10 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
                     )
                 }
                 if (!notGranted.isEmpty()) {
-                    requestPermissions(notGranted.toTypedArray(), PERMISSIONS_REQUEST_CAMERA)
+                    requestPermissions(
+                        notGranted.toTypedArray(),
+                        PERMISSIONS_REQUEST_CAMERA
+                    )
                     return false
                 }
             }

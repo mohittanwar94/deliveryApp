@@ -84,7 +84,13 @@ public class UserInfo {
         userInfo.mUserUpdate.postValue(true);
         preferences.edit().putString("phone_number", phone_number).apply();
     }
+    public String getCountryCode() {
+        return preferences.getString("setCountryCode", "");
+    }
 
+    public void setCountryCode(String countryCode) {
+        preferences.edit().putString("setCountryCode", countryCode).apply();
+    }
     public String getAccessToken() {
         return "Bearer " + preferences.getString("accessTokenApp", "");
     }

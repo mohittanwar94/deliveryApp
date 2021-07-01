@@ -2,6 +2,7 @@ package com.ezymd.restaurantapp.delivery
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -25,31 +26,10 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class HomeScreen : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
-    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
 
-
-        val navController = findNavController(R.id.nav_host_fragment)
-
-        // get fragment
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!
-
-        // setup custom navigator
-        val navigator =
-            KeepStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment)
-        navController.navigatorProvider += navigator
-
-        // set navigation graph
-        navController.setGraph(R.navigation.mobile_navigation)
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
-        navView.setupWithNavController(navController)
-        navView.labelVisibilityMode = LABEL_VISIBILITY_LABELED
-        SnapLog.print("onCreate")
-
-        setWorkManager()
         setLocationUpdates()
         if (userInfo!!.userID != 0)
             EzymdApplication.getInstance().loginToFirebase(userInfo!!.userID)
@@ -69,16 +49,42 @@ class HomeScreen : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverList
         );
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startTrackerService()
+            initializeUi()
         } else {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ),
-                PERMISSIONS_REQUEST
-            )
+            startActivityForResult(Intent(this, PermissionActivity::class.java), 1000)
         }
     }
 
+    @SuppressLint("RestrictedApi")
+    private fun initializeUi() {
+        val navController = findNavController(R.id.nav_host_fragment)
+        // get fragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!
+        // setup custom navigator
+        val navigator =
+            KeepStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment)
+        navController.navigatorProvider += navigator
+        // set navigation graph
+        navController.setGraph(R.navigation.mobile_navigation)
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+
+        navView.setupWithNavController(navController)
+        navView.labelVisibilityMode = LABEL_VISIBILITY_LABELED
+        SnapLog.print("onCreate")
+
+        setWorkManager()
+
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            setLocationUpdates()
+        }else{
+            finish()
+        }
+    }
 
     private fun setWorkManager() {
         val mWorkManager = WorkManager.getInstance(this)

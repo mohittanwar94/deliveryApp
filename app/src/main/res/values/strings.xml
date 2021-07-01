@@ -143,5 +143,6 @@
     <string name="picked">Picked</string>
     <string name="online_offline">Online/Offline</string>
     <string name="changepassword">Change Password</string>
+    <string name="allow_permission">Allow</string>
 
 </resources>

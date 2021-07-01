@@ -1,6 +1,5 @@
 package com.ezymd.restaurantapp.delivery.order.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,9 +16,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class OrderViewModel @ViewModelInject constructor(
+@HiltViewModel
+class OrderViewModel @Inject constructor(
     private val loginRepository: OrderListRepository
-    //private val networkHelper: NetworkHelper
 ) : ViewModel() {
 
     var errorRequest: SingleLiveEvent<String>

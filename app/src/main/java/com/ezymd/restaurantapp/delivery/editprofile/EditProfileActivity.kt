@@ -18,6 +18,7 @@ import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.login.otp.OTPScreen
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.ezymd.restaurantapp.delivery.utils.JSONKeys.OTP_REQUEST
+import com.ybs.countrypicker.CountryPicker
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import java.io.File
 import java.io.FileOutputStream
@@ -302,9 +303,23 @@ class EditProfileActivity : BaseActivity() {
     }
 
 
+    private fun selectCountry(text: String) {
+        val picker = CountryPicker.newInstance("Choose Your Country") // dialog title
+
+        picker.setListener { name, code, dialCode, flagDrawableResID ->
+            userInfo?.countryCode = dialCode
+            picker.dismissAllowingStateLoss()
+            generateOtp(text)
+        }
+        picker.show(supportFragmentManager, "COUNTRY_PICKER")
+    }
     private fun generateOtp(text: String) {
+        if (userInfo?.countryCode.equals("")) {
+            selectCountry(text)
+            return
+        }
         SuspendKeyPad.suspendKeyPad(this)
-        viewModel.generateOtp(text)
+        viewModel.generateOtp(text,userInfo?.countryCode)
         viewModel.otpResponse.removeObservers(this)
 
         viewModel.otpResponse.observe(this, Observer {
