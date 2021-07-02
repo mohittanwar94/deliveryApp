@@ -303,23 +303,26 @@ class EditProfileActivity : BaseActivity() {
     }
 
 
+    private var counCode: String = "US"
     private fun selectCountry(text: String) {
         val picker = CountryPicker.newInstance("Choose Your Country") // dialog title
 
         picker.setListener { name, code, dialCode, flagDrawableResID ->
             userInfo?.countryCode = dialCode
+            counCode = code
             picker.dismissAllowingStateLoss()
             generateOtp(text)
         }
         picker.show(supportFragmentManager, "COUNTRY_PICKER")
     }
+
     private fun generateOtp(text: String) {
         if (userInfo?.countryCode.equals("")) {
             selectCountry(text)
             return
         }
         SuspendKeyPad.suspendKeyPad(this)
-        viewModel.generateOtp(text,userInfo?.countryCode)
+        viewModel.generateOtp(text, counCode, userInfo?.countryCode)
         viewModel.otpResponse.removeObservers(this)
 
         viewModel.otpResponse.observe(this, Observer {
