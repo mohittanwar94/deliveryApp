@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:217762471579:android:f8de2d112094e0f0fc303e",
+        "mobilesdk_app_id": "1:217762471579:android:1c92b929e8753f78fc303e",
         "android_client_info": {
-          "package_name": "com.ezymd.grocery.delivery"
+          "package_name": "com.ezymd.pharmacy.delivery"
         }
       },
       "oauth_client": [
         {
-          "client_id": "217762471579-rb5g9ngb0k3eghmlrf786j94c3p8c6vt.apps.googleusercontent.com",
+          "client_id": "217762471579-8ioal5qg8il8rhvf6u8pprqusoe6nktb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.ezymd.grocery.delivery",
+            "package_name": "com.ezymd.pharmacy.delivery",
             "certificate_hash": "10c2fa3a63838d7f0e9787e0374873d1ebab63a3"
           }
         },

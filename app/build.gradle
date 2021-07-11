@@ -76,7 +76,7 @@ android {
         }
         liveServer {
             minSdkVersion 21
-            applicationId 'com.ezymd.grocery.delivery'
+            applicationId 'com.ezymd.pharmacy.delivery'
             signingConfig signingConfigs.releaseConfig
             targetSdkVersion 30
             buildConfigField "String", "CONNECTY_APP_ID", "\"" + keys.PROD_CONNECTY_APP_ID + "\""
