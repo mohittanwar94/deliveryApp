@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:217762471579:android:b293994a4699abe9fc303e",
+        "mobilesdk_app_id": "1:217762471579:android:f8de2d112094e0f0fc303e",
         "android_client_info": {
-          "package_name": "com.ezymd.restaurantapp"
+          "package_name": "com.ezymd.grocery.delivery"
         }
       },
       "oauth_client": [
         {
-          "client_id": "217762471579-fputhor050u3i2didv3pfdp3apdf6o0p.apps.googleusercontent.com",
+          "client_id": "217762471579-rb5g9ngb0k3eghmlrf786j94c3p8c6vt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.ezymd.restaurantapp",
+            "package_name": "com.ezymd.grocery.delivery",
             "certificate_hash": "10c2fa3a63838d7f0e9787e0374873d1ebab63a3"
           }
         },
@@ -44,12 +44,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:217762471579:android:c321aba354fd0ad7fc303e",
+        "mobilesdk_app_id": "1:217762471579:android:cb98de0f0aa7a19dfc303e",
         "android_client_info": {
-          "package_name": "com.ezymd.restaurantapp.delivery"
+          "package_name": "com.ezymd.pharmacy.delivery.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "217762471579-sqpcn3fjjcd7ogiepgahte5uae2pafgh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ezymd.pharmacy.delivery.app",
+            "certificate_hash": "10c2fa3a63838d7f0e9787e0374873d1ebab63a3"
+          }
+        },
         {
           "client_id": "217762471579-bp7p2jbv5u3m1k64qc7k812a9q50sdb9.apps.googleusercontent.com",
           "client_type": 3

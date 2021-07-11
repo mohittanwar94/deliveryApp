@@ -33,7 +33,7 @@ android {
     defaultConfig {
         applicationId "com.ezymd.restaurantapp"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -61,7 +61,7 @@ android {
     productFlavors {
         alphaServer {
             minSdkVersion 21
-            targetSdkVersion 29
+            targetSdkVersion 30
             applicationId "com.ezymd.restaurantapp.delivery.test"
             buildConfigField "String", "CONNECTY_APP_ID", "\"" + keys.DEV_CONNECTY_APP_ID + "\""
             buildConfigField "String", "CONNECTY_AUTH_KEY", "\"" + keys.DEV_CONNECTY_AUTH_KEY + "\""
@@ -76,9 +76,9 @@ android {
         }
         liveServer {
             minSdkVersion 21
-            applicationId 'com.ezymd.restaurantapp.delivery'
+            applicationId 'com.ezymd.grocery.delivery'
             signingConfig signingConfigs.releaseConfig
-            targetSdkVersion 29
+            targetSdkVersion 30
             buildConfigField "String", "CONNECTY_APP_ID", "\"" + keys.PROD_CONNECTY_APP_ID + "\""
             buildConfigField "String", "CONNECTY_AUTH_KEY", "\"" + keys.PROD_CONNECTY_AUTH_KEY + "\""
 
