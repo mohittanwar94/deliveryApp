@@ -63,7 +63,7 @@ class OrdersAdapter(
         holder.itemView.name.text = item.restaurantName
 
         holder.itemView.totalAmount.text =
-            holder.itemView.context.getString(R.string.dollor) + item.total
+            item.currency + item.total
 
         val itemsString = StringBuilder()
         for (model in item.orderItems) {

@@ -220,7 +220,7 @@ class CompleteOrderActivity : BaseActivity(),
 
         if (orderModel.paymentType == PaymentMethodTYPE.COD) {
             cash.visibility = View.VISIBLE
-            cash.text = "Cash to be collected " + getString(R.string.dollor) + orderModel.total
+            cash.text = "Cash to be collected " + orderModel.currency + orderModel.total
         }
 
     }
@@ -284,7 +284,7 @@ class CompleteOrderActivity : BaseActivity(),
 
     private fun showConfirmationDialog() {
         val builder = AlertDialog.Builder(this, R.style.alert_dialog_theme)
-        builder.setMessage("Have You Received Cash " + getString(R.string.dollor) + orderModel.total + "?")
+        builder.setMessage("Have You Received Cash " + orderModel.currency + orderModel.total + "?")
             .setCancelable(false)
             .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, id: Int) {

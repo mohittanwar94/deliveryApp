@@ -14,6 +14,9 @@ public class OrderModel implements Serializable {
     @Expose
     private String discount;
 
+    @SerializedName("currency")
+    @Expose
+    private String currency;
 
     @SerializedName("order_id")
     @Expose
@@ -333,6 +336,13 @@ public class OrderModel implements Serializable {
         return paymentType;
     }
 
+    public String getCurrency() {
+        return TextUtils.isEmpty(currency) ? "$" : currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public String getDiscount() {
         return TextUtils.isEmpty(discount) ? "0.0" : discount;

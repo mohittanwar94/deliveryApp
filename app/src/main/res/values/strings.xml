@@ -45,7 +45,6 @@
     <string name="rating">Rating</string>
     <string name="free_delivery">Free delivery</string>
     <string name="minimum">Min</string>
-    <string name="dollor">$</string>
     <string name="edit">Edit</string>
     <string name="my_wallet">My wallet</string>
     <string name="faq">FAQ’s</string>
@@ -114,7 +113,7 @@
     <string name="delivery_boy_pick_up">Delivery Boy</string>
 
     <string name="wait_assigning_order">Wait! assigning your order</string>
-    <string name="waiting_for_confrirmation">Waiting for confirmation from restaurant.\nPlease Wait...</string>
+    <string name="waiting_for_confrirmation">Waiting for confirmation from store.\nPlease Wait...</string>
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
     <string name="congratualtions">Congratulations</string>
@@ -124,7 +123,7 @@
     <string name="live_status">Live Status</string>
     <string name="have_an_issue_chat_with_us">Have an issue chat with us?</string>
     <string name="your_order_processing">Your order is processing</string>
-    <string name="your_order_is_cooking">"Your order is cooking "</string>
+    <string name="your_order_is_cooking">"Your order is being prepared "</string>
     <string name="assign_for_delivey">Assign for delivery</string>
     <string name="orders">Orders</string>
     <string name="deliver_order">Deliver Order</string>

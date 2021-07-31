@@ -103,12 +103,12 @@ class OrderDetailsActivity : BaseActivity() {
     private fun setGUI() {
         paymentMode.text = getPaymentMode(item.paymentType)
         subTotal.text =
-            getString(R.string.dollor) + String.format("%.2f", getTotalPrice(item.orderItems))
+            item.currency+ String.format("%.2f", getTotalPrice(item.orderItems))
 
         if (item.discount != "0.0") {
             discountLay.visibility = View.VISIBLE
             discount.text =
-                getString(R.string.dollor) + String.format("%.2f", item.discount.toDouble())
+                item.currency + String.format("%.2f", item.discount.toDouble())
         }
 
         order_id.text = getString(R.string.orderID) + " #" + item.orderId
@@ -116,10 +116,8 @@ class OrderDetailsActivity : BaseActivity() {
         address.text = item.restaurantAddress
         username.text = item.username
         order_info.text =
-            TimeUtils.getReadableDate(item.created) + " | " + item.orderItems.size + " items | " + getString(
-                R.string.dollor
-            ) + item.total
-        totalAmount.text = getString(R.string.dollor) + item.total
+            TimeUtils.getReadableDate(item.created) + " | " + item.orderItems.size + " items | " + item.currency + item.total
+        totalAmount.text = item.currency + item.total
         deliveryInstruction.text = item.deliveryInstruction
         userAddress.text = item.address
         if (item.scheduleType == 2) {
@@ -139,7 +137,7 @@ class OrderDetailsActivity : BaseActivity() {
 
         if (!item.deliveryCharges.equals("0"))
             shippingCharge.text =
-                getString(R.string.dollor) + String.format("%.2f", item.deliveryCharges.toDouble())
+                item.currency+ String.format("%.2f", item.deliveryCharges.toDouble())
     }
 
     private fun setOrderStatus(orderStatus: Int) {
