@@ -1,0 +1,259 @@
+package com.ezymd.restaurantapp.delivery.home.profile
+
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsClient
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.ezymd.restaurantapp.delivery.BaseActivity
+import com.ezymd.restaurantapp.delivery.HomeScreen
+import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.ServerConfig
+import com.ezymd.restaurantapp.delivery.editprofile.EditProfileActivity
+import com.ezymd.restaurantapp.delivery.login.Login
+import com.ezymd.restaurantapp.delivery.utils.*
+import com.google.android.material.appbar.AppBarLayout
+import kotlinx.android.synthetic.main.fragment_profile.*
+
+class ProfileFragment : Fragment() {
+    enum class State {
+        EXPANDED, COLLAPSED, IDLE
+    }
+
+    var mCurrentState: State = State.IDLE
+
+    private lateinit var notificationsViewModel: ProfileViewModel
+
+    private val userInfo by lazy {
+        UserInfo.getInstance(requireActivity())
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        notificationsViewModel =
+            ViewModelProvider(this).get(ProfileViewModel::class.java)
+        return inflater.inflate(R.layout.fragment_profile, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setToolBar()
+        setGUI()
+
+    }
+
+    private fun setGUI() {
+        notificationsViewModel.dutyStatus.postValue(userInfo.dutyStatus)
+        offlineLay.setOnClickListener {
+            switchButton.performClick()
+        }
+        switchButton.setOnClickListener {
+            if (userInfo.dutyStatus == 0) {
+                changeStatus(true)
+            } else {
+                changeStatus(false)
+            }
+        }
+        setProfileData()
+        edit_profile.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            val intent = Intent(activity, EditProfileActivity::class.java)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.left_in, R.anim.left_out)
+        }
+        logout.setOnClickListener {
+            UIUtil.clickHandled(it)
+            val baseRequest = BaseRequest(userInfo)
+            notificationsViewModel.logout(baseRequest)
+
+        }
+
+        changePassword.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            notificationsViewModel.changePasswordLinkGeneration(getChangePasswordRequest())
+        }
+
+        faq.setOnClickListener {
+            UIUtil.clickAlpha(it)
+            loadFaqs(it)
+        }
+
+    }
+
+    private fun loadFaqs(it: View) {
+        val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(ContextCompat.getColor(requireActivity(), R.color.colorPrimary))
+        builder.setShowTitle(true)
+        builder.setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+        builder.setCloseButtonIcon(
+            BitmapFactory.decodeResource(resources, R.drawable.ic_back)
+        )
+        builder.setStartAnimations(requireActivity(), R.anim.left_in, R.anim.left_out)
+        builder.setExitAnimations(requireActivity(), R.anim.right_in, R.anim.right_out)
+
+        val customTabsIntent = builder.build()
+
+        val list = ArrayList<String>()
+        list.add(ServerConfig.FAQ_URL)
+        val packageName = CustomTabsClient.getPackageName(requireContext(), list)
+        if (packageName == null) {
+            requireActivity().startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(ServerConfig.FAQ_URL)
+                )
+            )
+
+        } else {
+            customTabsIntent.intent.setPackage(packageName)
+            customTabsIntent.launchUrl(requireActivity(), Uri.parse(ServerConfig.FAQ_URL))
+        }
+
+    }
+
+    private fun getChangePasswordRequest(): BaseRequest {
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["user_id"] = "" + userInfo.userID
+        baseRequest.paramsMap["email"] = if (TextUtils.isEmpty(userInfo.email)) {
+            userInfo.phoneNumber
+        } else {
+            userInfo.email
+        }
+        return baseRequest
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setObserver()
+    }
+
+
+    private fun setObserver() {
+
+        userInfo.mUserUpdate.observe(this, Observer {
+            setProfileData()
+        })
+        notificationsViewModel.isLoading.observe(this, Observer {
+            if (it)
+                logoutProgress.visibility = View.VISIBLE
+            else
+                logoutProgress.visibility = View.GONE
+        })
+
+        notificationsViewModel.mResturantData.observe(this, Observer {
+            if (it.status == ErrorCodes.SUCCESS) {
+                userInfo.clear()
+                val intent =
+                    Intent(requireActivity(), Login::class.java)
+                startActivity(intent)
+                requireActivity().overridePendingTransition(R.anim.left_in, R.anim.left_out)
+                requireActivity().finish()
+            } else {
+                (activity as BaseActivity).showError(false, it.message, null)
+            }
+        })
+        notificationsViewModel.dutyStatus.observe(viewLifecycleOwner, Observer {
+            userInfo.dutyStatus = it
+            switchButton.isChecked = it == 1
+
+        })
+
+        notificationsViewModel.changePassword.observe(viewLifecycleOwner, Observer {
+            (activity as BaseActivity).showError(it.status == ErrorCodes.SUCCESS, it.message, null)
+        })
+    }
+
+    private fun changeStatus(isChecked: Boolean) {
+        val baseRequest = BaseRequest(userInfo)
+        baseRequest.paramsMap["user_id"] = "" + userInfo.userID
+        baseRequest.paramsMap["duty"] = if (isChecked) {
+            "1"
+        } else {
+            "0"
+        }
+        notificationsViewModel.changeDutyStatus(baseRequest)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireActivity(), R.color.color_002366)
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        requireActivity().window.statusBarColor = Color.WHITE
+        notificationsViewModel.isLoading.removeObservers(this)
+        notificationsViewModel.mResturantData.removeObservers(this)
+        userInfo.mUserUpdate.removeObservers(this)
+    }
+
+
+    private fun setToolBar() {
+        (requireActivity() as HomeScreen).setSupportActionBar(toolbar)
+        requireActivity().window.statusBarColor = Color.TRANSPARENT
+        toolbar_layout.title = getString(R.string.title_profile)
+
+        toolbar_layout.setExpandedTitleColor(Color.TRANSPARENT)
+        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            SnapLog.print("" + verticalOffset)
+            if (Math.abs(verticalOffset) != verticalOffset) {
+                toolbar_layout.setCollapsedTitleTextColor(Color.TRANSPARENT)
+            }
+            if (verticalOffset == 0) {
+
+                mCurrentState = State.EXPANDED;
+            } else if (Math.abs(verticalOffset) >= appBarLayout.totalScrollRange) {
+                if (mCurrentState != State.COLLAPSED) {
+                    toolbar.setTitleTextColor(Color.BLACK)
+                    toolbar.setBackgroundColor(Color.WHITE)
+                    requireActivity().window.statusBarColor = Color.WHITE
+
+                }
+                toolbar_layout.setCollapsedTitleTextColor(Color.BLACK)
+                mCurrentState = State.COLLAPSED;
+            } else {
+                if (mCurrentState != State.IDLE) {
+                    toolbar.setBackgroundColor(Color.TRANSPARENT)
+                    toolbar.setTitleTextColor(Color.TRANSPARENT)
+                    toolbar_layout.setExpandedTitleColor(Color.TRANSPARENT)
+                    requireActivity().window.statusBarColor =
+                        ContextCompat.getColor(requireActivity(), R.color.color_002366)
+                }
+                toolbar_layout.setExpandedTitleColor(Color.TRANSPARENT)
+                mCurrentState = State.IDLE
+            }
+
+        })
+
+    }
+
+
+    private fun setProfileData() {
+        userName.text = userInfo!!.userName
+        if (userInfo!!.email != "")
+            email.text = userInfo!!.email
+        else
+            email.text = userInfo!!.phoneNumber
+        if (userInfo!!.profilePic != null) {
+            GlideApp.with(requireActivity().applicationContext)
+                .load(userInfo!!.profilePic).centerCrop().override(100, 100).dontAnimate()
+                .dontTransform().diskCacheStrategy(DiskCacheStrategy.ALL).into(userImage)
+        }
+    }
+}

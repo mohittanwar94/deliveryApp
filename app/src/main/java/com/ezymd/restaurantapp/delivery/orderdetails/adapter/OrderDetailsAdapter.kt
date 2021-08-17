@@ -54,11 +54,16 @@ class OrderDetailsAdapter(
 
         val item = data[position]
         holder.itemView.dishName.text = item.item
-        holder.itemView.price.text = mContext.getString(R.string.dollor) + item.price
+        holder.itemView.price.visibility = View.GONE
 
-        holder.itemView.qty.text = "" + item.qty + "x" + item.price
+        holder.itemView.qty.text = "Qty- " + item.qty
 
-
+        if (item.product_option_name.equals("")) {
+            holder.itemView.sizeVariant.visibility = View.GONE
+        } else {
+            holder.itemView.sizeVariant.visibility = View.VISIBLE
+            holder.itemView.sizeVariant.text = item.product_option_name
+        }
     }
 
 

@@ -14,7 +14,12 @@ import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.SystemClock
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Interpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
@@ -27,6 +32,7 @@ import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.tracker.TrackerActivity.PERMISSIONS_REQUEST
+import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -49,11 +55,8 @@ import kotlin.collections.ArrayList
 
 
 class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
-    val PATTERN_DASH_LENGTH_PX = 30
-    val PATTERN_GAP_LENGTH_PX = 20
-    val DASH: PatternItem = Dash(PATTERN_DASH_LENGTH_PX.toFloat())
-    val GAP: PatternItem = Gap(PATTERN_GAP_LENGTH_PX.toFloat())
-    val PATTERN_POLYGON_ALPHA: List<PatternItem> = Arrays.asList(GAP, DASH)
+    private var start_rotation: Float=0f
+    private var isDrawFirst = false
     private var movingCabMarker: Marker? = null
     private var previousLatLng: LatLng? = null
     private var currentLatLng: LatLng? = null
@@ -84,7 +87,25 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
 
+        startTrackerService()
+    }
 
+    private fun startTrackerService() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        } else {
+            startService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -142,8 +163,25 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
                 pointsList.clear()
                 pointsList.addAll(it)
-                if (pointsList.size > 0)
-                    showPath(pointsList)
+                if (pointsList.size > 0) {
+                    if (!isDrawFirst)
+                        showPath(pointsList)
+                    else {
+                        val polylineOptions = PolylineOptions()
+                        polylineOptions.color(Color.GRAY)
+                        polylineOptions.width(12f)
+                        polylineOptions.addAll(pointsList)
+                        grayPolyline = mMap!!.addPolyline(polylineOptions)
+
+                        val polylineOptions1 = PolylineOptions()
+                        polylineOptions1.color(Color.BLACK)
+                        polylineOptions1.width(12f)
+                        polylineOptions1.addAll(pointsList)
+                        blackPolyline = mMap!!.addPolyline(polylineOptions1)
+
+
+                    }
+                }
                 showDefaultLocationOnMap(defaultLocation)
 
 
@@ -243,12 +281,17 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 */
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        mMap!!.setMinZoomPreference(15f)
-        mMap!!.setMaxZoomPreference(20f)
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json
+            )
+        );
+
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
         mMap!!.isBuildingsEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
+        mMap!!.uiSettings.isCompassEnabled = false
         requestLocationUpdates()
         setObserver()
     }
@@ -309,6 +352,17 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
+    private fun animateCamera(latLng: LatLng, bearing: Float) {
+        var zoom = mMap!!.cameraPosition.zoom
+        if (zoom < 16f)
+            zoom = 16f
+
+        val cameraPosition = CameraPosition.Builder().target(latLng).bearing(bearing).zoom(
+            zoom
+        ).build()
+        mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
 
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
@@ -319,7 +373,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             }
 
         return mMap!!.addMarker(
-            MarkerOptions().position(latLng).flat(true).draggable(false).icon(bitmapDescriptor)
+            MarkerOptions().position(latLng).flat(true).zIndex(1000F).draggable(false)
+                .icon(bitmapDescriptor)
         )
     }
 
@@ -330,8 +385,8 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 15000
-        request.fastestInterval = 15000
+        request.interval = 5000
+        request.fastestInterval = 5000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val client = LocationServices.getFusedLocationProviderClient(this)
         val permission = ContextCompat.checkSelfPermission(
@@ -346,29 +401,21 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
                     val location = locationResult.lastLocation
                     location?.let {
                         val latlang = LatLng(it.latitude, it.longitude)
-                        val baseRequest = BaseRequest(userInfo)
-                        baseRequest.paramsMap["id"] = "" + orderModel.orderId
-                        baseRequest.paramsMap["lat"] = "" + it.latitude
-                        baseRequest.paramsMap["lang"] = "" + it.longitude
                         defaultLocation = latlang
                         if (sourceLocation == null)
                             sourceLocation = latlang
-                        trackViewModel.downloadLatestCoordinates(baseRequest)
+                        getUpdateRoot(latlang)
+                        SnapLog.print("location.bearing====" + location.bearing)
                         if (previousLatLng == null) {
-                            updateCarLocation(latlang)
+                            updateCarLocation(latlang, location.bearing, location.hasBearing())
+
                         } else {
-                            SnapLog.print(
-                                "distanceBetween(previousLatLng!!, latlang)" + distanceBetween(
-                                    previousLatLng!!,
-                                    latlang
-                                )
-                            )
-                            if (distanceBetween(previousLatLng!!, latlang) > 10f) {
-                                updateCarLocation(latlang)
+                            if (distanceBetween(previousLatLng!!, latlang) > 3f) {
+                                updateCarLocation(latlang, location.bearing, location.hasBearing())
+
 
                             }
                         }
-
                     }
 
                 }
@@ -424,24 +471,18 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         polylineOptions.color(Color.GRAY)
         polylineOptions.width(0f)
         polylineOptions.addAll(latLngList)
-        polylineOptions.pattern(PATTERN_POLYGON_ALPHA)
-        grayPolyline?.remove()
         grayPolyline = mMap!!.addPolyline(polylineOptions)
 
         val blackPolylineOptions = PolylineOptions()
         blackPolylineOptions.color(ContextCompat.getColor(this, R.color.color_002366))
-        blackPolylineOptions.width(8f)
-        blackPolylineOptions.pattern(PATTERN_POLYGON_ALPHA)
-        blackPolyline?.remove()
+        blackPolylineOptions.width(12f)
         blackPolyline = mMap!!.addPolyline(blackPolylineOptions)
 
-        originMarker?.remove()
 
         originMarker = addOriginDestinationMarkerAndGet(true, latLngList[0])
         //originMarker?.setAnchor(0.5f, 0.5f)
         originMarker?.isDraggable = false
 
-        destinationMarker?.remove()
         destinationMarker = addOriginDestinationMarkerAndGet(false, latLngList[latLngList.size - 1])
         //destinationMarker?.setAnchor(0.5f, 0.5f)
         destinationMarker?.isDraggable = false
@@ -453,6 +494,7 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
             blackPolyline?.points = grayPolyline?.points!!.subList(0, index)
         }
         polylineAnimator.start()
+        isDrawFirst = true
     }
 
     private fun addCarMarkerAndGet(latLng: LatLng): Marker {
@@ -463,10 +505,15 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
 
-    private fun updateCarLocation(latLng: LatLng) {
+    /**
+     * This function is used to update the location of the Cab while moving from Origin to Destination
+     */
+    private fun updateCarLocation(latLng: LatLng, bearing: Float, hasBearing: Boolean) {
+        SnapLog.print("updateCarLocation============")
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
+        movingCabMarker?.zIndex = 1000F
         if (previousLatLng == null) {
             currentLatLng = latLng
             previousLatLng = currentLatLng
@@ -476,23 +523,140 @@ class ReachPickUpOrderActivity : BaseActivity(), OnMapReadyCallback {
         } else {
             previousLatLng = currentLatLng
             currentLatLng = latLng
-            val valueAnimator = AnimationUtils.carAnimator()
+
+
+            val updatedLocation = Location(LocationManager.GPS_PROVIDER)
+            updatedLocation.latitude = latLng.latitude
+            updatedLocation.longitude = latLng.longitude
+            moveVechile(movingCabMarker!!, updatedLocation)
+            rotateMarker(movingCabMarker!!, bearing, start_rotation, hasBearing)
+            /*val valueAnimator = AnimationUtils.carAnimator()
             valueAnimator.addUpdateListener { va ->
                 if (currentLatLng != null && previousLatLng != null) {
                     val multiplier = va.animatedFraction
+
+
                     val nextLocation = LatLng(
                         multiplier * currentLatLng!!.latitude + (1 - multiplier) * previousLatLng!!.latitude,
                         multiplier * currentLatLng!!.longitude + (1 - multiplier) * previousLatLng!!.longitude
                     )
-                    movingCabMarker?.position = nextLocation
-                    val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat() - 90
 
+                    previousLng = currentLng
+                    currentLng = nextLocation
+
+                    val updatedLocation = Location(LocationManager.GPS_PROVIDER)
+                    updatedLocation.latitude = nextLocation.latitude
+                    updatedLocation.longitude = nextLocation.longitude
+                    val bearing = bearingBetweenLocations(previousLatLng!!, latLng).toFloat()
+
+
+                    movingCabMarker?.rotation = bearing
+                    SnapLog.print("bearing============$bearing")
+                    movingCabMarker?.position = nextLocation
+                    movingCabMarker?.setAnchor(0.5f, 0.5f)
                     animateCamera(nextLocation)
                 }
             }
             valueAnimator.start()
         }
+*/
+        }
     }
 
+
+    /*private fun rotateMarker(marker: Marker, toRotation: Float) {
+        if (!isMarkerRotating) {
+            val handler = Handler()
+            val start: Long = SystemClock.uptimeMillis()
+            val startRotation = marker.rotation
+            SnapLog.print("startRotation=====$startRotation")
+
+            val duration: Long = 1000
+            val interpolator: Interpolator = LinearInterpolator()
+            handler.post(object : Runnable {
+                override fun run() {
+                    isMarkerRotating = true
+                    val elapsed: Long = SystemClock.uptimeMillis() - start
+                    val t: Float = interpolator.getInterpolation(elapsed.toFloat() / duration)
+                    val rot = t * toRotation + (1 - t) * startRotation
+                    marker.rotation = if (-rot > 180) rot / 2 else rot
+                    SnapLog.print("final=====" + marker.rotation)
+
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16)
+                    } else {
+                        isMarkerRotating = false
+                    }
+                }
+            })
+        }
+    }*/
+    fun moveVechile(myMarker: Marker, finalPosition: Location) {
+        val startPosition = myMarker.position
+        val handler = Handler()
+        val start = SystemClock.uptimeMillis()
+        val interpolator: Interpolator = AccelerateDecelerateInterpolator()
+        val durationInMs = 3000f
+        val hideMarker = false
+        handler.post(object : Runnable {
+            var elapsed: Long = 0
+            var t = 0f
+            var v = 0f
+            override fun run() {
+                // Calculate progress using interpolator
+                elapsed = SystemClock.uptimeMillis() - start
+                t = elapsed / durationInMs
+                v = interpolator.getInterpolation(t)
+                val currentPosition = LatLng(
+                    startPosition.latitude * (1 - t) + finalPosition.latitude * t,
+                    startPosition.longitude * (1 - t) + finalPosition.longitude * t
+                )
+                myMarker.setPosition(currentPosition)
+                // myMarker.setRotation(finalPosition.getBearing());
+
+
+                // Repeat till progress is completeelse
+                if (t < 1) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16)
+                    // handler.postDelayed(this, 100);
+                } else {
+                    myMarker.isVisible = !hideMarker
+                }
+            }
+        })
+    }
+
+    fun rotateMarker(marker: Marker, toRotation: Float, st: Float, hasBearing: Boolean) {
+        if (!hasBearing)
+            return
+        val handler = Handler()
+        val start = SystemClock.uptimeMillis()
+        val startRotation = marker.rotation
+        val duration: Long = 1555
+        val interpolator: Interpolator = LinearInterpolator()
+        handler.post(object : Runnable {
+            override fun run() {
+                val elapsed = SystemClock.uptimeMillis() - start
+                val t = interpolator.getInterpolation(elapsed.toFloat() / duration)
+                val rot = t * toRotation + (1 - t) * startRotation
+                marker.rotation = if (-rot > 180) rot / 2 else rot
+                start_rotation = if (-rot > 180) rot / 2 else rot
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16)
+                }
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(
+            Intent(
+                this, TrackerService::class.java
+            )
+        )
+    }
 }

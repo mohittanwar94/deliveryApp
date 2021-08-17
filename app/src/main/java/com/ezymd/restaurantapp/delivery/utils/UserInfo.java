@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import androidx.lifecycle.MutableLiveData;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 
 public class UserInfo {
@@ -82,7 +84,13 @@ public class UserInfo {
         userInfo.mUserUpdate.postValue(true);
         preferences.edit().putString("phone_number", phone_number).apply();
     }
+    public String getCountryCode() {
+        return preferences.getString("setCountryCode", "");
+    }
 
+    public void setCountryCode(String countryCode) {
+        preferences.edit().putString("setCountryCode", countryCode).apply();
+    }
     public String getAccessToken() {
         return "Bearer " + preferences.getString("accessTokenApp", "");
     }
@@ -119,7 +127,13 @@ public class UserInfo {
 
     }
 
+    public int getDutyStatus() {
+        return preferences.getInt("setDutyStatus"+getUserID(), 0);
+    }
 
+    public void setDutyStatus(int status) {
+        preferences.edit().putInt("setDutyStatus"+getUserID(), status).apply();
+    }
 
     public String getLat() {
         return preferences.getString("lat", "0.0");

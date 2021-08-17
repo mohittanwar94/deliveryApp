@@ -4,11 +4,9 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.net.Uri
@@ -35,11 +33,15 @@ class SplashScreen : BaseActivity() {
         try {
             val mNotifyManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotifyManager.getNotificationChannel(
-                    getString(R.string.default_notification_channel_id)) != null) {
+                    getString(R.string.default_notification_channel_id)
+                ) != null
+            ) {
                 mNotifyManager.deleteNotificationChannel(getString(R.string.default_notification_channel_id))
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotifyManager.getNotificationChannel(
-                    getString(R.string.default_notification_channel_id)) == null) {
+                    getString(R.string.default_notification_channel_id)
+                ) == null
+            ) {
                 val mChannel = NotificationChannel(
                     getString(R.string.default_notification_channel_id),
                     "EzymdDel",
@@ -65,9 +67,9 @@ class SplashScreen : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        printKeyHash(this)
+        //printKeyHash(this)
         if (userInfo!!.userID != 0) {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, HomeScreen::class.java))
         } else
             startActivity(Intent(this, Login::class.java))
 

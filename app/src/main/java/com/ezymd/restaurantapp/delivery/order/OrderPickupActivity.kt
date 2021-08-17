@@ -26,10 +26,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_details.*
@@ -225,6 +222,10 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json));
+
         mMap!!.setMaxZoomPreference(16f)
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         mMap!!.isTrafficEnabled = false
@@ -241,9 +242,9 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
     private fun addOriginDestinationMarkerAndGet(isSource: Boolean, latLng: LatLng): Marker {
         val bitmapDescriptor =
             if (isSource) {
-                MapUtils.getSourceBitmap(this, R.drawable.ic_delivery_man)
+                MapUtils.getSourceBitmapPng()
             } else {
-                MapUtils.getDestinationBitmap(this, R.drawable.ic_dining_large)
+                MapUtils.getDestinationBitmap(this!!, R.drawable.ic_dining_large)
             }
 
         return mMap!!.addMarker(
@@ -267,11 +268,11 @@ class OrderPickupActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun showMarkersOnMap(latLng: LatLng) {
         destinationMarker = addOriginDestinationMarkerAndGet(false, latLng)
-        destinationMarker?.setAnchor(0.5f, 0.5f)
+//        destinationMarker?.setAnchor(0.5f, 0.5f)
         destinationMarker?.isDraggable = false
 
         originMarker = addOriginDestinationMarkerAndGet(true, latLng)
-        originMarker?.setAnchor(0.5f, 0.5f)
+//        originMarker?.setAnchor(0.5f, 0.5f)
         originMarker?.isDraggable = false
 
 

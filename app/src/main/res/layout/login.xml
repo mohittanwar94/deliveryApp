@@ -127,6 +127,7 @@
                     android:layout_gravity="center|end"
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:elevation="@dimen/_10sdp"
+                    android:theme="@style/progressBarThemeBlack"
                     android:visibility="gone" />
             </FrameLayout>
 

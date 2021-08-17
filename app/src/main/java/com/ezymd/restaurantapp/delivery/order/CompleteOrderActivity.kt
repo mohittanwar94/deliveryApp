@@ -16,9 +16,14 @@ import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.SystemClock
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Interpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -30,6 +35,7 @@ import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.customviews.SnapTextView
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
+import com.ezymd.restaurantapp.delivery.tracker.TrackerService
 import com.ezymd.restaurantapp.delivery.tracker.TrackerViewModel
 import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -43,18 +49,22 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.maps.android.PolyUtil
-import com.google.maps.android.SphericalUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.complete_order.*
 import kotlinx.android.synthetic.main.header_new.*
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.address
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.items
-import kotlinx.android.synthetic.main.order_completed_details_with_customer.name
 import kotlinx.android.synthetic.main.order_completed_details_with_customer.showDetails
 import kotlinx.android.synthetic.main.order_details_with_customer.*
 
 
-class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
+class CompleteOrderActivity : BaseActivity(),
+    OnMapReadyCallback/*, SinchService.StartFailedListener*/ {
+    private var restPhoneNO: String? = ""
+    private var nameUser: String? = ""
+    private var avatar: String? = ""
+
+    private var start_rotation: Float = 0f
     private lateinit var defaultLocation: LatLng
     private var grayPolyline: Polyline? = null
     private var blackPolyline: Polyline? = null
@@ -64,6 +74,7 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     private val mMarkers: HashMap<String, Marker> = HashMap()
     private var originMarker: Marker? = null
     private var destinationMarker: Marker? = null
+    private var isDrawFirst = false
 
     val pointsList = ArrayList<LatLng>()
 
@@ -151,31 +162,129 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
         }
 
         userCall.setOnClickListener {
-            UIUtil.clickAlpha(it)
-            val intent = Intent(Intent.ACTION_DIAL)
-            intent.data = Uri.parse("tel:" + orderModel.phoneNo)
-            startActivity(intent)
+            restPhoneNO = orderModel.phoneNo
+            nameUser = orderModel.username
+            avatar = ""
+            try {
+                val isGranted = checkPhoneAudioPermissions(object : PermissionListener {
+                    override fun result(isGranted: Boolean) {
+                        if (isGranted) {
+                            UIUtil.clickAlpha(it)
+                            loginClicked()
+                        }
+
+                    }
+                })
+
+                if (isGranted) {
+                    UIUtil.clickAlpha(it)
+                    loginClicked()
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
         }
 
 
         restCall.setOnClickListener {
-            UIUtil.clickAlpha(it)
-            val intent = Intent(Intent.ACTION_DIAL)
-            intent.data = Uri.parse("tel:" + orderModel.restPhoneNO)
-            startActivity(intent)
+            restPhoneNO = orderModel.restPhoneNO
+            nameUser = orderModel.restaurantName
+            avatar = ""
+            try {
+                val isGranted = checkPhoneAudioPermissions(object : PermissionListener {
+                    override fun result(isGranted: Boolean) {
+                        if (isGranted) {
+                            UIUtil.clickAlpha(it)
+                            loginClicked()
+                        }
+
+                    }
+                })
+
+                if (isGranted) {
+                    UIUtil.clickAlpha(it)
+                    loginClicked()
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
 
         }
+
 
         if (orderModel.paymentType == PaymentMethodTYPE.COD) {
             cash.visibility = View.VISIBLE
-            cash.text = "Cash to be collected " + getString(R.string.dollor) + orderModel.total
+            cash.text = "Cash to be collected " + orderModel.currency + orderModel.total
         }
+
     }
+
+    override fun onServiceConnected() {
+        //  getSinchServiceInterface()?.setStartListener(this)
+    }
+
+
+    /* override fun onStartFailed(error: SinchError) {
+         Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
+     }
+
+     override fun onStarted() {
+         openPlaceCallActivity()
+     }
+ */
+    private fun loginClicked() {
+        val userName = "" + userInfo?.userID
+        /* if (userName != getSinchServiceInterface()?.userName) {
+             getSinchServiceInterface()?.stopClient()
+         }
+         if (!getSinchServiceInterface()?.isStarted!!) {
+             getSinchServiceInterface()?.startClient(userName)
+         } else {
+        */     openPlaceCallActivity()
+
+    }
+
+    private fun openPlaceCallActivity() {
+        //item.delivery.phoneNo
+        callConnect()
+
+    }
+
+    private fun callConnect() {
+        /*if (restPhoneNO.equals("")) {
+            showError(false, "Phone No is Not available", null)
+            return
+        }
+        val call = getSinchServiceInterface()!!.callPhoneNumber(
+            if (ServerConfig.IS_TESTING) {
+                "+46000000000"
+            } else {
+                restPhoneNO
+            }
+        )
+        val callId = call.callId
+        val callScreen = Intent(this, CallScreenActivity::class.java)
+        callScreen.putExtra(SinchService.CALL_ID, callId)
+        callScreen.putExtra(JSONKeys.NAME, nameUser)
+        callScreen.putExtra(JSONKeys.AVATAR, avatar)
+        startActivity(callScreen)*/
+
+        val intent = Intent(Intent.ACTION_DIAL)
+        intent.data = Uri.parse("tel:" + restPhoneNO)
+        startActivity(intent)
+
+    }
+
 
     private fun showConfirmationDialog() {
         val builder = AlertDialog.Builder(this, R.style.alert_dialog_theme)
-        builder.setMessage("Have You Received Cash " + getString(R.string.dollor) + orderModel.total + "?")
+        builder.setMessage("Have You Received Cash " + orderModel.currency + orderModel.total + "?")
             .setCancelable(false)
             .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, id: Int) {
@@ -258,8 +367,25 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                 blackPolyline?.remove()
                 pointsList.clear()
                 pointsList.addAll(it)
-                if (pointsList.size > 0)
-                    showPath(pointsList)
+                if (pointsList.size > 0) {
+                    if (!isDrawFirst) {
+                        showPath(pointsList)
+                    } else {
+                        val polylineOptions = PolylineOptions()
+                        polylineOptions.color(Color.GRAY)
+                        polylineOptions.width(12f)
+                        polylineOptions.addAll(pointsList)
+
+                        grayPolyline = mMap!!.addPolyline(polylineOptions)
+                        val polylineOptions1 = PolylineOptions()
+                        polylineOptions1.color(Color.BLACK)
+                        polylineOptions1.width(12f)
+                        polylineOptions1.addAll(pointsList)
+                        blackPolyline = mMap!!.addPolyline(polylineOptions1)
+
+
+                    }
+                }
 
 
             }
@@ -335,22 +461,48 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json
+            )
+        );
+
         mMap!!.setMaxZoomPreference(25f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
         mMap!!.isBuildingsEnabled = true
+        mMap!!.uiSettings.isCompassEnabled = false
         defaultLocation =
             LatLng(orderModel.restaurant_lat.toDouble(), orderModel.restaurant_lang.toDouble())
         mMap!!.uiSettings.isMyLocationButtonEnabled = false
         showDefaultLocationOnMap(defaultLocation)
         setObserver()
         requestLocationUpdates()
+        startTrackerService()
+    }
+
+    private fun startTrackerService() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        } else {
+            startService(
+                Intent(this, TrackerService::class.java).putExtra(
+                    JSONKeys.ID,
+                    orderModel.orderId
+                )
+            )
+        }
     }
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 15000
-        request.fastestInterval = 15000
+        request.interval = 5000
+        request.fastestInterval = 5000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val client = LocationServices.getFusedLocationProviderClient(this)
         val permission = ContextCompat.checkSelfPermission(
@@ -367,19 +519,17 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
                         val latlang = LatLng(location.latitude, location.longitude)
 
                         // save on server
-                        val baseRequest = BaseRequest(userInfo)
-                        baseRequest.paramsMap["id"] = "" + orderModel.orderId
-                        baseRequest.paramsMap["lat"] = "" + location.latitude
-                        baseRequest.paramsMap["lang"] = "" + location.longitude
-                        trackViewModel.downloadLatestCoordinates(baseRequest)
+
 
                         getUpdateRoot(latlang)
-
+                        SnapLog.print("location.bearing====" + location.bearing)
                         if (previousLatLng == null) {
-                            updateCarLocation(latlang)
+                            updateCarLocation(latlang, location.bearing, location.hasBearing())
+
                         } else {
-                            if (distanceBetween(previousLatLng!!, latlang) > 10f) {
-                                updateCarLocation(latlang)
+                            if (distanceBetween(previousLatLng!!, latlang) > 3f) {
+                                updateCarLocation(latlang, location.bearing, location.hasBearing())
+
 
                             }
                         }
@@ -466,8 +616,17 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun animateCamera(latLng: LatLng) {
-        val zoom: Float = mMap!!.cameraPosition.zoom
+        var zoom: Float = mMap!!.cameraPosition.zoom
+        if (zoom < 15f)
+            zoom = 15f
         val cameraPosition = CameraPosition.Builder().target(latLng).zoom(zoom).build()
+        mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    private fun animateCamera(latLng: LatLng, bearing: Float) {
+        val zoom: Float = mMap!!.cameraPosition.zoom
+        val cameraPosition =
+            CameraPosition.Builder().target(latLng).bearing(bearing).zoom(zoom).build()
         mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
@@ -530,41 +689,179 @@ class CompleteOrderActivity : BaseActivity(), OnMapReadyCallback {
             blackPolyline?.points = grayPolyline?.points!!.subList(0, index)
         }
         polylineAnimator.start()
+        isDrawFirst = true
     }
 
     /**
      * This function is used to update the location of the Cab while moving from Origin to Destination
      */
-    private fun updateCarLocation(latLng: LatLng) {
+    private fun updateCarLocation(latLng: LatLng, bearing: Float, hasBearing: Boolean) {
+        SnapLog.print("updateCarLocation============")
         if (movingCabMarker == null) {
             movingCabMarker = addCarMarkerAndGet(latLng)
         }
+        movingCabMarker?.zIndex = 1000F
         if (previousLatLng == null) {
             currentLatLng = latLng
             previousLatLng = currentLatLng
             movingCabMarker?.position = currentLatLng
+            movingCabMarker?.setAnchor(0.5f, 0.5f)
             animateCamera(currentLatLng!!)
         } else {
             previousLatLng = currentLatLng
             currentLatLng = latLng
-            val valueAnimator = AnimationUtils.carAnimator()
+
+
+            val updatedLocation = Location(LocationManager.GPS_PROVIDER)
+            updatedLocation.latitude = latLng.latitude
+            updatedLocation.longitude = latLng.longitude
+            moveVechile(movingCabMarker!!, updatedLocation)
+            rotateMarker(movingCabMarker!!, bearing, start_rotation, hasBearing)
+            /*val valueAnimator = AnimationUtils.carAnimator()
             valueAnimator.addUpdateListener { va ->
                 if (currentLatLng != null && previousLatLng != null) {
                     val multiplier = va.animatedFraction
+
+
                     val nextLocation = LatLng(
                         multiplier * currentLatLng!!.latitude + (1 - multiplier) * previousLatLng!!.latitude,
                         multiplier * currentLatLng!!.longitude + (1 - multiplier) * previousLatLng!!.longitude
                     )
-                    movingCabMarker?.position = nextLocation
-                    val heading = SphericalUtil.computeHeading(previousLatLng, nextLocation);
-                    movingCabMarker?.rotation = heading.toFloat()-90
 
+                    previousLng = currentLng
+                    currentLng = nextLocation
+
+                    val updatedLocation = Location(LocationManager.GPS_PROVIDER)
+                    updatedLocation.latitude = nextLocation.latitude
+                    updatedLocation.longitude = nextLocation.longitude
+                    val bearing = bearingBetweenLocations(previousLatLng!!, latLng).toFloat()
+
+
+                    movingCabMarker?.rotation = bearing
+                    SnapLog.print("bearing============$bearing")
+                    movingCabMarker?.position = nextLocation
+                    movingCabMarker?.setAnchor(0.5f, 0.5f)
                     animateCamera(nextLocation)
                 }
             }
             valueAnimator.start()
         }
+*/
+        }
     }
 
+
+    /*private fun rotateMarker(marker: Marker, toRotation: Float) {
+        if (!isMarkerRotating) {
+            val handler = Handler()
+            val start: Long = SystemClock.uptimeMillis()
+            val startRotation = marker.rotation
+            SnapLog.print("startRotation=====$startRotation")
+
+            val duration: Long = 1000
+            val interpolator: Interpolator = LinearInterpolator()
+            handler.post(object : Runnable {
+                override fun run() {
+                    isMarkerRotating = true
+                    val elapsed: Long = SystemClock.uptimeMillis() - start
+                    val t: Float = interpolator.getInterpolation(elapsed.toFloat() / duration)
+                    val rot = t * toRotation + (1 - t) * startRotation
+                    marker.rotation = if (-rot > 180) rot / 2 else rot
+                    SnapLog.print("final=====" + marker.rotation)
+
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16)
+                    } else {
+                        isMarkerRotating = false
+                    }
+                }
+            })
+        }
+    }*/
+    fun moveVechile(myMarker: Marker, finalPosition: Location) {
+        val startPosition = myMarker.position
+        val handler = Handler()
+        val start = SystemClock.uptimeMillis()
+        val interpolator: Interpolator = AccelerateDecelerateInterpolator()
+        val durationInMs = 3000f
+        val hideMarker = false
+        handler.post(object : Runnable {
+            var elapsed: Long = 0
+            var t = 0f
+            var v = 0f
+            override fun run() {
+                // Calculate progress using interpolator
+                elapsed = SystemClock.uptimeMillis() - start
+                t = elapsed / durationInMs
+                v = interpolator.getInterpolation(t)
+                val currentPosition = LatLng(
+                    startPosition.latitude * (1 - t) + finalPosition.latitude * t,
+                    startPosition.longitude * (1 - t) + finalPosition.longitude * t
+                )
+                myMarker.setPosition(currentPosition)
+                // myMarker.setRotation(finalPosition.getBearing());
+
+
+                // Repeat till progress is completeelse
+                if (t < 1) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16)
+                    // handler.postDelayed(this, 100);
+                } else {
+                    myMarker.isVisible = !hideMarker
+                }
+            }
+        })
+    }
+
+    fun rotateMarker(marker: Marker, toRotation: Float, st: Float, hasBearing: Boolean) {
+        if (!hasBearing)
+            return
+        val handler = Handler()
+        val start = SystemClock.uptimeMillis()
+        val startRotation = marker.rotation
+        val duration: Long = 1555
+        val interpolator: Interpolator = LinearInterpolator()
+        handler.post(object : Runnable {
+            override fun run() {
+                val elapsed = SystemClock.uptimeMillis() - start
+                val t = interpolator.getInterpolation(elapsed.toFloat() / duration)
+                val rot = t * toRotation + (1 - t) * startRotation
+                marker.rotation = if (-rot > 180) rot / 2 else rot
+                start_rotation = if (-rot > 180) rot / 2 else rot
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16)
+                }
+            }
+        })
+    }
+
+    fun bearingBetweenLocations(latLng1: LatLng, latLng2: LatLng): Double {
+        val PI = 3.14159
+        val lat1 = latLng1.latitude * PI / 180
+        val long1 = latLng1.longitude * PI / 180
+        val lat2 = latLng2.latitude * PI / 180
+        val long2 = latLng2.longitude * PI / 180
+        val dLon = long2 - long1
+        val y = Math.sin(dLon) * Math.cos(lat2)
+        val x = Math.cos(lat1) * Math.sin(lat2) - (Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon))
+        var brng = Math.atan2(y, x)
+        brng = Math.toDegrees(brng)
+        brng = (brng + 360) % 360
+        return brng
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(
+            Intent(
+                this, TrackerService::class.java
+            )
+        )
+    }
 
 }

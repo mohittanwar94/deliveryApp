@@ -2,12 +2,14 @@ package com.ezymd.restaurantapp.network
 
 
 import com.ezymd.restaurantapp.delivery.ServerConfig
+import com.ezymd.restaurantapp.delivery.home.profile.LogoutModel
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.order.model.OrderBaseModel
 import com.ezymd.restaurantapp.delivery.utils.BaseResponse
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface WebServices {
@@ -17,6 +19,10 @@ interface WebServices {
         @FieldMap commonParameters: Map<String, String>
     ): OtpModel
 
+    @GET(ServerConfig.LOGOUT)
+    suspend fun logout(
+        @Header("Authorization") token: String
+    ): LogoutModel
 
     @FormUrlEncoded
     @POST(ServerConfig.LOGIN_USER)
@@ -56,10 +62,42 @@ interface WebServices {
         @Header("Authorization") accessToken: String
     ): OrderAcceptResponse
 
+
+    @FormUrlEncoded
+    @POST(ServerConfig.CHANGE_DUTY_STATUS)
+    suspend fun changeDutyStatus(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") accessToken: String
+    ): OrderAcceptResponse
+
+
     @FormUrlEncoded
     @POST(ServerConfig.ASSIGN_ORDER_DELIVERY)
     suspend fun assignOrder(
         @Field("order_id") restaurant_id: String,
+        @Header("Authorization") accessToken: String
+    ): OrderAcceptResponse
+
+
+    @Multipart
+    @POST(ServerConfig.UPDATE_PROFILE)
+    suspend fun updateProfile(
+        @Part avatar: MultipartBody.Part,
+        @Header("Authorization") token: String
+    ): LoginModel
+
+    @FormUrlEncoded
+    @POST(ServerConfig.UPDATE_PROFILE)
+    suspend fun updateWithoutImageProfile(
+        @FieldMap commonParameters: Map<String, String>,
+        @Header("Authorization") token: String
+    ): LoginModel
+
+
+    @FormUrlEncoded
+    @POST(ServerConfig.CHANGE_PASSWORD)
+    suspend fun changePassword(
+        @FieldMap commonParameters: Map<String, String>,
         @Header("Authorization") accessToken: String
     ): OrderAcceptResponse
 

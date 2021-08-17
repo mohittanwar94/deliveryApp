@@ -5,19 +5,23 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ezymd.restaurantapp.delivery.BaseActivity
 import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.login.LoginRepository
 import com.ezymd.restaurantapp.delivery.order.model.OrderItems
 import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderListRepository
 import com.ezymd.restaurantapp.delivery.orderdetails.adapter.OrderDetailsAdapter
 import com.ezymd.restaurantapp.delivery.utils.*
-import com.ezymd.vendor.order.OrderViewModel
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_order_details.*
 
+@AndroidEntryPoint
 class OrderDetailsActivity : BaseActivity() {
     private var actionTaken: Boolean = false
     private var restaurantAdapter: OrderDetailsAdapter? = null
@@ -29,9 +33,8 @@ class OrderDetailsActivity : BaseActivity() {
     }
 
 
-    private val searchViewModel by lazy {
-        ViewModelProvider(this).get(OrderViewModel::class.java)
-    }
+    private val searchViewModel: OrderViewModel by viewModels()
+
 
     override fun onBackPressed() {
         if (actionTaken) {
@@ -100,12 +103,12 @@ class OrderDetailsActivity : BaseActivity() {
     private fun setGUI() {
         paymentMode.text = getPaymentMode(item.paymentType)
         subTotal.text =
-            getString(R.string.dollor) + String.format("%.2f", getTotalPrice(item.orderItems))
+            item.currency+ String.format("%.2f", getTotalPrice(item.orderItems))
 
         if (item.discount != "0.0") {
             discountLay.visibility = View.VISIBLE
             discount.text =
-                getString(R.string.dollor) + String.format("%.2f", item.discount.toDouble())
+                item.currency + String.format("%.2f", item.discount.toDouble())
         }
 
         order_id.text = getString(R.string.orderID) + " #" + item.orderId
@@ -113,10 +116,8 @@ class OrderDetailsActivity : BaseActivity() {
         address.text = item.restaurantAddress
         username.text = item.username
         order_info.text =
-            TimeUtils.getReadableDate(item.created) + " | " + item.orderItems.size + " items | " + getString(
-                R.string.dollor
-            ) + item.total
-        totalAmount.text = getString(R.string.dollor) + item.total
+            TimeUtils.getReadableDate(item.created) + " | " + item.orderItems.size + " items | " + item.currency + item.total
+        totalAmount.text = item.currency + item.total
         deliveryInstruction.text = item.deliveryInstruction
         userAddress.text = item.address
         if (item.scheduleType == 2) {
@@ -136,7 +137,7 @@ class OrderDetailsActivity : BaseActivity() {
 
         if (!item.deliveryCharges.equals("0"))
             shippingCharge.text =
-                getString(R.string.dollor) + String.format("%.2f", item.deliveryCharges.toDouble())
+                item.currency+ String.format("%.2f", item.deliveryCharges.toDouble())
     }
 
     private fun setOrderStatus(orderStatus: Int) {

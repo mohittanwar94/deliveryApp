@@ -188,6 +188,10 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json));
+
         mMap!!.setMaxZoomPreference(25f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false
@@ -243,7 +247,7 @@ class OrderCompletedActivity : BaseActivity(), OnMapReadyCallback {
             }
 
         return mMap!!.addMarker(
-            MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor)
+            MarkerOptions().position(latLng).zIndex(1000F).flat(true).icon(bitmapDescriptor)
         )
     }
 

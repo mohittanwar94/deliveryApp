@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ezymd.restaurantapp.delivery.order.CompleteOrderActivity
@@ -19,21 +19,24 @@ import com.ezymd.restaurantapp.delivery.order.model.OrderModel
 import com.ezymd.restaurantapp.delivery.order.model.OrderStatus
 import com.ezymd.restaurantapp.delivery.orderdetails.OrderDetailsActivity
 import com.ezymd.restaurantapp.delivery.utils.*
-import com.ezymd.vendor.order.OrderViewModel
+import com.ezymd.restaurantapp.delivery.order.viewmodel.OrderViewModel
 import com.ezymd.vendor.order.adapter.OrdersAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_orders.*
 
+@AndroidEntryPoint
 class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var restaurantAdapter: OrdersAdapter? = null
     private var isNullViewRoot = false
-    private lateinit var searchViewModel: OrderViewModel
+    private val searchViewModel : OrderViewModel by viewModels()
+
     private var viewRoot: View? = null
 
     private val dataResturant = ArrayList<OrderModel>()
 
     private val userInfo by lazy {
-        (activity as MainActivity).userInfo
+        (activity as HomeScreen).userInfo
     }
 
 
@@ -42,7 +45,6 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        searchViewModel = ViewModelProvider(this).get(OrderViewModel::class.java)
         isNullViewRoot = false
         if (viewRoot == null) {
             viewRoot = inflater.inflate(R.layout.fragment_orders, container, false)
@@ -64,8 +66,8 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
             searchViewModel.processingOrderList(baseRequest)
-            setObservers()
         }
+        setObservers()
 
     }
 
@@ -111,7 +113,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             )
         )
         restaurantAdapter =
-            OrdersAdapter(activity as MainActivity, object : OnRecyclerViewLongClick {
+            OrdersAdapter(activity as HomeScreen, object : OnRecyclerViewLongClick {
                 override fun onClick(position: Int, view: View?) {
                     activity!!.startActivityFromFragment(
                         this@ProcessingFragment,
@@ -171,7 +173,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun setObservers() {
-        searchViewModel.isLoading.observe(requireActivity(), androidx.lifecycle.Observer {
+        searchViewModel.isLoading.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (!it) {
                 swipeLayout.isRefreshing = false
                 (activity as BaseActivity).enableEvents()
@@ -181,14 +183,14 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             }
         })
 
-        EzymdApplication.getInstance().isRefresh.observe(requireActivity(), Observer {
+        EzymdApplication.getInstance().isRefresh.observe(viewLifecycleOwner, Observer {
             dataResturant.clear()
             restaurantAdapter?.clearData()
             val baseRequest = BaseRequest(userInfo)
             baseRequest.paramsMap["order_status"] = "processing_for_delivery"
             searchViewModel.processingOrderList(baseRequest)
         })
-        searchViewModel.assignResponse.observe(requireActivity(), Observer {
+        searchViewModel.assignResponse.observe(viewLifecycleOwner, Observer {
             if (it != null && it.status == ErrorCodes.SUCCESS) {
                 (activity as BaseActivity).showError(true, it.message, null)
                 dataResturant.clear()
@@ -201,7 +203,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             }
 
         })
-        searchViewModel.processingResponse.observe(requireActivity(), androidx.lifecycle.Observer {
+        searchViewModel.processingResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.status == ErrorCodes.SUCCESS && it.data != null) {
                 dataResturant.clear()
                 restaurantAdapter?.clearData()
@@ -216,7 +218,7 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         })
 
-        searchViewModel.errorRequest.observe(this, androidx.lifecycle.Observer {
+        searchViewModel.errorRequest.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it != null)
                 (activity as BaseActivity).showError(false, it, null)
         })
@@ -226,9 +228,6 @@ class ProcessingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        searchViewModel.isLoading.removeObservers(this)
-        searchViewModel.errorRequest.removeObservers(this)
-        searchViewModel.baseResponse.removeObservers(this)
 
     }
 

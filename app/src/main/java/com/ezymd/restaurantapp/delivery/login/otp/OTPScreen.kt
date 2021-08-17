@@ -14,9 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
-import com.ezymd.restaurantapp.delivery.MainActivity
 import com.ezymd.restaurantapp.delivery.OtpBroadcastReceiver
 import com.ezymd.restaurantapp.delivery.R
+import com.ezymd.restaurantapp.delivery.home.order.MainOrderFragment
 import com.ezymd.restaurantapp.delivery.login.LoginRequest
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.utils.*
@@ -35,6 +35,7 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
     private var smsBroadcast: OtpBroadcastReceiver? = null
     private var isBackPressEnable = false
     private var otpViewModel: OtpViewModel? = null
+
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +110,10 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
                 false
             )
 
+            if (it.status == ErrorCodes.SUCCESS) {
+                intent.putExtra(JSONKeys.OTP, it.data.otp)
+            }
+
 
         })
 
@@ -129,7 +134,7 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
         val spann = SpannableString(getString(R.string.did_not_receive_otp))
         val spannResend = SpannableString(getString(R.string.resend))
         spannResend.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_ffb912)),
+            ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_002366)),
             0,
             spannResend.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -138,14 +143,14 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
 
         val spannMsg = SpannableString(getString(R.string.enter_four_digit_code))
         val mobileNo = intent.getStringExtra(JSONKeys.MOBILE_NO)
-        val mask = mobileNo.replace("\\w(?=\\w{4})".toRegex(), "x")
-
+        var mask = mobileNo!!.replace("\\w(?=\\w{4})".toRegex(), "x")
+        mask = mask.chunked(3).joinToString(separator = "-")
         val spannMobile = SpannableString(mask)
         spannMobile.setSpan(
             ForegroundColorSpan(
                 ContextCompat.getColor(
                     this,
-                    R.color.blue_002366
+                    R.color.color_010a1d
                 )
             ), 0, spannMobile.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
@@ -268,11 +273,19 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
             icon4.requestFocus()
         } else {
             SuspendKeyPad.suspendKeyPad(this)
-            progressLogin.visibility = View.VISIBLE
             if (intent.hasExtra(IS_MOBILE)) {
-                setResult(Activity.RESULT_OK)
-                finish()
+                val otp = intent.getStringExtra(JSONKeys.OTP)
+                val otpString = icon1.text.toString().trim() + icon2.text.toString()
+                    .trim() + icon3.text.toString().trim() + icon4.text.toString().trim()
+                if (otp!!.equals(otpString)) {
+                    progressLogin.visibility = View.VISIBLE
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                } else {
+                    setErrorWithVibrator()
+                }
             } else {
+                progressLogin.visibility = View.VISIBLE
                 val loginRequest = LoginRequest()
                 loginRequest.mobileNo = intent.getStringExtra(JSONKeys.MOBILE_NO)
                 loginRequest.otp =
@@ -287,7 +300,10 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
     private fun resendSameOtp(v: View) {
         UIUtil.clickAlpha(v)
         otpViewModel!!.startLoading(true)
-        otpViewModel!!.resendOtp(intent.getStringExtra(JSONKeys.MOBILE_NO)!!)
+        otpViewModel!!.resendOtp(
+            intent.getStringExtra(JSONKeys.MOBILE_NO)!!,
+            intent.hasExtra(IS_MOBILE)
+        )
 
     }
 
@@ -320,7 +336,7 @@ class OTPScreen : BaseActivity(), View.OnClickListener {
         userInfo?.userID = it.data.user.id
         userInfo?.phoneNumber = it.data.user.phone_no
         userInfo?.profilePic = it.data.user.profile_pic
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, MainOrderFragment::class.java))
         finish()
 
     }

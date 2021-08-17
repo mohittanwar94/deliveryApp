@@ -1,6 +1,7 @@
-package com.ezymd.restaurantapp.network
+package com.ezymd.restaurantapp.delivery.network
 
 import com.ezymd.restaurantapp.delivery.utils.ErrorResponse
+import com.ezymd.restaurantapp.network.ResultWrapper
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -27,7 +28,7 @@ class NetworkCommonRequest {
 
     init {
         if (networkRequest != null) {
-          //  throw RuntimeException("Use getInstance() method to get the single instance of NetworkCommonRequest class.")
+            //  throw RuntimeException("Use getInstance() method to get the single instance of NetworkCommonRequest class.")
         }
     }
 

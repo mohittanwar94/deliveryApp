@@ -2,13 +2,13 @@ package com.ezymd.restaurantapp.delivery.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ezymd.restaurantapp.delivery.BaseActivity
-import com.ezymd.restaurantapp.delivery.EzymdApplication
-import com.ezymd.restaurantapp.delivery.MainActivity
+import com.ezymd.restaurantapp.delivery.HomeScreen
 import com.ezymd.restaurantapp.delivery.R
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.utils.*
@@ -61,8 +61,11 @@ class Login : BaseActivity() {
         })
     }
 
+    fun CharSequence?.isValidEmail() =
+        Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
     private fun checkConditions() {
-        if (userName.text.toString().trim().isEmpty()) {
+        if (userName.text.toString().trim().isEmpty() || !userName.text.isValidEmail()) {
             ShowDialog(this).disPlayDialog(
                 getString(R.string.user_name_can_not_be_empty),
                 false,
@@ -81,6 +84,7 @@ class Login : BaseActivity() {
         val baseRequest = BaseRequest()
         baseRequest.paramsMap["email"] = userName.text.toString().trim()
         baseRequest.paramsMap["password"] = password.text.toString().trim()
+        baseRequest.paramsMap["role_id"] = "5"
         loginViewModel.login(baseRequest)
     }
 
@@ -109,7 +113,7 @@ class Login : BaseActivity() {
         userInfo?.userID = it.data.user.id
         userInfo?.phoneNumber = it.data.user.phone_no
         userInfo?.profilePic = it.data.user.profile_pic
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, HomeScreen::class.java))
         finish()
 
     }

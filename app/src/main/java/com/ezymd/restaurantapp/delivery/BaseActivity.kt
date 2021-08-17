@@ -8,9 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
 import android.provider.Settings
 import android.view.MotionEvent
 import android.view.View
@@ -26,7 +24,10 @@ import com.ezymd.restaurantapp.delivery.utils.*
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
-open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
+open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener /*,
+    ServiceConnection*/ {
+
+    // var mSinchServiceInterface: SinchService.SinchServiceInterface? = null
     var size: Sizes? = null
     val PERMISSIONS_REQUEST_CAMERA = 3333
     val PERMISSIONS_REQUEST_CAMERA_AUDIO = 3331
@@ -47,12 +48,58 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     private var mLastTimeNoInternet = System.currentTimeMillis()
     private var handler: Handler? = null
 
+    /*override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder?) {
+        if ((SinchService::class.java.name == componentName.className)) {
+            mSinchServiceInterface = iBinder as SinchService.SinchServiceInterface?
+            onServiceConnected()
+        }
+    }
+
+    override fun onServiceDisconnected(componentName: ComponentName) {
+        if ((SinchService::class.java.name == componentName.className)) {
+            mSinchServiceInterface = null
+            onServiceDisconnected()
+        }
+    }
+
+
+    */
+    open fun onServiceConnected() {}
+    open fun onServiceDisconnected() {}
+
+    /* fun getSinchServiceInterface(): SinchService.SinchServiceInterface? {
+         return mSinchServiceInterface
+     }
+ */
+    private val messenger = Messenger(object : Handler(Looper.getMainLooper()!!) {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                /*SinchService.MESSAGE_PERMISSIONS_NEEDED -> {
+                    val bundle = msg.data
+                    val requiredPermission = bundle.getString(SinchService.REQUIRED_PERMISSION)
+                    ActivityCompat.requestPermissions(
+                        this@BaseActivity,
+                        arrayOf(requiredPermission),
+                        0
+                    )
+                }*/
+            }
+        }
+    })
+
+    private fun bindService() {
+        /* val serviceIntent = Intent(this, SinchService::class.java)
+         serviceIntent.putExtra(SinchService.MESSENGER, messenger)
+         applicationContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)*/
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             window.statusBarColor = Color.GRAY
         }
         super.onCreate(savedInstanceState)
+        bindService()
         if (ServerConfig.IS_TESTING)
             Thread.setDefaultUncaughtExceptionHandler(TopExceptionHandler(this))
         mActivity = this
@@ -81,6 +128,28 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
         onNetWorkChange(isConnected)
     }
 
+    fun checkPhoneAudioPermissions(listener: PermissionListener): Boolean {
+        if (Build.VERSION.SDK_INT >= 23) {
+            permissionListener = listener
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                val notGranted = ArrayList<String>()
+                val permissions =
+                    arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.RECORD_AUDIO)
+                for (permission in permissions) {
+                    if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
+                        notGranted.add(permission)
+                }
+                if (!notGranted.isEmpty()) {
+                    requestPermissions(notGranted.toTypedArray(), PERMISSIONS_REQUEST_CAMERA_AUDIO)
+                    return false
+                }
+            }
+        }
+        return true
+    }
 
     /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -219,10 +288,10 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             .show()
     }
 
-    fun checkCameraPermissions(listener: PermissionListener): Boolean {
+    open fun checkCameraPermissions(listener: PermissionListener): Boolean {
         if (Build.VERSION.SDK_INT >= 23) {
             permissionListener = listener
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.ACCESS_MEDIA_LOCATION
@@ -230,7 +299,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
             ) {
                 val notGranted = ArrayList<String>()
                 val permissions = arrayOf(
-                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
                 for (permission in permissions) {
@@ -239,7 +308,10 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
                     )
                 }
                 if (!notGranted.isEmpty()) {
-                    requestPermissions(notGranted.toTypedArray(), PERMISSIONS_REQUEST_CAMERA)
+                    requestPermissions(
+                        notGranted.toTypedArray(),
+                        PERMISSIONS_REQUEST_CAMERA
+                    )
                     return false
                 }
             }

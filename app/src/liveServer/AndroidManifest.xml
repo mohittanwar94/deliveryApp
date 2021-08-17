@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ezymd.restaurantapp"
+    package="com.ezymd.restaurantapp.delivery"
     android:installLocation="auto">
 
 
@@ -8,7 +8,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.ezymd.restaurantapp.snapprovider"
+            android:authorities="com.ezymd.restaurantapp.delivery.snapprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -1,15 +1,18 @@
-package com.ezymd.vendor.order
+package com.ezymd.restaurantapp.delivery.order.viewmodel
 
+import com.ezymd.restaurantapp.delivery.network.NetworkComonRequest
 import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.order.model.OrderBaseModel
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
-import com.ezymd.restaurantapp.network.ApiClient
-import com.ezymd.restaurantapp.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
-class OrderListRepository {
+class OrderListRepository @Inject constructor(
+    private val apiHelper: WebServices,
+    private val networkCommonRequest: NetworkComonRequest
+) {
 
 
     suspend fun listOrders(
@@ -17,10 +20,9 @@ class OrderListRepository {
         dispatcher: CoroutineDispatcher
     ): ResultWrapper<OrderBaseModel> {
 
-        val apiServices = ApiClient.client!!.create(WebServices::class.java)
 
-        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
-            apiServices.orderList(
+        return networkCommonRequest.safeApiCall(dispatcher) {
+            apiHelper.orderList(
                 baseRequest.paramsMap["device_token"]!!,
                 baseRequest.paramsMap["device_id"]!!,
                 baseRequest.paramsMap["order_status"]!!, baseRequest.accessToken
@@ -36,10 +38,9 @@ class OrderListRepository {
         dispatcher: CoroutineDispatcher
     ): ResultWrapper<OrderBaseModel> {
 
-        val apiServices = ApiClient.client!!.create(WebServices::class.java)
 
-        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
-            apiServices.cancelOrderList(
+        return networkCommonRequest.safeApiCall(dispatcher) {
+            apiHelper.cancelOrderList(
                 baseRequest.paramsMap["device_token"]!!,
                 baseRequest.paramsMap["device_id"]!!,
                 baseRequest.paramsMap["order_status"]!!,
@@ -56,10 +57,9 @@ class OrderListRepository {
         dispatcher: CoroutineDispatcher
     ): ResultWrapper<OrderAcceptResponse> {
 
-        val apiServices = ApiClient.client!!.create(WebServices::class.java)
 
-        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
-            apiServices.assignOrder(
+        return networkCommonRequest.safeApiCall(dispatcher) {
+            apiHelper.assignOrder(
                 baseRequest.paramsMap.get("order_id")!!, baseRequest.accessToken
             )
         }
@@ -67,27 +67,5 @@ class OrderListRepository {
 
     }
 
-
-    companion object {
-        @Volatile
-        private var sportsFeeRepository: OrderListRepository? = null
-
-        @JvmStatic
-        val instance: OrderListRepository?
-            get() {
-                if (sportsFeeRepository == null) {
-                    synchronized(OrderListRepository::class.java) {
-                        sportsFeeRepository = OrderListRepository()
-                    }
-                }
-                return sportsFeeRepository
-            }
-    }
-
-    init {
-        if (sportsFeeRepository != null) {
-            throw RuntimeException("Use getInstance() method to get the single instance of this class.")
-        }
-    }
 
 }

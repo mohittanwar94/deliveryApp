@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.ncorti.slidetoact.SlideToActView
 import com.view.circulartimerview.CircularTimerListener
 import com.view.circulartimerview.TimeFormatEnum
@@ -159,6 +160,10 @@ class IncomingOrderActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        mMap?.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.style_json));
+
         mMap!!.setMaxZoomPreference(16f)
         mMap!!.isTrafficEnabled = false
         mMap!!.isIndoorEnabled = false

@@ -15,12 +15,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.net.conn.CONNECTIVITY_CHANGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -30,8 +27,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-
 
 
     <uses-feature
@@ -50,6 +45,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -75,6 +71,13 @@
 
 
         <activity
+            android:name=".PermissionActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppFullScreen" />
+
+
+        <activity
             android:name=".SplashScreen"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -93,8 +96,8 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysVisible" />
         <activity
             android:name=".order.IncomingOrderActivity"
+            android:parentActivityName="com.ezymd.restaurantapp.delivery.HomeScreen"
             android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
         <activity
@@ -102,7 +105,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeScreen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <activity
+            android:name=".editprofile.EditProfileActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
@@ -199,6 +207,14 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
+
+
+        <service android:name=".push.SinchService" />
+        <activity
+            android:name=".push.CallScreenActivity"
+            android:screenOrientation="portrait" />
+
+
 
     </application>
 

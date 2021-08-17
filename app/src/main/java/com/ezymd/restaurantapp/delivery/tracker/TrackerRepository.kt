@@ -1,11 +1,11 @@
 package com.ezymd.restaurantapp.delivery.tracker
 
+import com.ezymd.restaurantapp.delivery.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.delivery.order.model.OrderAcceptResponse
 import com.ezymd.restaurantapp.delivery.utils.BaseRequest
 import com.ezymd.restaurantapp.delivery.utils.BaseResponse
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.ezymd.restaurantapp.network.ApiClient
-import com.ezymd.restaurantapp.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
 import com.google.gson.JsonObject
@@ -72,6 +72,24 @@ class TrackerRepository private constructor() {
 
 
     }
+
+    suspend fun changeDutyStatus(
+        baseRequest: BaseRequest,
+        dispatcher: CoroutineDispatcher
+    ): ResultWrapper<OrderAcceptResponse> {
+
+        SnapLog.print("track repositry=====")
+        val apiServices = ApiClient.client!!.create(WebServices::class.java)
+
+        return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
+            apiServices.changeDutyStatus(
+                baseRequest.paramsMap,baseRequest.accessToken
+            )
+        }
+
+
+    }
+
 
     companion object {
         @Volatile

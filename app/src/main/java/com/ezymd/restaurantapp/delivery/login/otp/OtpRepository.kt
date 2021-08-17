@@ -3,9 +3,9 @@ package com.ezymd.restaurantapp.delivery.login.otp
 import com.ezymd.restaurantapp.delivery.login.LoginRequest
 import com.ezymd.restaurantapp.delivery.login.model.LoginModel
 import com.ezymd.restaurantapp.delivery.login.model.OtpModel
+import com.ezymd.restaurantapp.delivery.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.delivery.utils.SnapLog
 import com.ezymd.restaurantapp.network.ApiClient
-import com.ezymd.restaurantapp.network.NetworkCommonRequest
 import com.ezymd.restaurantapp.network.ResultWrapper
 import com.ezymd.restaurantapp.network.WebServices
 import com.google.android.gms.auth.api.phone.SmsRetrieverClient
@@ -27,17 +27,20 @@ class OtpRepository private constructor() {
 
     suspend fun resendSms(
         mobile: String,
-        dispatcher: CoroutineDispatcher
+        dispatcher: CoroutineDispatcher,
+        hasExtra: Boolean
     ): ResultWrapper<OtpModel> {
         SnapLog.print("Login repositry=====")
         val apiServices = ApiClient.client!!.create(WebServices::class.java)
         val map = HashMap<String, String>()
-        map.put("phone_no", mobile)
-
+        map["phone_no"] = mobile
+        if (hasExtra)
+            map["is_otp"] = "1"
         return NetworkCommonRequest.instance!!.safeApiCall(dispatcher) {
             apiServices.sendOtp(map)
         }
     }
+
 
 
     suspend fun registerLoginUser(
